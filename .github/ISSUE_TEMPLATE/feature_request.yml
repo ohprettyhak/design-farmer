@@ -1,0 +1,43 @@
+name: Feature request
+description: Propose a new capability or improvement for design-farmer
+title: "[FEATURE REQUEST] "
+labels:
+  - feature
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What user or maintainer problem are you trying to solve?
+      placeholder: Describe the current pain point and why it matters.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: What change should be introduced?
+      placeholder: Describe the proposed approach and expected behavior.
+    validations:
+      required: true
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact
+      description: Who is impacted and what is the expected outcome?
+      placeholder: Explain user impact, scope, and urgency.
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance criteria
+      description: Define concrete completion criteria.
+      placeholder: |
+        - [ ] Criterion 1
+        - [ ] Criterion 2
+    validations:
+      required: true

@@ -1,0 +1,56 @@
+name: Quality gap report
+description: Report documentation, validation, consistency, or workflow quality gaps
+title: "[QUALITY GAP] "
+labels:
+  - quality
+body:
+  - type: dropdown
+    id: category
+    attributes:
+      label: Gap category
+      options:
+        - Documentation
+        - Validation / CI
+        - Skill structure
+        - Process / workflow
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: current_state
+    attributes:
+      label: Current state
+      description: What is happening now?
+      placeholder: Describe the observed behavior or missing standard.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected_state
+    attributes:
+      label: Expected state
+      description: What should happen instead?
+      placeholder: Define the target quality bar.
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Include logs, screenshots, links, or file paths.
+      placeholder: Add concrete evidence that helps maintainers triage quickly.
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance criteria
+      description: Define how we know the gap is resolved.
+      placeholder: |
+        - [ ] Criterion 1
+        - [ ] Criterion 2
+    validations:
+      required: true

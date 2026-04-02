@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability report
+    url: https://github.com/ohprettyhak/design-farmer/security/advisories/new
+    about: Please use private reporting for security issues.
