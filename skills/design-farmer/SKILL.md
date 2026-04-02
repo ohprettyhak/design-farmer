@@ -2633,7 +2633,39 @@ If user chose A or B, execute the following steps.
   Only proceed after the user approves. If "no", ask what to adjust. If "skip", move
   to the next step.
 
+**Mode B approval payload (MANDATORY before each step):**
+
+Before asking "Approve this change?", include ALL of the following in the preview:
+- `frameworkBranch`: detected framework branch (e.g., next-app-router, remix, nuxt)
+- `targetFiles`: exact file paths that will be edited in this step
+- `themeLibrary`: selected library from Question 5-1 (or `custom` / `none`)
+- `cssEntryTarget`: the exact app entry CSS file (or `none` if not needed)
+- `executionMode`: `guided`
+
+If any field is unknown, STOP and ask a clarification question first. Do NOT execute
+the step with inferred or omitted payload fields.
+
 ### 10.1 Dependency Installation
+
+Compatibility gate (MANDATORY):
+
+- Next.js → `next-themes` or `custom`
+- Astro → `astro-color-scheme` or `custom`
+- Remix → `remix-themes` or `custom`
+- SvelteKit → `mode-watcher` or `custom`
+- Nuxt → `@nuxtjs/color-mode` or `custom`
+- Plain React (Vite/CRA) → `custom` or `use-dark-mode`
+
+If `{themeLibrary}` does NOT match the detected framework's allowed set,
+STOP and ask the user via AskUserQuestion:
+
+> The selected theme library (`{themeLibrary}`) does not match the detected framework (`{framework}`).
+> To avoid a broken integration, choose one:
+> - A) Use framework-compatible library: {recommendedLibrary}
+> - B) Use custom implementation
+> - C) Keep current choice and skip automatic integration
+
+Do NOT proceed until user responds.
 
 ```bash
 # Install the design system's peer dependencies
@@ -2653,15 +2685,17 @@ fi
 Apply root integration based on the detected framework from Phase 0.
 Do NOT assume Next.js App Router. Use ONLY the path that exists for the detected stack.
 
-Framework mapping:
+Framework decision matrix (MANDATORY):
 
-- **Next.js App Router** (`app/layout.tsx` exists): update `app/layout.tsx`
-- **Next.js Pages Router** (`pages/_app.tsx`): update `pages/_app.tsx` and, if needed, `pages/_document.tsx`
-- **Remix**: update `app/root.tsx`
-- **Astro**: update the main layout/template (`src/layouts/*.astro` or project root layout)
-- **SvelteKit**: update `src/routes/+layout.svelte`
-- **Nuxt**: update `app.vue` or `layouts/default.vue`
-- **Plain React (Vite/CRA)**: update `src/main.tsx` / `src/main.jsx` or `src/index.tsx` / `src/index.jsx`
+| Framework Branch | Primary File(s) to Edit | Provider Insertion Point | CSS Entry Target | NEVER do this |
+|---|---|---|---|---|
+| Next.js App Router | `app/layout.tsx` | Inside `<body>`, wrap `{children}` | `app/layout.tsx` import block or app global CSS | Do NOT edit `pages/_app.tsx` in this branch |
+| Next.js Pages Router | `pages/_app.tsx` (+ `pages/_document.tsx` only if needed) | Wrap `<Component {...pageProps} />` in `_app` | `pages/_app.tsx` import block or global CSS | Do NOT instruct edits to `app/layout.tsx` |
+| Remix | `app/root.tsx` | Wrap `<Outlet />` tree in root component | `app/root.tsx`/root stylesheet linkage | Do NOT reference Next/Nuxt file paths |
+| Astro | Main `.astro` layout/template (`src/layouts/*.astro` or project root layout) | Layout shell where slotted page content is rendered | Main Astro stylesheet entry | Do NOT instruct React-only provider wrappers |
+| SvelteKit | `src/routes/+layout.svelte` | Root layout markup around `<slot />` | Root style import used by `+layout.svelte` | Do NOT reference React JSX wrappers |
+| Nuxt | `app.vue` or `layouts/default.vue` | Root template wrapper around `<NuxtPage />` | Nuxt global CSS entry (config/layout import) | Do NOT reference Next/Remix paths |
+| Plain React (Vite/CRA) | `src/main.tsx` / `src/main.jsx` or `src/index.tsx` / `src/index.jsx` | Root `createRoot(...).render(...)` tree | Root CSS import in main entry | Do NOT claim `app/layout.tsx` exists |
 
 For the detected framework's root file:
 
@@ -2671,12 +2705,12 @@ For the detected framework's root file:
 // 3. Import the design system's global CSS
 
 // The agent MUST:
-// - Read the existing app/layout.tsx
+// - Read the existing detected root file first
 // - Preserve ALL existing content (metadata, fonts, providers, analytics, etc.)
 // - Add the ThemeProvider as the INNERMOST provider wrapping {children}
 //   (do NOT remove or reorder existing providers)
 // - Add the CSS import at the TOP of the import block
-// - Add suppressHydrationWarning to <html> if not already present
+// - Add suppressHydrationWarning to <html> only when that tag is present in the edited file
 ```
 
 If the framework does NOT render a literal `<html>` element in app code,
