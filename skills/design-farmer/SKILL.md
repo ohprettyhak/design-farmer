@@ -87,7 +87,7 @@ Try primary path:
 | Phase 4.5 (DESIGN.md) | Structured design-document drafting | Write DESIGN.md directly with Write tool |
 | Phase 5 (Tokens) | Specialized implementation pass | Implement tokens directly with Edit/Write |
 | Phase 6 (Components) | Specialized implementation pass | Implement components directly with Edit/Write, one at a time |
-| Phase 7 (Storybook) | `npx storybook@latest init` | Manual .storybook config + story file generation |
+| Phase 7 (Storybook) | `storybook init` via the detected package manager | Manual .storybook config + story file generation |
 | Phase 8 (Review) | 5 specialized reviewer passes (parallel when supported) | Sequential review with combined criteria |
 | Phase 8.5 (Visual QA) | Headless browser screenshots | Manual verification prompt with user-provided screenshots |
 | Phase 9 (Docs) | Structured documentation drafting | Write docs directly with Write tool |
@@ -99,8 +99,12 @@ Before using any external tool, verify availability without triggering installs 
 access as part of the check itself:
 
 ```bash
-# npx/storybook helper
-command -v npx >/dev/null 2>&1 || echo "npx unavailable"
+# Storybook init helper via detected package manager
+if command -v npx >/dev/null 2>&1 || command -v pnpm >/dev/null 2>&1 || command -v bun >/dev/null 2>&1; then
+  echo "storybook init helper available"
+else
+  echo "no package-manager storybook init helper available"
+fi
 
 # gh CLI (Phase 11 ship)
 gh --version 2>/dev/null || echo "gh CLI unavailable"
