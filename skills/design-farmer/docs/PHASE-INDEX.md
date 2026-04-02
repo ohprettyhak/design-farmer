@@ -17,21 +17,27 @@ This index provides a compact map of `SKILL.md` execution flow for maintainers.
    - Assess design maturity, inventory components, identify style/token patterns.
 4. **Phase 3: Design Pattern Extraction & OKLCH Conversion**
    - Convert and normalize color systems, generate scales, validate contrast.
-5. **Phase 4: Architecture Design**
+5. **Phase 3.5: Visual Preview**
+   - Generate self-contained HTML preview of proposed design system.
+   - Color palette swatches, typography specimens, spacing scale, sample components.
+   - Theme toggle for light/dark comparison.
+   - User approval gate before Phase 4 begins.
+
+6. **Phase 4: Architecture Design**
    - Define token hierarchy, theme architecture, directory and build strategy.
-6. **Phase 5: Token Implementation**
+7. **Phase 5: Token Implementation**
    - Implement primitive + semantic tokens and utilities with tests.
-7. **Phase 6: Component Implementation**
+8. **Phase 6: Component Implementation**
    - Build component library using selected path (headless/custom) with accessibility requirements.
-8. **Phase 7: Storybook Integration**
+9. **Phase 7: Storybook Integration**
    - Document components and states visually (optional for light mode-only scenarios as configured).
-9. **Phase 8: Multi-Reviewer Verification**
-   - Execute multi-angle quality review and aggregate risk.
-10. **Phase 8.5: Design Review (Live Visual QA)**
-- Detect project-declared browser tooling (for example, an existing Playwright setup) or fall back to manual verification.
+10. **Phase 8: Multi-Reviewer Verification**
+    - Execute multi-angle quality review and aggregate risk.
+11. **Phase 8.5: Design Review (Live Visual QA)**
+    - Detect project-declared browser tooling (for example, an existing Playwright setup) or fall back to manual verification.
     - Perform visual QA loop with strict triage and risk thresholds.
     - Responsive viewport testing at mobile, tablet, and desktop breakpoints.
-11. **Phase 9: Documentation & Completion**
+12. **Phase 9: Documentation & Completion**
     - Generate docs, run final verification commands, emit completion report.
 
 ## Cross-Phase Contracts
