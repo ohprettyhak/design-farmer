@@ -2342,36 +2342,28 @@ that don't feel responsive.
 
 **Pre-requisite:** A running dev server or Storybook instance where components can be viewed.
 
-### 8.5.1 Browser Tooling Detection & Setup
+### 8.5.1 Browser Tooling Discovery & Setup
 
-Before visual QA begins, detect available browser tooling:
+Before visual QA begins, detect whether the repository already includes supported browser
+tooling. Do not assume unrelated CLIs, and do not trigger package installation or network
+access just to probe availability.
 
 ```bash
-# Check for gstack browse binary
-if command -v browse &>/dev/null; then
-  echo "VISUAL_TOOL=browse"
-# Check for Playwright
-elif npx playwright --version &>/dev/null 2>&1; then
+# Prefer browser tooling already declared in the project
+if ls playwright.config.* >/dev/null 2>&1 || grep -q '"@playwright/test"\|"playwright"' package.json 2>/dev/null; then
   echo "VISUAL_TOOL=playwright"
 else
   echo "VISUAL_TOOL=none"
 fi
 ```
 
-**Option A — gstack browse integration (preferred if available):**
-- `$B screenshot <url>` — capture screenshot
-- `$B snapshot <url>` — capture DOM snapshot
-- `$B responsive <url>` — test responsive viewports
-- `$B perf <url>` — performance measurement
-- `$B snapshot -D <url>` — diff comparison
-
-**Option B — Playwright integration:**
-- Launch browser against dev server or Storybook
+**Option A — Project-declared browser tooling (preferred if already configured):**
+- Use the repository's existing browser tooling against the running dev server or Storybook
 - Capture screenshots per component per theme
 - Responsive viewport testing via viewport configuration
 
-**Option C — Manual verification fallback:**
-- If no browser tool available, scope Phase 8.5 as manual verification
+**Option B — Manual verification fallback:**
+- If no project browser tool is available, scope Phase 8.5 as manual verification
 - Generate a structured checklist for user-provided screenshots
 - Document limitation in completion report
 
@@ -2388,7 +2380,7 @@ use Storybook stories as the evaluation target.
 If neither a dev server nor Storybook is available, skip this phase
 and note it in the completion report.
 
-**No browser tool fallback:**
+**No project browser tooling fallback:**
 ```
 Log: "Visual tooling unavailable. Phase 8.5 running in manual verification mode."
 Generate a markdown checklist at {systemPath}/docs/visual-qa-checklist.md
@@ -2891,19 +2883,22 @@ DO NOT replace values inside:
 
 ### Agent Delegation Strategy
 
-| Task | Agent | Tier |
-|------|-------|------|
-| Codebase scanning | `explore` | haiku |
-| Pattern analysis | `scientist` | sonnet |
-| Token implementation | `executor` | sonnet |
-| Component implementation | `executor` | sonnet |
-| Test writing | `test-engineer` | sonnet |
-| Storybook setup | `executor` | sonnet |
-| Architecture review | `architect` | opus |
-| Critical review | `critic` | opus |
-| Code review | `code-reviewer` | sonnet |
-| Design review | `designer` | sonnet |
-| Documentation | `writer` | haiku |
+Use the closest available specialist in your environment. Do not assume these labels map
+to literal built-in agents; tooling names and delegation APIs vary by runtime.
+
+| Task | Preferred capability | Effort |
+|------|----------------------|--------|
+| Codebase scanning | Repository exploration specialist | Low |
+| Pattern analysis | Design-system analysis specialist | Medium |
+| Token implementation | Implementation specialist | Medium |
+| Component implementation | Implementation specialist | Medium |
+| Test writing | Test-focused specialist | Medium |
+| Storybook setup | Documentation/setup specialist | Medium |
+| Architecture review | Architecture reviewer | High |
+| Critical review | Skeptical reviewer | High |
+| Code review | Code reviewer | Medium |
+| Design review | Visual/design reviewer | Medium |
+| Documentation | Documentation specialist | Low |
 
 ### Escalation Rules
 
