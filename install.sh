@@ -5,7 +5,30 @@ REPO="ohprettyhak/design-farmer"
 BRANCH="${BRANCH:-main}"
 RAW_BASE="https://raw.githubusercontent.com/${REPO}/${BRANCH}"
 SKILL_NAME="design-farmer"
-SKILL_SOURCE_PATH="skills/design-farmer/SKILL.md"
+SKILL_ROOT="skills/design-farmer"
+BUNDLE_FILES=(
+  "$SKILL_ROOT/SKILL.md"
+  "$SKILL_ROOT/docs/PHASE-INDEX.md"
+  "$SKILL_ROOT/docs/QUALITY-GATES.md"
+  "$SKILL_ROOT/docs/MAINTENANCE.md"
+  "$SKILL_ROOT/docs/EXAMPLES-GALLERY.md"
+  "$SKILL_ROOT/phases/operational-notes.md"
+  "$SKILL_ROOT/phases/phase-0-preflight.md"
+  "$SKILL_ROOT/phases/phase-1-discovery.md"
+  "$SKILL_ROOT/phases/phase-2-repo-analysis.md"
+  "$SKILL_ROOT/phases/phase-3-pattern-extraction.md"
+  "$SKILL_ROOT/phases/phase-3.5-visual-preview.md"
+  "$SKILL_ROOT/phases/phase-4-architecture.md"
+  "$SKILL_ROOT/phases/phase-4.5-design-source-of-truth.md"
+  "$SKILL_ROOT/phases/phase-5-tokens.md"
+  "$SKILL_ROOT/phases/phase-6-components.md"
+  "$SKILL_ROOT/phases/phase-7-storybook.md"
+  "$SKILL_ROOT/phases/phase-8-review.md"
+  "$SKILL_ROOT/phases/phase-8.5-design-review.md"
+  "$SKILL_ROOT/phases/phase-9-documentation.md"
+  "$SKILL_ROOT/phases/phase-10-integration.md"
+  "$SKILL_ROOT/phases/phase-11-readiness-handoff.md"
+)
 
 if [ -t 1 ]; then
   BOLD='\033[1m'
@@ -90,16 +113,27 @@ for tool in "${DETECTED[@]}"; do
   label="$(tool_label "$tool")"
   mkdir -p "$target_dir"
 
-  if curl -fsSL "${RAW_BASE}/${SKILL_SOURCE_PATH}" -o "${target_dir}/SKILL.md" 2>/dev/null; then
+  tool_failed=0
+  for relative_path in "${BUNDLE_FILES[@]}"; do
+    target_path="${target_dir}/${relative_path#${SKILL_ROOT}/}"
+    mkdir -p "$(dirname "$target_path")"
+
+    if ! curl -fsSL "${RAW_BASE}/${relative_path}" -o "$target_path" 2>/dev/null; then
+      tool_failed=1
+      printf "  %b✗%b %s (%s download failed)\n" "$RED" "$RESET" "$label" "$relative_path"
+      break
+    fi
+  done
+
+  if [ "$tool_failed" -eq 0 ]; then
     printf "  %b✓%b %s\n" "$GREEN" "$RESET" "$label"
   else
-    printf "  %b✗%b %s (download failed)\n" "$RED" "$RESET" "$label"
     FAILED=1
   fi
 done
 
 printf "\n"
-printf "Installed skill path: */skills/%s/SKILL.md\n" "$SKILL_NAME"
+printf "Installed skill path: */skills/%s/\n" "$SKILL_NAME"
 printf "Usage: invoke your assistant with the %s skill context\n" "$SKILL_NAME"
 
 if [ "$FAILED" -ne 0 ]; then

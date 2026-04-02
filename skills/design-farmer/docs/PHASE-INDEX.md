@@ -1,10 +1,11 @@
 # Design Farmer Phase Index
 
-This index provides a compact map of `SKILL.md` execution flow for maintainers.
+This index provides a compact map of the Design Farmer router + phase bundle for maintainers.
 
 ## Canonical Source
 
-- Canonical runtime instructions: `../SKILL.md`
+- Canonical runtime entrypoint: `../SKILL.md` (router)
+- Canonical phase instructions: `../phases/*.md`
 - This file is a maintenance companion, not an execution source.
 
 ## Phase Map

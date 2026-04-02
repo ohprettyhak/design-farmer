@@ -38,6 +38,20 @@ installed_skill_file_path() {
   esac
 }
 
+installed_skill_dir_path() {
+  case "$1" in
+    claude) echo "$2/.claude/skills/design-farmer" ;;
+    codex) echo "$2/.agents/skills/design-farmer" ;;
+    amp) echo "$2/.config/agents/skills/design-farmer" ;;
+    gemini) echo "$2/.gemini/skills/design-farmer" ;;
+    opencode) echo "$2/.config/opencode/skills/design-farmer" ;;
+    *)
+      echo "ERROR: Unknown tool '$1'" >&2
+      exit 1
+      ;;
+  esac
+}
+
 assert_contains() {
   local file="$1"
   local expected="$2"
@@ -114,6 +128,8 @@ test_successful_install_for_tool() {
 
   local installed_file
   installed_file="$(installed_skill_file_path "$tool" "$fake_home")"
+  local installed_dir
+  installed_dir="$(installed_skill_dir_path "$tool" "$fake_home")"
 
   if [[ ! -f "$installed_file" ]]; then
     echo "ERROR: Expected installed file not found: $installed_file"
@@ -124,8 +140,14 @@ test_successful_install_for_tool() {
   fi
 
   assert_contains "$installed_file" "stub skill content"
+  assert_contains "$installed_dir/phases/phase-0-preflight.md" "stub skill content"
+  assert_contains "$installed_dir/phases/phase-11-readiness-handoff.md" "stub skill content"
+  assert_contains "$installed_dir/docs/PHASE-INDEX.md" "stub skill content"
   assert_contains "$stdout_file" "Done!"
   assert_contains "$log_file" "https://raw.githubusercontent.com/ohprettyhak/design-farmer/${branch}/skills/design-farmer/SKILL.md"
+  assert_contains "$log_file" "https://raw.githubusercontent.com/ohprettyhak/design-farmer/${branch}/skills/design-farmer/phases/phase-0-preflight.md"
+  assert_contains "$log_file" "https://raw.githubusercontent.com/ohprettyhak/design-farmer/${branch}/skills/design-farmer/phases/phase-11-readiness-handoff.md"
+  assert_contains "$log_file" "https://raw.githubusercontent.com/ohprettyhak/design-farmer/${branch}/skills/design-farmer/docs/PHASE-INDEX.md"
 
   rm -rf "$temp_dir"
   trap - RETURN
