@@ -1,0 +1,17 @@
+name: Skill Quality
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  validate-skill:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run skill structure validation
+        run: bash scripts/validate-skill-md.sh

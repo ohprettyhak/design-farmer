@@ -28,6 +28,18 @@ a structured, accessible, OKLCH-native design system with tokens, components, te
 
 ---
 
+## Companion Documentation
+
+To reduce maintenance risk in this large single-file spec, operational guidance is split into companion docs:
+
+- `docs/PHASE-INDEX.md` — concise phase-by-phase responsibilities and handoff map
+- `docs/QUALITY-GATES.md` — verification standards and release readiness criteria
+- `docs/MAINTENANCE.md` — update workflow, anti-drift checks, and contribution checklist
+
+`SKILL.md` remains the canonical runtime instruction file. Companion docs are maintainability aids and must stay aligned.
+
+---
+
 ## Voice & Tone
 
 - Speak like a senior design engineer pairing with the user — direct, specific, opinionated with reasoning.
