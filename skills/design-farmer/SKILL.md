@@ -83,10 +83,10 @@ Try primary path:
 | Phase | Primary Path | Fallback Path |
 |-------|-------------|---------------|
 | Phase 2 (Analysis) | Agent `explore` | Direct Grep/Glob scanning with reduced depth |
-| Phase 3 (Extraction) | Agent `scientist` | Manual OKLCH extraction via inline math |
+| Phase 3 (Extraction) | Specialized analysis pass | Manual OKLCH extraction via inline math |
 | Phase 4.5 (DESIGN.md) | Agent doc generation | Write DESIGN.md directly with Write tool |
-| Phase 5 (Tokens) | Agent `executor` | Implement tokens directly with Edit/Write |
-| Phase 6 (Components) | Agent `executor` | Implement components directly with Edit/Write, one at a time |
+| Phase 5 (Tokens) | Specialized implementation pass | Implement tokens directly with Edit/Write |
+| Phase 6 (Components) | Specialized implementation pass | Implement components directly with Edit/Write, one at a time |
 | Phase 7 (Storybook) | `npx storybook@latest init` | Manual .storybook config + story file generation |
 | Phase 8 (Review) | 5 parallel Agent reviewers | Sequential single-agent review with combined criteria |
 | Phase 8.5 (Visual QA) | Headless browser screenshots | Manual verification prompt with user-provided screenshots |
@@ -95,17 +95,22 @@ Try primary path:
 
 ### Tool Availability Checks
 
-Before using any external tool, verify availability:
+Before using any external tool, verify availability without triggering installs or network
+access as part of the check itself:
 
 ```bash
-# npx/storybook
-npx --version 2>/dev/null || echo "npx unavailable"
+# npx/storybook helper
+command -v npx >/dev/null 2>&1 || echo "npx unavailable"
 
 # gh CLI (Phase 11 ship)
 gh --version 2>/dev/null || echo "gh CLI unavailable"
 
-# Headless browser
-command -v browse 2>/dev/null || npx playwright --version 2>/dev/null || echo "no browser tooling"
+# Headless browser tooling already declared in the project
+if ls playwright.config.* >/dev/null 2>&1 || grep -q '"@playwright/test"\|"playwright"' package.json 2>/dev/null; then
+  echo "project browser tooling available"
+else
+  echo "no project-declared browser tooling"
+fi
 ```
 
 ### Logging Requirement
