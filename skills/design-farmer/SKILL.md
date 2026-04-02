@@ -1293,7 +1293,7 @@ If no styling framework detected:
 
 ## Phase 4.5: Design Source of Truth (DESIGN.md)
 
-Generate a `DESIGN.md` file at the project root (or `{systemPath}/DESIGN.md` for monorepos) that captures all design decisions as a persistent, machine-readable reference.
+Generate a `DESIGN.md` file at `{systemPath}/DESIGN.md` so the design artifact always lives beside the generated design-system work it describes.
 
 ### 4.5.1 DESIGN.md Structure
 
@@ -1377,7 +1377,7 @@ Phase 8 reviewers use this file to:
 ### 4.5.2 Generation
 
 ```
-Generate DESIGN.md at {projectRoot}/DESIGN.md following the structure above.
+Generate DESIGN.md at {systemPath}/DESIGN.md following the structure above.
 Populate with:
 - Aesthetic direction from Phase 1 interview responses
 - Color rationale from Phase 3 OKLCH extraction results
@@ -1412,7 +1412,7 @@ If DESIGN.md already exists:
 
 Update Phase 8 reviewer prompts to include:
 ```
-"Before evaluating, read DESIGN.md at {projectRoot}/DESIGN.md.
+"Before evaluating, read DESIGN.md at {systemPath}/DESIGN.md.
 Calibrate your review against the documented design decisions.
 Flag any implementation that deviates from the documented direction as HIGH severity."
 ```
