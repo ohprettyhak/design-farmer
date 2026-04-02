@@ -2956,10 +2956,13 @@ DO NOT replace values inside:
 Use the closest available specialist in your environment. Do not assume these labels map
 to literal built-in agents; tooling names and delegation APIs vary by runtime.
 
+<<<<<<< HEAD
 If your environment exposes delegation through a call such as `Agent(prompt="...")`,
 pass the reusable briefs in this document through that interface. Otherwise execute the
 same briefs directly with the tools and specialists available in your runtime.
 
+=======
+>>>>>>> deafa60 (docs: generalize delegation guidance for portable runtimes)
 | Task | Preferred capability | Effort |
 |------|----------------------|--------|
 | Codebase scanning | Repository exploration specialist | Low |
