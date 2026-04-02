@@ -41,6 +41,14 @@ This index provides a compact map of `SKILL.md` execution flow for maintainers.
     - Responsive viewport testing at mobile, tablet, and desktop breakpoints.
 13. **Phase 9: Documentation & Completion**
     - Generate docs, run final verification commands, emit completion report.
+12. **Phase 10: App Integration**
+    - Wire design system into application layout, imports, dependencies.
+13. **Phase 11: Ship**
+    - Pre-ship verification (tests, typecheck, lint, build).
+    - Git branch creation and descriptive commit.
+    - PR creation via `gh pr create` with structured description.
+    - Ship completion report.
+    - Fallback: manual git commands + manual PR creation steps.
 
 ## Cross-Phase Contracts
 
