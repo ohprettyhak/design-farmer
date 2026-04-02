@@ -107,7 +107,7 @@ else
 fi
 
 # Headless browser tooling already declared in the project
-if ls playwright.config.* >/dev/null 2>&1 || ls */playwright.config.* >/dev/null 2>&1 || grep -q '"@playwright/test"\|"playwright"' package.json */package.json 2>/dev/null; then
+if ls playwright.config.* >/dev/null 2>&1 || compgen -G '**/playwright.config.*' >/dev/null 2>&1 || grep -R -l '"@playwright/test"\|"playwright"' . --include 'package.json' >/dev/null 2>&1; then
   echo "project browser tooling available"
 else
   echo "no project-declared browser tooling"
@@ -2612,8 +2612,8 @@ tooling. Do not assume unrelated CLIs, and do not trigger package installation o
 access just to probe availability.
 
 ```bash
-# Prefer browser tooling already declared in the project, including workspace packages
-if ls playwright.config.* >/dev/null 2>&1 || ls */playwright.config.* >/dev/null 2>&1 || grep -q '"@playwright/test"\|"playwright"' package.json */package.json 2>/dev/null; then
+# Prefer browser tooling already declared in the project, including nested workspace packages
+if ls playwright.config.* >/dev/null 2>&1 || compgen -G '**/playwright.config.*' >/dev/null 2>&1 || grep -R -l '"@playwright/test"\|"playwright"' . --include 'package.json' >/dev/null 2>&1; then
   echo "VISUAL_TOOL=playwright"
 else
   echo "VISUAL_TOOL=none"
@@ -2908,6 +2908,11 @@ All must pass with zero errors before declaring completion.
 - Scientist: {data validation summary}
 - Designer: {grade}
 - Design Engineer: {APPROVED/APPROVED_WITH_CHANGES}
+
+### Pipeline Degradations
+- {Phase}: {primary_path} failed ({reason}) → {fallback_path}
+- {Phase}: {primary_path} failed ({reason}) → {fallback_path}
+- Or: None
 
 ### Next Steps
 See Phase 10 (App Integration) to wire the design system into your application.
