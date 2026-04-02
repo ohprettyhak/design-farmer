@@ -3215,15 +3215,12 @@ Accessibility: WCAG AA compliant"
 Do NOT push branches, create commits, or open PRs unless the user explicitly requested
 publication.
 
-If the user asked for publication and the branch is ready, use the appropriate path below:
+If the user asked for publication and the branch is ready, publish it with the repository's normal Git workflow for that environment. Do not assume a specific remote name, hosting provider, or CLI.
 
-```bash
-# Push the branch only after the user requested publication
-git push -u origin "$BRANCH_NAME"
+When opening the PR, include a summary in this structure:
 
-# Create the PR only when GitHub CLI is available
-if command -v gh &>/dev/null; then
-  gh pr create --title "feat: add design system" --body "## Summary
+```markdown
+## Summary
 Design Farmer generated a production-ready design system.
 
 ### Components: {count} implemented
@@ -3249,10 +3246,7 @@ Design Farmer generated a production-ready design system.
 - [ ] Theme toggle works
 - [ ] Keyboard navigation on all interactive components
 
-Generated with Design Farmer"
-else
-  echo "gh CLI unavailable. Create the PR manually in the GitHub UI."
-fi
+Generated with Design Farmer
 ```
 
 If the user did not request publication, stop after the ship report and provide the
