@@ -82,13 +82,13 @@ Try primary path:
 
 | Phase | Primary Path | Fallback Path |
 |-------|-------------|---------------|
-| Phase 2 (Analysis) | Structured repository analysis pass | Direct Grep/Glob scanning with reduced depth |
+| Phase 2 (Analysis) | Structured repository analysis pass (specialized delegation preferred) | Direct Grep/Glob scanning with reduced depth |
 | Phase 3 (Extraction) | Specialized analysis pass | Manual OKLCH extraction via inline math |
 | Phase 4.5 (DESIGN.md) | Structured design-document drafting | Write DESIGN.md directly with Write tool |
 | Phase 5 (Tokens) | Specialized implementation pass | Implement tokens directly with Edit/Write |
 | Phase 6 (Components) | Specialized implementation pass | Implement components directly with Edit/Write, one at a time |
 | Phase 7 (Storybook) | `npx storybook@latest init` | Manual .storybook config + story file generation |
-| Phase 8 (Review) | 5 independent reviewer passes | Sequential review with combined criteria |
+| Phase 8 (Review) | 5 specialized reviewer passes (parallel when supported) | Sequential review with combined criteria |
 | Phase 8.5 (Visual QA) | Headless browser screenshots | Manual verification prompt with user-provided screenshots |
 | Phase 9 (Docs) | Structured documentation drafting | Write docs directly with Write tool |
 | Phase 10 (Integration) | Structured application changes | Guided step-by-step instructions for manual execution |
