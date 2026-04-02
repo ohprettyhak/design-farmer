@@ -1976,8 +1976,8 @@ lint configuration (eslintrc, biome.json, etc.) instead.**
 ### Deprecated React Patterns (weight: mandatory — any violation is CRITICAL)
 - [ ] NEVER use `React.FC` or `React.FunctionComponent` — use explicit return types or infer
 - [ ] NEVER use `React.ElementRef<T>` (deprecated) — use `React.ComponentRef<T>` instead
-- [ ] NEVER use `React.ComponentProps<T>` for ref-forwarding components — use `React.ComponentPropsWithRef<T>`
-- [ ] Use `React.ComponentPropsWithoutRef<T>` when the component does NOT forward refs
+- [ ] For component prop types, use `React.ComponentPropsWithoutRef<T>` — the ref is
+  handled separately by forwardRef's generic parameter, not via props
 - [ ] NEVER use `defaultProps` — use parameter defaults in destructuring
 - [ ] NEVER use `propTypes` — use TypeScript interfaces exclusively
 - [ ] NEVER use legacy string refs — only callback refs or useRef
@@ -2619,7 +2619,19 @@ Via AskUserQuestion, ask:
 
 **STOP. Do NOT proceed until user responds.**
 
-If user chose A or B, execute the following steps:
+If user chose A or B, execute the following steps.
+
+**Mode behavior:**
+- **Mode A (full):** Execute each step automatically. Only stop on errors.
+- **Mode B (guided):** Before executing EACH step (10.1 through 10.5), show the user
+  a diff preview of what will change and wait for explicit approval via AskUserQuestion:
+  > Step {N}: {description}. Here's what will change:
+  > ```diff
+  > {preview of changes}
+  > ```
+  > Approve this change? (yes / no / skip)
+  Only proceed after the user approves. If "no", ask what to adjust. If "skip", move
+  to the next step.
 
 ### 10.1 Dependency Installation
 
