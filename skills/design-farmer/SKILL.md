@@ -3210,23 +3210,20 @@ Color space: OKLCH with APCA contrast validation
 Accessibility: WCAG AA compliant"
 ```
 
-### 11.3 PR Creation
+### 11.3 Publication (only if the user asked for it)
+
+Do NOT push branches, create commits, or open PRs unless the user explicitly requested
+publication.
+
+If the user asked for publication and the branch is ready, use the appropriate path below:
 
 ```bash
-# Check gh CLI availability
-if ! command -v gh &>/dev/null; then
-  echo "gh CLI not available. Manual push instructions:"
-  echo "  git push -u origin $BRANCH_NAME"
-  echo "  Then create PR via GitHub UI."
-  Status: DONE_WITH_CONCERNS
-  Skip to 11.4
-fi
-
-# Push branch
+# Push the branch only after the user requested publication
 git push -u origin "$BRANCH_NAME"
 
-# Create PR with structured description
-gh pr create --title "feat: add design system" --body "## Summary
+# Create the PR only when GitHub CLI is available
+if command -v gh &>/dev/null; then
+  gh pr create --title "feat: add design system" --body "## Summary
 Design Farmer generated a production-ready design system.
 
 ### Components: {count} implemented
@@ -3253,7 +3250,13 @@ Design Farmer generated a production-ready design system.
 - [ ] Keyboard navigation on all interactive components
 
 Generated with Design Farmer"
+else
+  echo "gh CLI unavailable. Create the PR manually in the GitHub UI."
+fi
 ```
+
+If the user did not request publication, stop after the ship report and provide the
+recommended push / PR commands as optional next steps instead of executing them.
 
 ### 11.4 Ship Completion Report
 
@@ -3261,7 +3264,7 @@ Generated with Design Farmer"
 ## Ship Report
 
 ### Branch: {branch_name}
-### PR: {pr_url or "Create manually — gh CLI unavailable"}
+### PR: {pr_url or "Not created — publication not requested or gh CLI unavailable"}
 
 ### Quality Gates
 - Tests: {pass_count}/{total_count} passing

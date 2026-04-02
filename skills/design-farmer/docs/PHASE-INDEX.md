@@ -46,7 +46,7 @@ This index provides a compact map of `SKILL.md` execution flow for maintainers.
 13. **Phase 11: Ship**
     - Pre-ship verification (tests, typecheck, lint, build).
     - Git branch creation and descriptive commit.
-    - PR creation via `gh pr create` with structured description.
+- Optional publication via project-available Git tooling or manual PR creation steps.
     - Ship completion report.
     - Fallback: manual git commands + manual PR creation steps.
 
