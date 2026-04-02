@@ -2640,15 +2640,30 @@ If user chose A or B, execute the following steps.
 # Detect package manager from lockfile (package-lock.json / pnpm-lock.yaml / bun.lockb / yarn.lock)
 {packageManager} install
 
-# If the theme library was chosen (e.g., next-themes), verify it's installed.
-# NOTE: `pnpm list` may succeed even when the package is absent. Use a portable
-# check that works across all package managers:
-node -e "require.resolve('next-themes')" 2>/dev/null || {packageManager} add next-themes
+# If a theme library was chosen in Question 5-1, verify THAT exact package.
+# Do not hardcode next-themes; use the user's selected library.
+# Skip install when user chose a custom/no-library path.
+if [ "{themeLibrary}" != "" ] && [ "{themeLibrary}" != "custom" ] && [ "{themeLibrary}" != "none" ]; then
+  node -e "require.resolve('{themeLibrary}')" 2>/dev/null || {packageManager} add {themeLibrary}
+fi
 ```
 
 ### 10.2 Root Layout Integration
 
-For Next.js App Router — update `app/layout.tsx`:
+Apply root integration based on the detected framework from Phase 0.
+Do NOT assume Next.js App Router. Use ONLY the path that exists for the detected stack.
+
+Framework mapping:
+
+- **Next.js App Router** (`app/layout.tsx` exists): update `app/layout.tsx`
+- **Next.js Pages Router** (`pages/_app.tsx`): update `pages/_app.tsx` and, if needed, `pages/_document.tsx`
+- **Remix**: update `app/root.tsx`
+- **Astro**: update the main layout/template (`src/layouts/*.astro` or project root layout)
+- **SvelteKit**: update `src/routes/+layout.svelte`
+- **Nuxt**: update `app.vue` or `layouts/default.vue`
+- **Plain React (Vite/CRA)**: update `src/main.tsx` / `src/main.jsx` or `src/index.tsx` / `src/index.jsx`
+
+For the detected framework's root file:
 
 ```typescript
 // 1. Add suppressHydrationWarning to <html>
@@ -2663,6 +2678,10 @@ For Next.js App Router — update `app/layout.tsx`:
 // - Add the CSS import at the TOP of the import block
 // - Add suppressHydrationWarning to <html> if not already present
 ```
+
+If the framework does NOT render a literal `<html>` element in app code,
+skip the `suppressHydrationWarning` step and apply the equivalent SSR-safe
+theme bootstrap mechanism for that framework.
 
 **CRITICAL: Never overwrite the user's existing layout. Read it first, then surgically
 add only the necessary imports and wrapper. Preserve everything else exactly as-is.**
@@ -2759,7 +2778,7 @@ DO NOT replace values inside:
 ## App Integration Summary
 
 ### Changes Made
-- Layout: {app/layout.tsx — added ThemeProvider + suppressHydrationWarning}
+- Layout/root entry: {actual framework file path — added ThemeProvider + hydration-safe theming setup}
 - CSS imports: {list of added imports with order}
 - Dependencies: {list of added/updated packages}
 - Token replacements: {count} hardcoded values → design tokens (if applicable)
