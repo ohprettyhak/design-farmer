@@ -499,7 +499,7 @@ to follow the **greenfield path** (build from best practices) or the **enhanceme
 
 ### 2.2 Existing Pattern Extraction
 
-If your environment supports delegation, you may use the following analysis brief. Otherwise perform the same scan directly:
+Use the following analysis brief by default when your environment supports specialized delegation; otherwise perform the same scan directly:
 
 ```
 Scan the codebase for:
@@ -1203,7 +1203,7 @@ If no styling framework detected:
 
 ## Phase 5: Token Implementation
 
-Implement tokens in this order. If your environment supports delegation, you may use the following implementation brief:
+Implement tokens in this order. Use the following implementation brief by default when specialized delegation is available; otherwise execute the same work directly:
 
 ### 5.1 OKLCH Utility Functions
 
@@ -1851,7 +1851,7 @@ Always verify both sides use the same mechanism.
 ## Phase 8: Multi-Reviewer Verification
 
 Five specialized reviewers evaluate the design system. Each role is defined inline — no external
-plugins or agent frameworks required. Run the reviewer passes independently, and parallelize only if your environment supports it.
+plugins or agent frameworks required. Run every reviewer pass; execute them in parallel by default when your environment supports independent work, otherwise run them sequentially without skipping any pass.
 
 **Finding format (all reviewers):** `[SEVERITY] (confidence: N/10) file:line — description`
 
