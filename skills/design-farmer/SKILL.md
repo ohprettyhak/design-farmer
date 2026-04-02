@@ -107,7 +107,7 @@ else
 fi
 
 # Headless browser tooling already declared in the project
-if find . -path '*/node_modules' -prune -o -name 'playwright.config.*' -print -quit | grep -q . || grep -R -l '"@playwright/test"\|"playwright"' . --include 'package.json' >/dev/null 2>&1; then
+if find . -path '*/node_modules' -prune -o -name 'playwright.config.*' -print -quit | grep -q . || grep -R -l '"@playwright/test"\|"playwright"' . --include 'package.json' --exclude-dir node_modules >/dev/null 2>&1; then
   echo "project browser tooling available"
 else
   echo "no project-declared browser tooling"
@@ -2613,7 +2613,7 @@ access just to probe availability.
 
 ```bash
 # Prefer browser tooling already declared in the project, including nested workspace packages
-if find . -path '*/node_modules' -prune -o -name 'playwright.config.*' -print -quit | grep -q . || grep -R -l '"@playwright/test"\|"playwright"' . --include 'package.json' >/dev/null 2>&1; then
+if find . -path '*/node_modules' -prune -o -name 'playwright.config.*' -print -quit | grep -q . || grep -R -l '"@playwright/test"\|"playwright"' . --include 'package.json' --exclude-dir node_modules >/dev/null 2>&1; then
   echo "VISUAL_TOOL=playwright"
 else
   echo "VISUAL_TOOL=none"
