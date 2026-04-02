@@ -1960,6 +1960,52 @@ Every public export is a contract. Every `any` type is a hole in the contract.
 - [ ] displayName set for forwardRef components (debugging support)
 - [ ] Default props use parameter defaults, not defaultProps
 
+### Lint Suppression (weight: mandatory — any violation is CRITICAL)
+- [ ] ZERO `biome-ignore` comments in generated code
+- [ ] ZERO `eslint-disable` or `eslint-disable-next-line` comments
+- [ ] ZERO `@ts-ignore` comments — use `@ts-expect-error` with explanation only if genuinely unavoidable
+- [ ] ZERO `// @ts-nocheck` files
+- [ ] If a lint rule fires, FIX the underlying code — never suppress the warning
+- [ ] If a lint rule is a false positive, document why and fix the rule config, not the code
+
+**CRITICAL: Lint suppression comments are NEVER acceptable in generated design system code.
+They mask real issues and create technical debt from day one. If the code triggers a lint
+error, the code is wrong — fix it. If the lint rule is wrong for this project, update the
+lint configuration (eslintrc, biome.json, etc.) instead.**
+
+### Deprecated React Patterns (weight: mandatory — any violation is CRITICAL)
+- [ ] NEVER use `React.FC` or `React.FunctionComponent` — use explicit return types or infer
+- [ ] NEVER use `React.ElementRef<T>` (deprecated) — use `React.ComponentRef<T>` instead
+- [ ] NEVER use `React.ComponentProps<T>` for ref-forwarding components — use `React.ComponentPropsWithRef<T>`
+- [ ] Use `React.ComponentPropsWithoutRef<T>` when the component does NOT forward refs
+- [ ] NEVER use `defaultProps` — use parameter defaults in destructuring
+- [ ] NEVER use `propTypes` — use TypeScript interfaces exclusively
+- [ ] NEVER use legacy string refs — only callback refs or useRef
+
+**Modern component typing reference:**
+
+```typescript
+// CORRECT — modern pattern
+import { forwardRef } from 'react'
+
+interface ButtonProps extends React.ComponentPropsWithoutRef<'button'> {
+  variant?: 'primary' | 'secondary' | 'ghost'
+  size?: 'sm' | 'md' | 'lg'
+}
+
+const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ variant = 'primary', size = 'md', ...props }, ref) => {
+    return <button ref={ref} {...props} />
+  }
+)
+Button.displayName = 'Button'
+
+// WRONG — deprecated patterns
+const Button: React.FC<ButtonProps> = (props) => { ... }  // ❌ React.FC
+type Ref = React.ElementRef<typeof SomeComponent>          // ❌ React.ElementRef
+Button.defaultProps = { variant: 'primary' }               // ❌ defaultProps
+```
+
 ### CSS Architecture (weight: 20%)
 - [ ] Zero hardcoded color/spacing/radius values in component CSS
 - [ ] All styles reference CSS custom properties from semantic tokens only
@@ -2549,10 +2595,146 @@ All must pass with zero errors before declaring completion.
 - Design Engineer: {APPROVED/APPROVED_WITH_CHANGES}
 
 ### Next Steps
-1. Import the design system in your application
-2. Run the token build to generate CSS custom properties
-3. Apply the ThemeProvider at your app root
-4. Start consuming components from the public API
+See Phase 10 (App Integration) to wire the design system into your application.
+```
+
+---
+
+## Phase 10: App Integration
+
+Via AskUserQuestion, ask:
+
+> Your design system is built, tested, and documented. The final step is wiring it
+> into your application so it's actually used.
+>
+> **Would you like me to integrate the design system into your app?**
+>
+> RECOMMENDATION: Choose A — automatic integration ensures correct import order,
+> ThemeProvider placement, and token availability throughout your app.
+>
+> Options:
+> - A) Yes, full integration — Update layout, imports, and dependencies automatically
+> - B) Yes, guided — Show me exactly what to change (diff preview) and I'll approve each step
+> - C) No, skip — I'll integrate manually using the documentation
+
+**STOP. Do NOT proceed until user responds.**
+
+If user chose A or B, execute the following steps:
+
+### 10.1 Dependency Installation
+
+```bash
+# Install the design system's peer dependencies
+# Detect package manager from lockfile (package-lock.json / pnpm-lock.yaml / bun.lockb / yarn.lock)
+{packageManager} install
+
+# If the theme library was chosen (e.g., next-themes), verify it's installed:
+{packageManager} list next-themes 2>/dev/null || {packageManager} add next-themes
+```
+
+### 10.2 Root Layout Integration
+
+For Next.js App Router — update `app/layout.tsx`:
+
+```typescript
+// 1. Add suppressHydrationWarning to <html>
+// 2. Import and wrap with ThemeProvider
+// 3. Import the design system's global CSS
+
+// The agent MUST:
+// - Read the existing app/layout.tsx
+// - Preserve ALL existing content (metadata, fonts, providers, analytics, etc.)
+// - Add the ThemeProvider as the INNERMOST provider wrapping {children}
+//   (do NOT remove or reorder existing providers)
+// - Add the CSS import at the TOP of the import block
+// - Add suppressHydrationWarning to <html> if not already present
+```
+
+**CRITICAL: Never overwrite the user's existing layout. Read it first, then surgically
+add only the necessary imports and wrapper. Preserve everything else exactly as-is.**
+
+### 10.3 CSS Import Chain
+
+Wire the design system's CSS into the application's import chain:
+
+```
+// For Next.js / Vite — add to the root CSS file or layout:
+import '{systemPath}/tokens/css/tokens.css'  // primitive + semantic tokens
+import '{systemPath}/tokens/css/light.css'   // light theme values
+import '{systemPath}/tokens/css/dark.css'    // dark theme values
+import '{systemPath}/components/styles.css'  // component styles (if CSS modules not used)
+```
+
+Verify the import ORDER is correct:
+1. Reset / base styles (if any)
+2. Token definitions (primitives → semantics)
+3. Theme files (light.css, dark.css)
+4. Component styles
+5. Application-specific overrides (existing app CSS)
+
+### 10.4 Replace Hardcoded Values (optional, if user chose A)
+
+Scan the user's existing codebase for hardcoded values that should use design tokens:
+
+```
+Agent(prompt="
+Scan the application source files (NOT the design system directory) for hardcoded
+values that should be replaced with design system tokens:
+
+1. Color values: hex (#xxx), rgb(), hsl(), oklch() → var(--surface-*), var(--text-*), etc.
+2. Spacing values: arbitrary px/rem values → var(--spacing-*) or spacing scale classes
+3. Font sizes: hardcoded px/rem → var(--font-size-*) or typography scale
+4. Border radius: hardcoded values → var(--radius-*)
+
+For each found instance:
+- Show the file, line number, and current value
+- Suggest the matching design token
+- Only replace if the mapping is unambiguous
+
+DO NOT replace values inside:
+- Third-party library code (node_modules)
+- Generated files
+- The design system directory itself
+- SVG path data or image references
+")
+```
+
+### 10.5 Integration Verification
+
+```bash
+# 1. Type check — ensure no type errors from new imports
+{packageManager} run typecheck  # or npx tsc --noEmit
+
+# 2. Lint — ensure no lint errors (NEVER suppress with biome-ignore or eslint-disable)
+{packageManager} run lint
+
+# 3. Dev server — verify the app starts without errors
+{packageManager} run dev &
+# Wait for ready, then verify no console errors
+
+# 4. Visual check — verify tokens are applied
+# - Background colors use design system surfaces
+# - Text uses design system text tokens
+# - Theme toggle works (if dark mode enabled)
+```
+
+### 10.6 Integration Completion Report
+
+```
+## App Integration Summary
+
+### Changes Made
+- Layout: {app/layout.tsx — added ThemeProvider + suppressHydrationWarning}
+- CSS imports: {list of added imports with order}
+- Dependencies: {list of added/updated packages}
+- Token replacements: {count} hardcoded values → design tokens (if applicable)
+
+### Verified
+- [ ] App starts without errors
+- [ ] TypeScript compilation passes
+- [ ] Lint passes with zero suppressions
+- [ ] Theme toggle works
+- [ ] Design tokens are visible in rendered output
 ```
 
 ---
