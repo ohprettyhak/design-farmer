@@ -100,14 +100,14 @@ access as part of the check itself:
 
 ```bash
 # Storybook init helper via detected package manager
-if command -v npx >/dev/null 2>&1 || command -v pnpm >/dev/null 2>&1 || command -v bun >/dev/null 2>&1; then
+if command -v npx >/dev/null 2>&1 || command -v yarn >/dev/null 2>&1 || command -v pnpm >/dev/null 2>&1 || command -v bun >/dev/null 2>&1; then
   echo "storybook init helper available"
 else
   echo "no package-manager storybook init helper available"
 fi
 
 # Headless browser tooling already declared in the project
-if ls playwright.config.* >/dev/null 2>&1 || grep -R -l 'playwright.config\.' . >/dev/null 2>&1 || grep -R -l '"@playwright/test"\|"playwright"' . --include 'package.json' >/dev/null 2>&1; then
+if find . -path '*/node_modules' -prune -o -name 'playwright.config.*' -print -quit | grep -q . || grep -R -l '"@playwright/test"\|"playwright"' . --include 'package.json' >/dev/null 2>&1; then
   echo "project browser tooling available"
 else
   echo "no project-declared browser tooling"
@@ -2613,7 +2613,7 @@ access just to probe availability.
 
 ```bash
 # Prefer browser tooling already declared in the project, including nested workspace packages
-if ls playwright.config.* >/dev/null 2>&1 || grep -R -l 'playwright.config\.' . >/dev/null 2>&1 || grep -R -l '"@playwright/test"\|"playwright"' . --include 'package.json' >/dev/null 2>&1; then
+if find . -path '*/node_modules' -prune -o -name 'playwright.config.*' -print -quit | grep -q . || grep -R -l '"@playwright/test"\|"playwright"' . --include 'package.json' >/dev/null 2>&1; then
   echo "VISUAL_TOOL=playwright"
 else
   echo "VISUAL_TOOL=none"
