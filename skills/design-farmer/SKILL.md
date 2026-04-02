@@ -1377,7 +1377,6 @@ Phase 8 reviewers use this file to:
 ### 4.5.2 Generation
 
 ```
-Agent(prompt="
 Generate DESIGN.md at {projectRoot}/DESIGN.md following the structure above.
 Populate with:
 - Aesthetic direction from Phase 1 interview responses
@@ -1391,7 +1390,6 @@ Config: {serialized DesignFarmerConfig}
 Extraction results: {serialized Phase 3 results}
 Architecture decisions: {serialized Phase 4 decisions}
 User interaction log: {collected decisions from Phases 1-4}
-")
 ```
 
 ### 4.5.3 Subsequent Run Behavior
