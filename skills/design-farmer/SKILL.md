@@ -688,7 +688,6 @@ Extract and normalize:
 Generate a self-contained HTML file at `{systemPath}/design-preview.html`:
 
 ```
-Agent(prompt="
 Generate a self-contained HTML file at {systemPath}/design-preview.html that visualizes the proposed design system. This file must:
 
 1. **Color Palette Display** — Show all generated OKLCH palettes as color swatches with:
@@ -727,7 +726,6 @@ Use the extracted patterns from Phase 3:
 - Typography: {serialized font data}
 - Spacing: {serialized spacing scale}
 - Component scope: {from DesignFarmerConfig}
-")
 ```
 
 ### 3.5.2 Preview Review Gate
@@ -2956,13 +2954,10 @@ DO NOT replace values inside:
 Use the closest available specialist in your environment. Do not assume these labels map
 to literal built-in agents; tooling names and delegation APIs vary by runtime.
 
-<<<<<<< HEAD
 If your environment exposes delegation through a call such as `Agent(prompt="...")`,
 pass the reusable briefs in this document through that interface. Otherwise execute the
 same briefs directly with the tools and specialists available in your runtime.
 
-=======
->>>>>>> deafa60 (docs: generalize delegation guidance for portable runtimes)
 | Task | Preferred capability | Effort |
 |------|----------------------|--------|
 | Codebase scanning | Repository exploration specialist | Low |
