@@ -499,10 +499,9 @@ to follow the **greenfield path** (build from best practices) or the **enhanceme
 
 ### 2.2 Existing Pattern Extraction
 
-Delegate to an `explore` agent at haiku tier:
+If your environment supports delegation, you may use the following analysis brief. Otherwise perform the same scan directly:
 
 ```
-Agent(prompt="
 Scan the codebase for:
 1. All color values (hex, rgb, hsl, oklch, CSS custom properties with color values)
 2. Typography definitions (font-family, font-size, line-height, font-weight)
@@ -520,7 +519,6 @@ For each category, report:
 - Whether they use CSS variables, theme objects, or hardcoded values
 
 Output as structured data.
-")
 ```
 
 ### 2.3 Component Inventory
@@ -1205,7 +1203,7 @@ If no styling framework detected:
 
 ## Phase 5: Token Implementation
 
-Delegate to executor agent. Implement tokens in this order:
+Implement tokens in this order. If your environment supports delegation, you may use the following implementation brief:
 
 ### 5.1 OKLCH Utility Functions
 
@@ -1247,15 +1245,13 @@ never primitive tokens directly. This enables theming without component API chan
 // - Verify no primitive token is directly consumed by any component
 ```
 
-Delegate implementation:
+Optional implementation brief:
 ```
-Agent(prompt="
 Implement the token system at {systemPath}/src/tokens/ following the architecture
 defined in Phase 4. Use OKLCH values throughout. Generate light.css and dark.css
 theme files. Include TypeScript type exports for all tokens.
 Config: {serialized DesignFarmerConfig}
 Extracted patterns: {serialized extraction results}
-")
 ```
 
 ---
@@ -1393,7 +1389,6 @@ For each component:
 
 2. **Implementation** — Build the component:
    ```
-   Agent(prompt="
    Implement {ComponentName} at {systemPath}/src/primitives/{component}/
 
    Design maturity: {GREENFIELD|EMERGING|MATURE}
@@ -1411,12 +1406,10 @@ For each component:
    - All sizes from best-practices.md reference (height, padding, font-size, radius)
    - States: hover, focus-visible, active, disabled, loading
    - Support compound component pattern for complex components (Select, Dialog, etc.)
-   ")
    ```
 
 3. **Test creation** — Write tests alongside the component:
    ```
-   Agent(prompt="
    Write tests for {ComponentName} at {systemPath}/src/primitives/{component}/
    Cover:
    - Rendering all variants and sizes
@@ -1429,7 +1422,6 @@ For each component:
    - Visual regression baseline capture (screenshot per variant/state)
    - If compound component: test sub-component composition
    Use: vitest + @testing-library/react + axe-core for a11y
-   ")
    ```
 
 4. **Visual regression testing** — Capture visual baselines:
@@ -1530,7 +1522,6 @@ installed Storybook major version. Always verify compatibility before installing
 **Step 2 — Delegate installation:**
 
 ```
-Agent(prompt="
 Install and configure Storybook for the design system at {systemPath}:
 
 IMPORTANT: First run `npm view storybook version` to determine the latest stable version.
@@ -1549,7 +1540,6 @@ Use that version throughout — do NOT assume any specific major version number.
    - Enable autodocs for automatic API documentation generation
 4. Create stories for every implemented component following the Polymorphic Coverage
    Matrix defined in Step 3 below.
-")
 ```
 
 **Step 3 — Polymorphic Coverage Story Generation:**
@@ -1861,7 +1851,7 @@ Always verify both sides use the same mechanism.
 ## Phase 8: Multi-Reviewer Verification
 
 Five specialized reviewers evaluate the design system. Each role is defined inline — no external
-plugins or agent frameworks required. Run independent reviewers in parallel via the Agent tool.
+plugins or agent frameworks required. Run the reviewer passes independently, and parallelize only if your environment supports it.
 
 **Finding format (all reviewers):** `[SEVERITY] (confidence: N/10) file:line — description`
 
@@ -1889,7 +1879,6 @@ and cross-component consistency. You are opinionated but evidence-driven: every 
 cites a specific file and line.
 
 ```
-Agent(prompt="
 You are a Design System Critic reviewing {systemPath}.
 
 ## Your Perspective
@@ -1922,7 +1911,6 @@ quality_score = max(0, 10 - (critical_count * 2 + high_count * 1 + medium_count 
 For each criterion: score (1-10), evidence (file:line), and specific failures.
 Final verdict: PASS (all criteria >= 7) or FAIL (any < 7).
 If FAIL, list exact fixes required with file paths.
-")
 ```
 
 **STOP. Read the critic's output. If CRITICAL findings exist, fix them before running other reviewers.**
@@ -1937,7 +1925,6 @@ and `any` types. You review like it's a PR that will be consumed by every engine
 the company.
 
 ```
-Agent(prompt="
 You are a Code Quality Reviewer for the design system at {systemPath}.
 
 ## Your Perspective
@@ -2032,7 +2019,6 @@ Button.defaultProps = { variant: 'primary' }               // ❌ defaultProps
 Findings grouped by checklist section.
 Summary: X critical, Y high, Z medium, W low.
 quality_score = max(0, 10 - (critical * 2 + high * 1 + medium * 0.3))
-")
 ```
 
 ---
@@ -2044,7 +2030,6 @@ data, not opinions. You run computations on every color value, measure every spa
 ratio, and count every token reference. If a claim can be quantified, you quantify it.
 
 ```
-Agent(prompt="
 You are a Token & Color Scientist analyzing the design system at {systemPath}.
 
 ## Your Perspective
@@ -2099,7 +2084,6 @@ c) Count total CSS rules per component (flag if > 100 rules)
 Structured data tables for each analysis.
 Pass/fail per section with numeric evidence.
 Overall: PASS (all sections pass) or FAIL (list failures with data).
-")
 ```
 
 ---
@@ -2112,7 +2096,6 @@ visual hierarchy, rhythm, proportion, and the emotional tone of the system. You 
 generic, AI-sloppy, or inconsistent design choices.
 
 ```
-Agent(prompt="
 You are a Visual Design Reviewer evaluating the design system at {systemPath}.
 
 ## Your Perspective
@@ -2201,7 +2184,6 @@ Each Medium-impact finding drops half a letter grade.
 Per-category grade with specific evidence.
 Overall Design Quality grade (weighted).
 Top 3 strengths and top 3 improvements with actionable suggestions.
-")
 ```
 
 ---
@@ -2214,7 +2196,6 @@ experience. You think in terms of build pipelines, bundle sizes, API surfaces, a
 the daily life of the consuming developer.
 
 ```
-Agent(prompt="
 You are a Design Systems Engineer reviewing {systemPath}.
 
 ## Your Perspective
@@ -2263,7 +2244,6 @@ Each area scored 1-10. Overall = weighted average.
 ## Output
 Per-area score with evidence (file:line references).
 If not APPROVED: numbered list of required changes, ordered by impact.
-")
 ```
 
 ---
@@ -2817,7 +2797,6 @@ Verify the import ORDER is correct:
 Scan the user's existing codebase for hardcoded values that should use design tokens:
 
 ```
-Agent(prompt="
 Scan the application source files (NOT the design system directory) for hardcoded
 values that should be replaced with design system tokens:
 
@@ -2836,7 +2815,6 @@ DO NOT replace values inside:
 - Generated files
 - The design system directory itself
 - SVG path data or image references
-")
 ```
 
 ### 10.5 Integration Verification
