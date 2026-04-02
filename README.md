@@ -59,3 +59,7 @@ Example tool roots:
 
 - If installer output says `No supported tools detected`, install one supported tool first, then re-run.
 - If a download fails, verify network access and check `curl --version`.
+
+## Project Policies
+
+- [Security Policy](SECURITY.md)
