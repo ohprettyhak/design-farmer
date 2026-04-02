@@ -27,5 +27,6 @@
 ## Checklist
 
 - [ ] Documentation updated to match behavior changes
+- [ ] `CHANGELOG.md` updated for user-visible changes (or marked N/A)
 - [ ] Acceptance criteria from linked issue are addressed
 - [ ] PR title/message reflects the purpose of the change
