@@ -3215,9 +3215,14 @@ Accessibility: WCAG AA compliant"
 Do NOT push branches, create commits, or open PRs unless the user explicitly requested
 publication.
 
-If the user asked for publication and the branch is ready, publish it with the repository's normal Git workflow for that environment. Do not assume a specific remote name, hosting provider, or CLI.
+If the user asked for publication and the branch is ready, complete ALL of the following publication outcomes using the repository's normal Git workflow for that environment. Do not assume a specific remote name, hosting provider, or CLI:
 
-When opening the PR, include a summary in this structure:
+1. Publish the prepared branch to the shared remote used by that repository.
+2. Open or update the pull request against the correct base branch.
+3. Include the summary below in the pull request description.
+4. Return the resulting PR URL or canonical review link in the completion report.
+
+When opening or updating the PR, include a summary in this structure:
 
 ```markdown
 ## Summary
@@ -3249,8 +3254,7 @@ Design Farmer generated a production-ready design system.
 Generated with Design Farmer
 ```
 
-If the user did not request publication, stop after the ship report and provide the
-recommended push / PR commands as optional next steps instead of executing them.
+If the user did not request publication, stop after the ship report and provide high-level next steps for publishing without executing them.
 
 ### 11.4 Ship Completion Report
 
