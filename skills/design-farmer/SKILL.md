@@ -60,6 +60,65 @@ Every phase concludes with one of:
 
 ---
 
+## Fallback & Degradation Protocol
+
+Every phase that delegates to an Agent or uses an external tool MUST define a fallback path. The pipeline NEVER silently fails.
+
+### Degradation Pattern
+
+```
+Try primary path:
+  If success → continue to next phase
+  If failure (timeout, token limit, tool unavailable):
+    Log: "[DEGRADATION] Phase {N}: {primary} failed ({reason}). Using {fallback}."
+    Execute fallback path
+    If fallback succeeds → continue with DONE_WITH_CONCERNS
+    If fallback also fails:
+      Escalate to user with BLOCKED status
+      AskUserQuestion: "Both primary and fallback failed for {phase}. Error: {error}. How to proceed?"
+```
+
+### Fallback Registry
+
+| Phase | Primary Path | Fallback Path |
+|-------|-------------|---------------|
+| Phase 2 (Analysis) | Agent `explore` | Direct Grep/Glob scanning with reduced depth |
+| Phase 3 (Extraction) | Agent `scientist` | Manual OKLCH extraction via inline math |
+| Phase 4.5 (DESIGN.md) | Agent doc generation | Write DESIGN.md directly with Write tool |
+| Phase 5 (Tokens) | Agent `executor` | Implement tokens directly with Edit/Write |
+| Phase 6 (Components) | Agent `executor` | Implement components directly with Edit/Write, one at a time |
+| Phase 7 (Storybook) | `npx storybook@latest init` | Manual .storybook config + story file generation |
+| Phase 8 (Review) | 5 parallel Agent reviewers | Sequential single-agent review with combined criteria |
+| Phase 8.5 (Visual QA) | Headless browser screenshots | Manual verification prompt with user-provided screenshots |
+| Phase 9 (Docs) | Agent doc generation | Write docs directly with Write tool |
+| Phase 10 (Integration) | Agent app modification | Guided step-by-step instructions for manual execution |
+
+### Tool Availability Checks
+
+Before using any external tool, verify availability:
+
+```bash
+# npx/storybook
+npx --version 2>/dev/null || echo "npx unavailable"
+
+# gh CLI (Phase 11 ship)
+gh --version 2>/dev/null || echo "gh CLI unavailable"
+
+# Headless browser
+command -v browse 2>/dev/null || npx playwright --version 2>/dev/null || echo "no browser tooling"
+```
+
+### Logging Requirement
+
+Every degradation MUST be logged:
+```
+[DEGRADATION] Phase {N}: {primary_path} failed ({reason}). Using {fallback_path}.
+```
+
+Degradation logs are included in Phase 9.3 Completion Report under a **Pipeline Degradations** section.
+
+---
+
 ## Phase 0: Pre-flight
 
 Run these checks before any other work:
