@@ -2910,9 +2910,8 @@ All must pass with zero errors before declaring completion.
 - Design Engineer: {APPROVED/APPROVED_WITH_CHANGES}
 
 ### Pipeline Degradations
-- {Phase}: {primary_path} failed ({reason}) → {fallback_path}
-- {Phase}: {primary_path} failed ({reason}) → {fallback_path}
-- Or: None
+- List one bullet per degradation in the format: `{Phase}: {primary_path} failed ({reason}) → {fallback_path}`
+- If no degradations occurred, write: `- None`
 
 ### Next Steps
 See Phase 10 (App Integration) to wire the design system into your application.
