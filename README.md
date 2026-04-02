@@ -64,6 +64,14 @@ Example tool roots:
 - If installer output says `No supported tools detected`, install one supported tool first, then re-run.
 - If a download fails, verify network access and check `curl --version`.
 
+## Documentation
+
+- [Canonical skill spec](skills/design-farmer/SKILL.md) — runtime instruction file.
+- [Phase index](skills/design-farmer/docs/PHASE-INDEX.md) — compact execution map for maintainers.
+- [Quality gates](skills/design-farmer/docs/QUALITY-GATES.md) — verification and release-readiness criteria.
+- [Maintenance guide](skills/design-farmer/docs/MAINTENANCE.md) — anti-drift and update workflow.
+- [Examples gallery](skills/design-farmer/docs/EXAMPLES-GALLERY.md) — scenario-based before/after outcomes and phase mapping.
+
 ## Contributing
 
 - [Contributing Guide](CONTRIBUTING.md)
