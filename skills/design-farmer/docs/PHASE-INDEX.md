@@ -41,9 +41,9 @@ This index provides a compact map of `SKILL.md` execution flow for maintainers.
     - Responsive viewport testing at mobile, tablet, and desktop breakpoints.
 13. **Phase 9: Documentation & Completion**
     - Generate docs, run final verification commands, emit completion report.
-12. **Phase 10: App Integration**
+14. **Phase 10: App Integration**
     - Wire design system into application layout, imports, dependencies.
-13. **Phase 11: Release Readiness & Handoff**
+15. **Phase 11: Release Readiness & Handoff**
     - Final verification (tests, typecheck, lint, build).
     - Readiness checklist for artifacts, docs, and degradations.
     - Handoff summary for the next publication step.
