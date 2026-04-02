@@ -43,12 +43,11 @@ This index provides a compact map of `SKILL.md` execution flow for maintainers.
     - Generate docs, run final verification commands, emit completion report.
 12. **Phase 10: App Integration**
     - Wire design system into application layout, imports, dependencies.
-13. **Phase 11: Ship**
-    - Pre-ship verification (tests, typecheck, lint, build).
-    - Git branch creation and descriptive commit.
-- Optional publication via project-available Git tooling or manual PR creation steps.
-    - Ship completion report.
-    - Fallback: manual git commands + manual PR creation steps.
+13. **Phase 11: Release Readiness & Handoff**
+    - Final verification (tests, typecheck, lint, build).
+    - Readiness checklist for artifacts, docs, and degradations.
+    - Handoff summary for the next publication step.
+    - Readiness completion report.
 
 ## Cross-Phase Contracts
 
