@@ -107,7 +107,7 @@ else
 fi
 
 # Headless browser tooling already declared in the project
-if ls playwright.config.* */playwright.config.* >/dev/null 2>&1 || grep -q '"@playwright/test"\|"playwright"' package.json */package.json 2>/dev/null; then
+if ls playwright.config.* >/dev/null 2>&1 || ls */playwright.config.* >/dev/null 2>&1 || grep -q '"@playwright/test"\|"playwright"' package.json */package.json 2>/dev/null; then
   echo "project browser tooling available"
 else
   echo "no project-declared browser tooling"
@@ -2613,7 +2613,7 @@ access just to probe availability.
 
 ```bash
 # Prefer browser tooling already declared in the project, including workspace packages
-if ls playwright.config.* */playwright.config.* >/dev/null 2>&1 || grep -q '"@playwright/test"\|"playwright"' package.json */package.json 2>/dev/null; then
+if ls playwright.config.* >/dev/null 2>&1 || ls */playwright.config.* >/dev/null 2>&1 || grep -q '"@playwright/test"\|"playwright"' package.json */package.json 2>/dev/null; then
   echo "VISUAL_TOOL=playwright"
 else
   echo "VISUAL_TOOL=none"
