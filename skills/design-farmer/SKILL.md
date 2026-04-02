@@ -2628,8 +2628,10 @@ If user chose A or B, execute the following steps:
 # Detect package manager from lockfile (package-lock.json / pnpm-lock.yaml / bun.lockb / yarn.lock)
 {packageManager} install
 
-# If the theme library was chosen (e.g., next-themes), verify it's installed:
-{packageManager} list next-themes 2>/dev/null || {packageManager} add next-themes
+# If the theme library was chosen (e.g., next-themes), verify it's installed.
+# NOTE: `pnpm list` may succeed even when the package is absent. Use a portable
+# check that works across all package managers:
+node -e "require.resolve('next-themes')" 2>/dev/null || {packageManager} add next-themes
 ```
 
 ### 10.2 Root Layout Integration
@@ -2655,14 +2657,35 @@ add only the necessary imports and wrapper. Preserve everything else exactly as-
 
 ### 10.3 CSS Import Chain
 
-Wire the design system's CSS into the application's import chain:
+Wire the design system's CSS into the application's import chain.
+
+**IMPORTANT: Do NOT assume fixed file paths. The actual CSS output paths depend on the
+token build pipeline configured in Phase 4.3. Scan the generated `{systemPath}` directory
+to discover the actual file locations:**
+
+```bash
+# Discover generated CSS files — paths vary by project configuration
+find {systemPath} -name '*.css' -type f | sort
+```
+
+Then import them in the correct order. Common output patterns:
 
 ```
-// For Next.js / Vite — add to the root CSS file or layout:
-import '{systemPath}/tokens/css/tokens.css'  // primitive + semantic tokens
-import '{systemPath}/tokens/css/light.css'   // light theme values
-import '{systemPath}/tokens/css/dark.css'    // dark theme values
-import '{systemPath}/components/styles.css'  // component styles (if CSS modules not used)
+// Pattern A — tokens/css/ directory (Style Dictionary output):
+import '{systemPath}/tokens/css/tokens.css'
+import '{systemPath}/tokens/css/light.css'
+import '{systemPath}/tokens/css/dark.css'
+
+// Pattern B — src/themes/ directory (custom build):
+import '{systemPath}/src/themes/tokens.css'
+import '{systemPath}/src/themes/light.css'
+import '{systemPath}/src/themes/dark.css'
+
+// Pattern C — Tailwind v4 @theme (no separate CSS files):
+// Tokens are injected via @theme in the Tailwind config — no manual CSS import needed
+
+// Component styles (if not using CSS modules):
+import '{systemPath}/components/styles.css'  // or wherever component CSS was generated
 ```
 
 Verify the import ORDER is correct:
