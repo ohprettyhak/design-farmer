@@ -2342,7 +2342,38 @@ that don't feel responsive.
 
 **Pre-requisite:** A running dev server or Storybook instance where components can be viewed.
 
-### 8.5.1 Setup
+### 8.5.1 Browser Tooling Detection & Setup
+
+Before visual QA begins, detect available browser tooling:
+
+```bash
+# Check for gstack browse binary
+if command -v browse &>/dev/null; then
+  echo "VISUAL_TOOL=browse"
+# Check for Playwright
+elif npx playwright --version &>/dev/null 2>&1; then
+  echo "VISUAL_TOOL=playwright"
+else
+  echo "VISUAL_TOOL=none"
+fi
+```
+
+**Option A — gstack browse integration (preferred if available):**
+- `$B screenshot <url>` — capture screenshot
+- `$B snapshot <url>` — capture DOM snapshot
+- `$B responsive <url>` — test responsive viewports
+- `$B perf <url>` — performance measurement
+- `$B snapshot -D <url>` — diff comparison
+
+**Option B — Playwright integration:**
+- Launch browser against dev server or Storybook
+- Capture screenshots per component per theme
+- Responsive viewport testing via viewport configuration
+
+**Option C — Manual verification fallback:**
+- If no browser tool available, scope Phase 8.5 as manual verification
+- Generate a structured checklist for user-provided screenshots
+- Document limitation in completion report
 
 ```bash
 # Start the dev server or Storybook in background
@@ -2352,13 +2383,29 @@ sleep 5
 ```
 
 If no dev server is available (e.g., library-only package without a preview app),
-use Storybook stories as the evaluation target. If neither exists, skip this phase
+use Storybook stories as the evaluation target.
+
+If neither a dev server nor Storybook is available, skip this phase
 and note it in the completion report.
+
+**No browser tool fallback:**
+```
+Log: "Visual tooling unavailable. Phase 8.5 running in manual verification mode."
+Generate a markdown checklist at {systemPath}/docs/visual-qa-checklist.md
+Prompt user: "No browser tooling detected. Please provide screenshots of each component
+in both light and dark themes for visual QA review."
+```
 
 ### 8.5.2 Visual Design Audit (10 Categories)
 
 Evaluate each rendered component against these 10 categories. For each finding,
 capture a screenshot as evidence.
+
+For each finding:
+1. Capture BEFORE screenshot (or prompt user to provide one)
+2. Apply fix
+3. Capture AFTER screenshot
+4. Compare and classify outcome
 
 ```
 Category                        Weight   Items
@@ -2427,7 +2474,20 @@ Category                        Weight   Items
                                          Design has a recognizable identity
 ```
 
-### 8.5.3 Scoring Rubric
+### 8.5.3 Responsive Viewport Testing
+
+If browser tooling available, test each component at:
+- Mobile: 375×667 (iPhone SE)
+- Tablet: 768×1024 (iPad)
+- Desktop: 1280×720 (standard)
+
+For each viewport:
+- Verify no horizontal overflow
+- Verify touch targets >= 44px on mobile
+- Verify text remains readable
+- Verify spacing adapts appropriately
+
+### 8.5.4 Scoring Rubric
 
 Each category receives a letter grade:
 
@@ -2446,7 +2506,7 @@ Each category receives a letter grade:
 
 **Overall Design Score** = weighted average of all 10 category grades.
 
-### 8.5.4 Finding Format
+### 8.5.5 Finding Format
 
 Each visual finding is documented as:
 
@@ -2461,7 +2521,7 @@ Evidence: {screenshot before fix}
 
 Findings are appended immediately upon discovery — never batch.
 
-### 8.5.5 Fix Loop
+### 8.5.6 Fix Loop
 
 For each finding, starting from HIGH impact down to MEDIUM:
 
@@ -2486,7 +2546,7 @@ For each finding, starting from HIGH impact down to MEDIUM:
    - DEFERRED: requires design decision from user, logged as TODO
 ```
 
-### 8.5.6 Risk Regulation
+### 8.5.7 Risk Regulation
 
 Track cumulative fix risk to prevent quality degradation:
 
@@ -2504,7 +2564,7 @@ Thresholds:
   Maximum: 30 fixes per review session.
 ```
 
-### 8.5.7 Design Review Triage
+### 8.5.8 Design Review Triage
 
 Via AskUserQuestion, ask:
 

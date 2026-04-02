@@ -28,7 +28,9 @@ This index provides a compact map of `SKILL.md` execution flow for maintainers.
 9. **Phase 8: Multi-Reviewer Verification**
    - Execute multi-angle quality review and aggregate risk.
 10. **Phase 8.5: Design Review (Live Visual QA)**
+    - Detect available browser tooling (gstack browse, Playwright, or manual fallback).
     - Perform visual QA loop with strict triage and risk thresholds.
+    - Responsive viewport testing at mobile, tablet, and desktop breakpoints.
 11. **Phase 9: Documentation & Completion**
     - Generate docs, run final verification commands, emit completion report.
 
