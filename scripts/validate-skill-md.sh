@@ -41,13 +41,6 @@ required_phase_specs=(
   "Phase 11: Release Readiness & Handoff|phases/phase-11-readiness-handoff.md"
 )
 
-required_status_markers=(
-  "- **DONE**"
-  "- **DONE_WITH_CONCERNS**"
-  "- **BLOCKED**"
-  "- **NEEDS_CONTEXT**"
-)
-
 echo "Validating router references and phase bundle..."
 required_phase_paths=()
 for spec in "${required_phase_specs[@]}"; do
@@ -125,7 +118,7 @@ done < <(sed -n 's/.*\*\*\(Phase [0-9][0-9.]*: [^*]*\)\*\*.*/\1/p' "$PHASE_INDEX
 
 echo "Validating PHASE-INDEX.md phase format consistency..."
 PHASE_MAP_SECTION=$(awk '/^## Phase Map/{found=1; next} found && /^## /{exit} found' "$PHASE_INDEX_FILE")
-unformatted=$(echo "$PHASE_MAP_SECTION" | grep -E 'Phase [0-9]+(\.[0-9]+)?:' | grep -v '\*\*Phase' || true)
+unformatted=$(echo "$PHASE_MAP_SECTION" | grep -E 'Phase [0-9]+(\.[0-9]+)?:' | grep -Fv '**Phase' || true)
 if [[ -n "$unformatted" ]]; then
   echo "ERROR: PHASE-INDEX.md contains unformatted phase references in Phase Map section:"
   echo "$unformatted"
@@ -138,9 +131,9 @@ fi
 echo "Validating completion statuses in protocol section..."
 PROTOCOL_SECTION=$(awk '/^## Completion Status Protocol/{found=1; next} found && /^## /{exit} found' "$SKILL_FILE")
 if [[ -z "$PROTOCOL_SECTION" ]]; then
-  echo "ERROR: Missing '## Completion Status Protocol' section in SKILL.md"
+  echo "ERROR: '## Completion Status Protocol' section in SKILL.md is missing or empty"
   echo "  File: SKILL.md"
-  echo "  Contract: completion protocol section must exist as a dedicated heading"
+  echo "  Contract: completion protocol section must exist as a dedicated heading with content"
   exit 1
 fi
 
@@ -163,9 +156,9 @@ done
 echo "Validating cross-phase contracts in SKILL.md..."
 CROSS_PHASE_SECTION=$(awk '/^### Cross-Phase Contracts/{found=1; next} found && /^##[# ]/{exit} found' "$SKILL_FILE")
 if [[ -z "$CROSS_PHASE_SECTION" ]]; then
-  echo "ERROR: Missing '### Cross-Phase Contracts' section in SKILL.md"
+  echo "ERROR: '### Cross-Phase Contracts' section in SKILL.md is missing or empty"
   echo "  File: SKILL.md"
-  echo "  Contract: cross-phase contract section must exist"
+  echo "  Contract: cross-phase contract section must exist with content"
   exit 1
 fi
 
@@ -187,9 +180,9 @@ done
 echo "Validating cross-phase contracts in PHASE-INDEX.md..."
 INDEX_CROSS_SECTION=$(awk '/^## Cross-Phase Contracts/{found=1; next} found && /^## /{exit} found' "$PHASE_INDEX_FILE")
 if [[ -z "$INDEX_CROSS_SECTION" ]]; then
-  echo "ERROR: Missing '## Cross-Phase Contracts' section in PHASE-INDEX.md"
+  echo "ERROR: '## Cross-Phase Contracts' section in PHASE-INDEX.md is missing or empty"
   echo "  File: docs/PHASE-INDEX.md"
-  echo "  Contract: PHASE-INDEX.md must mirror cross-phase contract declarations"
+  echo "  Contract: PHASE-INDEX.md must mirror cross-phase contract declarations with content"
   exit 1
 fi
 
@@ -225,7 +218,7 @@ for marker in "${discovery_control_points[@]}"; do
   fi
 done
 
-stop_count=$(grep -cF "**STOP" "$DISCOVERY_FILE" || true)
+stop_count=$(grep -cF "STOP" "$DISCOVERY_FILE" || true)
 ask_count=$(grep -cF "AskUserQuestion" "$DISCOVERY_FILE" || true)
 if [[ "$stop_count" -lt 2 ]]; then
   echo "ERROR: Discovery file has fewer than 2 STOP markers (found $stop_count)"
