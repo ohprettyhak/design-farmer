@@ -54,7 +54,7 @@ bash scripts/validate-skill-md.sh
 
 Expected success output includes:
 
-- `All skill structure checks passed.`
+- `All skill structure and contract checks passed.`
 
 If your change touches scripts/workflows, include any additional command output in the PR description.
 

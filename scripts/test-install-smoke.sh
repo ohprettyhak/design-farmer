@@ -4,6 +4,7 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 INSTALLER="$ROOT_DIR/install.sh"
+BASH_BIN="$(command -v bash)"
 
 if [[ ! -f "$INSTALLER" ]]; then
   echo "ERROR: Missing installer script: $INSTALLER"
@@ -129,7 +130,7 @@ test_successful_install_for_tool() {
 
   local stdout_file="$temp_dir/stdout.log"
   HOME="$fake_home" PATH="$fake_bin:/usr/bin:/bin" SMOKE_CURL_LOG="$log_file" BRANCH="$branch" \
-    /usr/bin/bash "$INSTALLER" >"$stdout_file" 2>&1
+    "$BASH_BIN" "$INSTALLER" >"$stdout_file" 2>&1
 
   local installed_file
   installed_file="$(installed_skill_file_path "$tool" "$fake_home")"
@@ -170,7 +171,7 @@ test_no_supported_tools_fails() {
 
   local output_file="$temp_dir/output.log"
   set +e
-  HOME="$fake_home" PATH="$fake_bin:/usr/bin:/bin" /usr/bin/bash "$INSTALLER" >"$output_file" 2>&1
+  HOME="$fake_home" PATH="$fake_bin:/usr/bin:/bin" "$BASH_BIN" "$INSTALLER" >"$output_file" 2>&1
   local exit_code=$?
   set -e
 
@@ -199,7 +200,7 @@ test_missing_curl_fails() {
 
   local output_file="$temp_dir/output.log"
   set +e
-  HOME="$fake_home" PATH="$path_without_curl" /usr/bin/bash "$INSTALLER" >"$output_file" 2>&1
+  HOME="$fake_home" PATH="$path_without_curl" "$BASH_BIN" "$INSTALLER" >"$output_file" 2>&1
   local exit_code=$?
   set -e
 
@@ -239,7 +240,7 @@ test_atomic_install_preserves_existing_on_download_failure() {
   local output_file="$temp_dir/output.log"
   set +e
   HOME="$fake_home" PATH="$fake_bin:/usr/bin:/bin" SMOKE_CURL_FAIL_MATCH="phase-4-architecture.md" BRANCH="smoke-test-branch" \
-    /usr/bin/bash "$INSTALLER" >"$output_file" 2>&1
+    "$BASH_BIN" "$INSTALLER" >"$output_file" 2>&1
   local exit_code=$?
   set -e
 
