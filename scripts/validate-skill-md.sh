@@ -134,7 +134,6 @@ if [[ -n "$unformatted" ]]; then
   exit 1
 fi
 
-# --- Contract-level: Completion Status Protocol section ---
 echo "Validating completion statuses in protocol section..."
 PROTOCOL_SECTION=$(awk '/^## Completion Status Protocol/{found=1; next} found && /^## /{exit} found' "$SKILL_FILE")
 if [[ -z "$PROTOCOL_SECTION" ]]; then
@@ -159,7 +158,6 @@ for marker in "${required_status_markers[@]}"; do
   fi
 done
 
-# --- Contract-level: Cross-Phase Contracts ---
 echo "Validating cross-phase contracts in SKILL.md..."
 CROSS_PHASE_SECTION=$(awk '/^### Cross-Phase Contracts/{found=1; next} found && /^##[# ]/{exit} found' "$SKILL_FILE")
 if [[ -z "$CROSS_PHASE_SECTION" ]]; then
@@ -207,7 +205,6 @@ for contract in "${index_required_contracts[@]}"; do
   fi
 done
 
-# --- Contract-level: Discovery gating semantics ---
 echo "Validating discovery interview gating semantics..."
 DISCOVERY_FILE="$SKILL_DIR/phases/phase-1-discovery.md"
 
@@ -240,7 +237,6 @@ if [[ "$ask_count" -lt 2 ]]; then
   exit 1
 fi
 
-# --- Contract-level: Phase file required sections ---
 echo "Validating required sections in verification phases..."
 
 if ! grep -Fq "## 9.2 Final Verification" "$SKILL_DIR/phases/phase-9-documentation.md"; then

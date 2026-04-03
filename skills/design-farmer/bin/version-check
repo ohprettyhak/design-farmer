@@ -10,13 +10,11 @@ REMOTE_URL="https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/ski
 TTL_OK=3600
 TTL_UPGRADE=43200
 
-# --- Read local version from SKILL.md frontmatter ---
 LOCAL_VERSION=$(sed -n 's/^version:[[:space:]]*//p' "${SKILL_DIR}/SKILL.md" 2>/dev/null | head -1 | tr -d '[:space:]')
 if [[ -z "$LOCAL_VERSION" ]]; then
   exit 0
 fi
 
-# --- Check cache ---
 NOW=$(date +%s)
 if [[ -f "$CACHE_FILE" ]]; then
   CACHE_TS=$(awk 'NR==1{print $1}' "$CACHE_FILE" 2>/dev/null || echo 0)
@@ -34,7 +32,6 @@ if [[ -f "$CACHE_FILE" ]]; then
   fi
 fi
 
-# --- Fetch remote version ---
 REMOTE_RAW=$(curl -fsSL --max-time 5 "$REMOTE_URL" 2>/dev/null || echo "")
 REMOTE_VERSION=$(echo "$REMOTE_RAW" | sed -n 's/^version:[[:space:]]*//p' | head -1 | tr -d '[:space:]')
 
@@ -42,7 +39,6 @@ if [[ -z "$REMOTE_VERSION" ]] || [[ ! "$REMOTE_VERSION" =~ ^[0-9]+\.[0-9.]+$ ]];
   exit 0
 fi
 
-# --- Compare and write cache ---
 mkdir -p "$CACHE_DIR"
 
 if [[ "$LOCAL_VERSION" != "$REMOTE_VERSION" ]]; then
