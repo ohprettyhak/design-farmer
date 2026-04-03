@@ -16,12 +16,19 @@ if [[ ! -f "$SKILL_FILE" ]]; then
   exit 1
 fi
 
-for required_file in "$PHASE_INDEX_FILE" "$QUALITY_GATES_FILE" "$MAINTENANCE_FILE" "$EXAMPLES_FILE" "$OP_NOTES_FILE"; do
+VERSION_CHECK_FILE="$SKILL_DIR/bin/version-check"
+
+for required_file in "$PHASE_INDEX_FILE" "$QUALITY_GATES_FILE" "$MAINTENANCE_FILE" "$EXAMPLES_FILE" "$OP_NOTES_FILE" "$VERSION_CHECK_FILE"; do
   if [[ ! -f "$required_file" ]]; then
     echo "ERROR: Missing required bundle file: $required_file"
     exit 1
   fi
 done
+
+if [[ ! -x "$VERSION_CHECK_FILE" ]]; then
+  echo "ERROR: bin/version-check exists but is not executable"
+  exit 1
+fi
 
 required_phase_specs=(
   "Phase 0: Pre-flight|phases/phase-0-preflight.md"

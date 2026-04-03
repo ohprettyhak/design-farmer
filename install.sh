@@ -8,6 +8,7 @@ SKILL_NAME="design-farmer"
 SKILL_ROOT="skills/design-farmer"
 BUNDLE_FILES=(
   "$SKILL_ROOT/SKILL.md"
+  "$SKILL_ROOT/bin/version-check"
   "$SKILL_ROOT/docs/PHASE-INDEX.md"
   "$SKILL_ROOT/docs/QUALITY-GATES.md"
   "$SKILL_ROOT/docs/MAINTENANCE.md"

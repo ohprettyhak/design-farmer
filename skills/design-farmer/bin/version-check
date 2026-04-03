@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+# design-farmer version check
+# Outputs "UPGRADE_AVAILABLE <local> <remote>" when a newer version exists.
+# Silent when up-to-date or when the check cannot complete.
+
+set -euo pipefail
+
+SKILL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+CACHE_DIR="${HOME}/.config/design-farmer"
+CACHE_FILE="${CACHE_DIR}/version-check.cache"
+REMOTE_URL="https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/skills/design-farmer/SKILL.md"
+
+TTL_OK=3600      # 60 min — cache "up-to-date" result
+TTL_UPGRADE=43200 # 720 min — cache "upgrade available" result
+
+# -- Read local version from SKILL.md frontmatter --
+LOCAL_VERSION=$(sed -n 's/^version:[[:space:]]*//p' "${SKILL_DIR}/SKILL.md" 2>/dev/null | head -1 | tr -d '[:space:]')
+if [[ -z "$LOCAL_VERSION" ]]; then
+  exit 0
+fi
+
+# -- Check cache --
+NOW=$(date +%s)
+if [[ -f "$CACHE_FILE" ]]; then
+  CACHE_TS=$(awk 'NR==1{print $1}' "$CACHE_FILE" 2>/dev/null || echo 0)
+  CACHE_STATUS=$(awk 'NR==1{print $2}' "$CACHE_FILE" 2>/dev/null || echo "")
+  CACHE_OLD=$(awk 'NR==1{print $3}' "$CACHE_FILE" 2>/dev/null || echo "")
+  CACHE_NEW=$(awk 'NR==1{print $4}' "$CACHE_FILE" 2>/dev/null || echo "")
+  ELAPSED=$(( NOW - CACHE_TS ))
+
+  if [[ "$CACHE_STATUS" == "OK" ]] && [[ $ELAPSED -lt $TTL_OK ]]; then
+    exit 0
+  fi
+  if [[ "$CACHE_STATUS" == "UPGRADE_AVAILABLE" ]] && [[ $ELAPSED -lt $TTL_UPGRADE ]]; then
+    echo "UPGRADE_AVAILABLE ${CACHE_OLD} ${CACHE_NEW}"
+    exit 0
+  fi
+fi
+
+# -- Fetch remote version --
+REMOTE_RAW=$(curl -fsSL --max-time 5 "$REMOTE_URL" 2>/dev/null || echo "")
+REMOTE_VERSION=$(echo "$REMOTE_RAW" | sed -n 's/^version:[[:space:]]*//p' | head -1 | tr -d '[:space:]')
+
+if [[ -z "$REMOTE_VERSION" ]] || [[ ! "$REMOTE_VERSION" =~ ^[0-9]+\.[0-9.]+$ ]]; then
+  exit 0
+fi
+
+# -- Compare and write cache --
+mkdir -p "$CACHE_DIR"
+
+if [[ "$LOCAL_VERSION" != "$REMOTE_VERSION" ]]; then
+  echo "${NOW} UPGRADE_AVAILABLE ${LOCAL_VERSION} ${REMOTE_VERSION}" > "$CACHE_FILE"
+  echo "UPGRADE_AVAILABLE ${LOCAL_VERSION} ${REMOTE_VERSION}"
+else
+  echo "${NOW} OK" > "$CACHE_FILE"
+fi

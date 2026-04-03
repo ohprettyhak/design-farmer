@@ -28,6 +28,40 @@ a structured, accessible, OKLCH-native design system with tokens, components, te
 
 ---
 
+## Version Check
+
+Before doing anything else, run the version check silently:
+
+```bash
+_DF_UPDATE=$(bash ~/.claude/skills/design-farmer/bin/version-check 2>/dev/null || true)
+```
+
+If `_DF_UPDATE` starts with `UPGRADE_AVAILABLE`:
+
+1. Parse the output: `UPGRADE_AVAILABLE <current> <latest>`
+2. Ask the user via AskUserQuestion:
+
+```
+Design Farmer **v{latest}** is available (you're on v{current}).
+
+Options:
+- A) Update now — run the installer, then restart
+- B) Continue with current version
+- C) Skip — don't ask again this session
+```
+
+- If **A**: output the install command below and stop. The user must re-invoke after updating.
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/install.sh | bash
+```
+
+- If **B** or **C**: continue to the next section.
+
+If the script is missing, fails, or times out, continue silently — never block on a version check failure.
+
+---
+
 ## Bundle Integrity Gate
 
 This skill is distributed as a **bundle**: the router `SKILL.md`, phase files under `phases/`,
