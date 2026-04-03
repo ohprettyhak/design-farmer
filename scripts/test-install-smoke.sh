@@ -98,6 +98,11 @@ if [[ -z "$output_file" ]]; then
 fi
 
 mkdir -p "$(dirname "$output_file")"
+
+if [[ -n "${SMOKE_CURL_FAIL_MATCH:-}" ]] && [[ "$url" == *"${SMOKE_CURL_FAIL_MATCH}" ]]; then
+  exit 22
+fi
+
 printf "stub skill content\n" >"$output_file"
 
 if [[ -n "${SMOKE_CURL_LOG:-}" ]]; then
@@ -210,6 +215,51 @@ test_missing_curl_fails() {
   trap - RETURN
 }
 
+test_atomic_install_preserves_existing_on_download_failure() {
+  local tool="claude"
+  local temp_dir
+  temp_dir="$(mktemp -d)"
+  trap 'rm -rf "$temp_dir"' RETURN
+
+  local fake_home="$temp_dir/home"
+  local fake_bin="$temp_dir/bin"
+  mkdir -p "$fake_home"
+  mkdir -p "$(tool_marker_path "$tool" "$fake_home")"
+  write_curl_stub "$fake_bin"
+
+  local skill_dir
+  skill_dir="$(installed_skill_dir_path "$tool" "$fake_home")"
+  mkdir -p "$skill_dir/phases"
+  mkdir -p "$skill_dir/docs"
+  printf "existing root\n" >"$skill_dir/SKILL.md"
+  printf "existing p0\n" >"$skill_dir/phases/phase-0-preflight.md"
+  printf "existing p11\n" >"$skill_dir/phases/phase-11-readiness-handoff.md"
+  printf "existing index\n" >"$skill_dir/docs/PHASE-INDEX.md"
+
+  local output_file="$temp_dir/output.log"
+  set +e
+  HOME="$fake_home" PATH="$fake_bin:/usr/bin:/bin" SMOKE_CURL_FAIL_MATCH="phase-4-architecture.md" BRANCH="smoke-test-branch" \
+    /usr/bin/bash "$INSTALLER" >"$output_file" 2>&1
+  local exit_code=$?
+  set -e
+
+  if [[ $exit_code -eq 0 ]]; then
+    echo "ERROR: Installer should fail when one bundle file download fails"
+    cat "$output_file"
+    exit 1
+  fi
+
+  assert_contains "$output_file" "bundle install failed; previous version preserved"
+  assert_contains "$output_file" "Completed with errors."
+  assert_contains "$skill_dir/SKILL.md" "existing root"
+  assert_contains "$skill_dir/phases/phase-0-preflight.md" "existing p0"
+  assert_contains "$skill_dir/phases/phase-11-readiness-handoff.md" "existing p11"
+  assert_contains "$skill_dir/docs/PHASE-INDEX.md" "existing index"
+
+  rm -rf "$temp_dir"
+  trap - RETURN
+}
+
 main() {
   local tool="${1:-}"
   if [[ -z "$tool" ]]; then
@@ -228,6 +278,9 @@ main() {
 
   echo "[smoke] failure path: missing curl prerequisite"
   test_missing_curl_fails
+
+  echo "[smoke] failure path: download error preserves existing bundle"
+  test_atomic_install_preserves_existing_on_download_failure
 
   echo "All installer smoke tests passed for tool=$tool"
 }

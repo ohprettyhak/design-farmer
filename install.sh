@@ -51,6 +51,52 @@ require_command() {
   fi
 }
 
+install_bundle_atomic() {
+  local target_dir="$1"
+  shift
+
+  local target_parent
+  target_parent="$(dirname "$target_dir")"
+  mkdir -p "$target_parent"
+
+  local staging_dir
+  staging_dir="$(mktemp -d "${target_parent}/.design-farmer-staging.XXXXXX")"
+  local backup_dir=""
+
+  for relative_path in "$@"; do
+    local staged_path
+    staged_path="${staging_dir}/${relative_path#${SKILL_ROOT}/}"
+    mkdir -p "$(dirname "$staged_path")"
+
+    if ! curl -fsSL "${RAW_BASE}/${relative_path}" -o "$staged_path" 2>/dev/null; then
+      rm -rf "$staging_dir"
+      return 1
+    fi
+  done
+
+  if [ -d "$target_dir" ]; then
+    backup_dir="$(mktemp -d "${target_parent}/.design-farmer-backup.XXXXXX")"
+    rmdir "$backup_dir"
+    if ! mv "$target_dir" "$backup_dir"; then
+      rm -rf "$staging_dir"
+      return 1
+    fi
+  fi
+
+  if mv "$staging_dir" "$target_dir"; then
+    if [ -n "$backup_dir" ] && [ -d "$backup_dir" ]; then
+      rm -rf "$backup_dir"
+    fi
+    return 0
+  fi
+
+  rm -rf "$staging_dir"
+  if [ -n "$backup_dir" ] && [ -d "$backup_dir" ]; then
+    mv "$backup_dir" "$target_dir" || true
+  fi
+  return 1
+}
+
 tool_marker() {
   case "$1" in
     claude) echo "${HOME}/.claude" ;;
@@ -111,23 +157,11 @@ FAILED=0
 for tool in "${DETECTED[@]}"; do
   target_dir="$(tool_skill_dir "$tool")"
   label="$(tool_label "$tool")"
-  mkdir -p "$target_dir"
 
-  tool_failed=0
-  for relative_path in "${BUNDLE_FILES[@]}"; do
-    target_path="${target_dir}/${relative_path#${SKILL_ROOT}/}"
-    mkdir -p "$(dirname "$target_path")"
-
-    if ! curl -fsSL "${RAW_BASE}/${relative_path}" -o "$target_path" 2>/dev/null; then
-      tool_failed=1
-      printf "  %b✗%b %s (%s download failed)\n" "$RED" "$RESET" "$label" "$relative_path"
-      break
-    fi
-  done
-
-  if [ "$tool_failed" -eq 0 ]; then
+  if install_bundle_atomic "$target_dir" "${BUNDLE_FILES[@]}"; then
     printf "  %b✓%b %s\n" "$GREEN" "$RESET" "$label"
   else
+    printf "  %b✗%b %s (bundle install failed; previous version preserved)\n" "$RED" "$RESET" "$label"
     FAILED=1
   fi
 done
