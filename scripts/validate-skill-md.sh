@@ -123,9 +123,20 @@ while IFS= read -r index_phase; do
   fi
 done < <(sed -n 's/.*\*\*\(Phase [0-9][0-9.]*: [^*]*\)\*\*.*/\1/p' "$PHASE_INDEX_FILE")
 
+echo "Validating PHASE-INDEX.md phase format consistency..."
+PHASE_MAP_SECTION=$(awk '/^## Phase Map/{found=1; next} found && /^## /{exit} found' "$PHASE_INDEX_FILE")
+unformatted=$(echo "$PHASE_MAP_SECTION" | grep -E 'Phase [0-9]+(\.[0-9]+)?:' | grep -v '\*\*Phase' || true)
+if [[ -n "$unformatted" ]]; then
+  echo "ERROR: PHASE-INDEX.md contains unformatted phase references in Phase Map section:"
+  echo "$unformatted"
+  echo "  File: docs/PHASE-INDEX.md"
+  echo "  Contract: phase entries must use **bold** formatting for reliable extraction"
+  exit 1
+fi
+
 # --- Contract-level: Completion Status Protocol section ---
 echo "Validating completion statuses in protocol section..."
-PROTOCOL_SECTION=$(sed -n '/^## Completion Status Protocol/,/^## /p' "$SKILL_FILE" | sed '$ d')
+PROTOCOL_SECTION=$(awk '/^## Completion Status Protocol/{found=1; next} found && /^## /{exit} found' "$SKILL_FILE")
 if [[ -z "$PROTOCOL_SECTION" ]]; then
   echo "ERROR: Missing '## Completion Status Protocol' section in SKILL.md"
   echo "  File: SKILL.md"
@@ -150,7 +161,7 @@ done
 
 # --- Contract-level: Cross-Phase Contracts ---
 echo "Validating cross-phase contracts in SKILL.md..."
-CROSS_PHASE_SECTION=$(sed -n '/^### Cross-Phase Contracts/,/^### /p' "$SKILL_FILE" | sed '$ d')
+CROSS_PHASE_SECTION=$(awk '/^### Cross-Phase Contracts/{found=1; next} found && /^##[# ]/{exit} found' "$SKILL_FILE")
 if [[ -z "$CROSS_PHASE_SECTION" ]]; then
   echo "ERROR: Missing '### Cross-Phase Contracts' section in SKILL.md"
   echo "  File: SKILL.md"
@@ -174,7 +185,7 @@ for contract in "${required_cross_phase_contracts[@]}"; do
 done
 
 echo "Validating cross-phase contracts in PHASE-INDEX.md..."
-INDEX_CROSS_SECTION=$(sed -n '/^## Cross-Phase Contracts/,/^## /p' "$PHASE_INDEX_FILE" | sed '$ d')
+INDEX_CROSS_SECTION=$(awk '/^## Cross-Phase Contracts/{found=1; next} found && /^## /{exit} found' "$PHASE_INDEX_FILE")
 if [[ -z "$INDEX_CROSS_SECTION" ]]; then
   echo "ERROR: Missing '## Cross-Phase Contracts' section in PHASE-INDEX.md"
   echo "  File: docs/PHASE-INDEX.md"
