@@ -105,13 +105,153 @@ if ! grep -Fq "Bundle Integrity Gate" "$SKILL_FILE"; then
   exit 1
 fi
 
-echo "Validating completion statuses..."
+echo "Validating PHASE-INDEX.md has no extra phases..."
+while IFS= read -r index_phase; do
+  matched=0
+  for spec in "${required_phase_specs[@]}"; do
+    phase="${spec%%|*}"
+    if [[ "$index_phase" == "$phase" ]]; then
+      matched=1
+      break
+    fi
+  done
+  if [[ $matched -eq 0 ]]; then
+    echo "ERROR: PHASE-INDEX.md contains phase not in canonical router: $index_phase"
+    echo "  File: docs/PHASE-INDEX.md"
+    echo "  Contract: phase map alignment (SKILL.md <-> PHASE-INDEX.md)"
+    exit 1
+  fi
+done < <(sed -n 's/.*\*\*\(Phase [0-9][0-9.]*: [^*]*\)\*\*.*/\1/p' "$PHASE_INDEX_FILE")
+
+# --- Contract-level: Completion Status Protocol section ---
+echo "Validating completion statuses in protocol section..."
+PROTOCOL_SECTION=$(sed -n '/^## Completion Status Protocol/,/^## /p' "$SKILL_FILE" | sed '$ d')
+if [[ -z "$PROTOCOL_SECTION" ]]; then
+  echo "ERROR: Missing '## Completion Status Protocol' section in SKILL.md"
+  echo "  File: SKILL.md"
+  echo "  Contract: completion protocol section must exist as a dedicated heading"
+  exit 1
+fi
+
+required_status_markers=(
+  "- **DONE**"
+  "- **DONE_WITH_CONCERNS**"
+  "- **BLOCKED**"
+  "- **NEEDS_CONTEXT**"
+)
 for marker in "${required_status_markers[@]}"; do
-  if ! grep -Fq -- "$marker" "$SKILL_FILE"; then
-    echo "ERROR: Missing completion status marker: $marker"
+  if ! echo "$PROTOCOL_SECTION" | grep -Fq -- "$marker"; then
+    echo "ERROR: Completion status marker missing from protocol section: $marker"
+    echo "  File: SKILL.md, section: '## Completion Status Protocol'"
+    echo "  Contract: all four status markers must appear in the protocol section, not elsewhere"
     exit 1
   fi
 done
+
+# --- Contract-level: Cross-Phase Contracts ---
+echo "Validating cross-phase contracts in SKILL.md..."
+CROSS_PHASE_SECTION=$(sed -n '/^### Cross-Phase Contracts/,/^### /p' "$SKILL_FILE" | sed '$ d')
+if [[ -z "$CROSS_PHASE_SECTION" ]]; then
+  echo "ERROR: Missing '### Cross-Phase Contracts' section in SKILL.md"
+  echo "  File: SKILL.md"
+  echo "  Contract: cross-phase contract section must exist"
+  exit 1
+fi
+
+required_cross_phase_contracts=(
+  "DesignFarmerConfig"
+  "Completion statuses are mandatory"
+  "one-at-a-time"
+  "explicit verification evidence"
+)
+for contract in "${required_cross_phase_contracts[@]}"; do
+  if ! echo "$CROSS_PHASE_SECTION" | grep -Fq "$contract"; then
+    echo "ERROR: Required cross-phase contract missing from SKILL.md: '$contract'"
+    echo "  File: SKILL.md, section: '### Cross-Phase Contracts'"
+    echo "  Contract: cross-phase contracts must include all required behavioral guarantees"
+    exit 1
+  fi
+done
+
+echo "Validating cross-phase contracts in PHASE-INDEX.md..."
+INDEX_CROSS_SECTION=$(sed -n '/^## Cross-Phase Contracts/,/^## /p' "$PHASE_INDEX_FILE" | sed '$ d')
+if [[ -z "$INDEX_CROSS_SECTION" ]]; then
+  echo "ERROR: Missing '## Cross-Phase Contracts' section in PHASE-INDEX.md"
+  echo "  File: docs/PHASE-INDEX.md"
+  echo "  Contract: PHASE-INDEX.md must mirror cross-phase contract declarations"
+  exit 1
+fi
+
+index_required_contracts=(
+  "Completion statuses are mandatory"
+  "one-at-a-time"
+  "explicit verification evidence"
+)
+for contract in "${index_required_contracts[@]}"; do
+  if ! echo "$INDEX_CROSS_SECTION" | grep -Fq "$contract"; then
+    echo "ERROR: Cross-phase contract missing from PHASE-INDEX.md: '$contract'"
+    echo "  File: docs/PHASE-INDEX.md, section: '## Cross-Phase Contracts'"
+    echo "  Contract: phase index must stay aligned with SKILL.md cross-phase contracts"
+    exit 1
+  fi
+done
+
+# --- Contract-level: Discovery gating semantics ---
+echo "Validating discovery interview gating semantics..."
+DISCOVERY_FILE="$SKILL_DIR/phases/phase-1-discovery.md"
+
+discovery_control_points=(
+  "ONE AT A TIME"
+  "AskUserQuestion"
+  "STOP"
+)
+for marker in "${discovery_control_points[@]}"; do
+  if ! grep -Fq "$marker" "$DISCOVERY_FILE"; then
+    echo "ERROR: Discovery gating control-point missing: '$marker'"
+    echo "  File: phases/phase-1-discovery.md"
+    echo "  Contract: discovery interview must enforce one-question-at-a-time semantics"
+    exit 1
+  fi
+done
+
+stop_count=$(grep -cF "**STOP" "$DISCOVERY_FILE" || true)
+ask_count=$(grep -cF "AskUserQuestion" "$DISCOVERY_FILE" || true)
+if [[ "$stop_count" -lt 2 ]]; then
+  echo "ERROR: Discovery file has fewer than 2 STOP markers (found $stop_count)"
+  echo "  File: phases/phase-1-discovery.md"
+  echo "  Contract: each question block must end with a STOP control point"
+  exit 1
+fi
+if [[ "$ask_count" -lt 2 ]]; then
+  echo "ERROR: Discovery file has fewer than 2 AskUserQuestion references (found $ask_count)"
+  echo "  File: phases/phase-1-discovery.md"
+  echo "  Contract: each question must be gated via AskUserQuestion"
+  exit 1
+fi
+
+# --- Contract-level: Phase file required sections ---
+echo "Validating required sections in verification phases..."
+
+if ! grep -Fq "## 9.2 Final Verification" "$SKILL_DIR/phases/phase-9-documentation.md"; then
+  echo "ERROR: Missing required section '## 9.2 Final Verification' in phase-9-documentation.md"
+  echo "  File: phases/phase-9-documentation.md"
+  echo "  Contract: Phase 9 must contain an explicit final verification section"
+  exit 1
+fi
+
+if ! grep -Fq "## 11.1 Final Verification" "$SKILL_DIR/phases/phase-11-readiness-handoff.md"; then
+  echo "ERROR: Missing required section '## 11.1 Final Verification' in phase-11-readiness-handoff.md"
+  echo "  File: phases/phase-11-readiness-handoff.md"
+  echo "  Contract: Phase 11 must contain an explicit final verification section"
+  exit 1
+fi
+
+if ! grep -Fq "## 11.2 Readiness Checklist" "$SKILL_DIR/phases/phase-11-readiness-handoff.md"; then
+  echo "ERROR: Missing required section '## 11.2 Readiness Checklist' in phase-11-readiness-handoff.md"
+  echo "  File: phases/phase-11-readiness-handoff.md"
+  echo "  Contract: Phase 11 must contain a readiness checklist section"
+  exit 1
+fi
 
 echo "Validating tool-contract keywords..."
 if ! grep -Fq "AskUserQuestion" "$SKILL_FILE"; then
@@ -135,4 +275,4 @@ if grep -R -nE 'best-practices\.md|research/best-practices\.md' "$SKILL_DIR" >/d
   exit 1
 fi
 
-echo "All skill structure checks passed."
+echo "All skill structure and contract checks passed."
