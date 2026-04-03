@@ -75,6 +75,10 @@ install_bundle_atomic() {
     fi
   done
 
+  if [ -d "$staging_dir/bin" ]; then
+    find "$staging_dir/bin" -type f -exec chmod +x {} +
+  fi
+
   if [ -d "$target_dir" ]; then
     backup_dir="$(mktemp -d "${target_parent}/.design-farmer-backup.XXXXXX")"
     rmdir "$backup_dir"
