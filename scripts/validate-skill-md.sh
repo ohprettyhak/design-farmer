@@ -119,8 +119,13 @@ if ! grep -Fq "AskUserQuestion" "$SKILL_FILE"; then
   exit 1
 fi
 
-if ! grep -Fq "Agent(" "$SKILL_FILE"; then
-  echo "ERROR: Agent delegation reference not found"
+if ! grep -Fq -- "- Agent" "$SKILL_FILE"; then
+  echo "ERROR: Agent tool is not declared in SKILL.md allowed-tools"
+  exit 1
+fi
+
+if ! grep -Fq 'Agent(prompt="' "$SKILL_FILE"; then
+  echo "ERROR: Explicit Agent(prompt=...) compatibility reference not found"
   exit 1
 fi
 

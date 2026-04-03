@@ -92,7 +92,9 @@ install_bundle_atomic() {
 
   rm -rf "$staging_dir"
   if [ -n "$backup_dir" ] && [ -d "$backup_dir" ]; then
-    mv "$backup_dir" "$target_dir" || true
+    if ! mv "$backup_dir" "$target_dir"; then
+      printf "%bError:%b rollback failed for %s; manual restore required.\n" "$RED" "$RESET" "$target_dir" >&2
+    fi
   fi
   return 1
 }
@@ -161,7 +163,7 @@ for tool in "${DETECTED[@]}"; do
   if install_bundle_atomic "$target_dir" "${BUNDLE_FILES[@]}"; then
     printf "  %b✓%b %s\n" "$GREEN" "$RESET" "$label"
   else
-    printf "  %b✗%b %s (bundle install failed; previous version preserved)\n" "$RED" "$RESET" "$label"
+    printf "  %b✗%b %s (bundle install failed; rollback attempted)\n" "$RED" "$RESET" "$label"
     FAILED=1
   fi
 done

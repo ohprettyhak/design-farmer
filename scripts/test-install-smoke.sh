@@ -249,7 +249,7 @@ test_atomic_install_preserves_existing_on_download_failure() {
     exit 1
   fi
 
-  assert_contains "$output_file" "bundle install failed; previous version preserved"
+  assert_contains "$output_file" "bundle install failed; rollback attempted"
   assert_contains "$output_file" "Completed with errors."
   assert_contains "$skill_dir/SKILL.md" "existing root"
   assert_contains "$skill_dir/phases/phase-0-preflight.md" "existing p0"
