@@ -114,12 +114,12 @@ for marker in "${required_status_markers[@]}"; do
 done
 
 echo "Validating tool-contract keywords..."
-if ! grep -R -Fq "AskUserQuestion" "$SKILL_DIR"; then
+if ! grep -Fq "AskUserQuestion" "$SKILL_FILE"; then
   echo "ERROR: AskUserQuestion reference not found"
   exit 1
 fi
 
-if ! grep -R -Fq "Agent(" "$SKILL_DIR"; then
+if ! grep -Fq "Agent(" "$SKILL_FILE"; then
   echo "ERROR: Agent delegation reference not found"
   exit 1
 fi

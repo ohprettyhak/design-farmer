@@ -109,6 +109,8 @@ Every phase concludes with one of:
 Every phase that delegates to an Agent or uses an external tool MUST define a fallback path.
 The pipeline NEVER silently fails.
 
+Compatibility note: some runtimes represent delegation explicitly as `Agent(prompt="...")`.
+
 ### Degradation Pattern
 
 ```
