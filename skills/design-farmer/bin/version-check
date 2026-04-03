@@ -15,6 +15,18 @@ if [[ -z "$LOCAL_VERSION" ]]; then
   exit 0
 fi
 
+ver_gt() {
+  IFS='.' read -ra A <<< "$1"
+  IFS='.' read -ra B <<< "$2"
+  for i in 0 1 2; do
+    a=${A[$i]:-0}
+    b=${B[$i]:-0}
+    if (( a > b )); then return 0; fi
+    if (( a < b )); then return 1; fi
+  done
+  return 1
+}
+
 NOW=$(date +%s)
 if [[ -f "$CACHE_FILE" ]]; then
   CACHE_TS=$(awk 'NR==1{print $1}' "$CACHE_FILE" 2>/dev/null || echo 0)
@@ -26,7 +38,7 @@ if [[ -f "$CACHE_FILE" ]]; then
   if [[ "$CACHE_STATUS" == "OK" ]] && [[ $ELAPSED -lt $TTL_OK ]]; then
     exit 0
   fi
-  if [[ "$CACHE_STATUS" == "UPGRADE_AVAILABLE" ]] && [[ $ELAPSED -lt $TTL_UPGRADE ]]; then
+  if [[ "$CACHE_STATUS" == "UPGRADE_AVAILABLE" ]] && [[ $ELAPSED -lt $TTL_UPGRADE ]] && [[ "$CACHE_OLD" == "$LOCAL_VERSION" ]]; then
     echo "UPGRADE_AVAILABLE ${CACHE_OLD} ${CACHE_NEW}"
     exit 0
   fi
@@ -41,7 +53,7 @@ fi
 
 mkdir -p "$CACHE_DIR"
 
-if [[ "$LOCAL_VERSION" != "$REMOTE_VERSION" ]]; then
+if ver_gt "$REMOTE_VERSION" "$LOCAL_VERSION"; then
   echo "${NOW} UPGRADE_AVAILABLE ${LOCAL_VERSION} ${REMOTE_VERSION}" > "$CACHE_FILE"
   echo "UPGRADE_AVAILABLE ${LOCAL_VERSION} ${REMOTE_VERSION}"
 else
