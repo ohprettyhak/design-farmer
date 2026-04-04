@@ -76,7 +76,7 @@ Via AskUserQuestion, ask:
 > - C) Neutral-first — start with a grayscale system, add brand colors later
 > - D) Custom palette — provide specific colors you want to use
 >
-> I'll use OKLCH for perceptual uniformity and generate a 9-step scale (50-950) with proper contrast ratios.
+> I'll use OKLCH for perceptual uniformity and generate an 11-step scale (50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950) with proper contrast ratios.
 
 **→ STOP — wait for user response before continuing.**
 
@@ -346,6 +346,9 @@ Only after receiving ALL 8 responses (Q0 through Q7, plus any applicable conditi
 
 ```typescript
 interface DesignFarmerConfig {
+  // Q0–Q7 answers
+  painPoint?: 'inconsistency' | 'accessibility' | 'dx' | 'handoff' | 'other';
+  painPointDetail?: string; // if 'other'
   vision: 'internal' | 'multi-product' | 'open-source' | 'design-bridge';
   colorDirection: 'keep' | 'brand' | 'neutral' | 'custom';
   brandColor?: string; // OKLCH primary
@@ -357,8 +360,10 @@ interface DesignFarmerConfig {
   themeLibrary?: string; // e.g., 'next-themes', 'custom', 'mode-watcher', etc.
   accessibilityLevel: 'aa' | 'aaa' | 'apca';
   targetPlatforms: 'web' | 'web-native' | 'web-hybrid' | 'multi-platform';
-  painPoint?: 'inconsistency' | 'accessibility' | 'dx' | 'handoff' | 'other';
-  painPointDetail?: string; // if 'other'
+  // Detected from Phase 0/2 — carried into all subsequent phases
+  packageManager: 'bun' | 'pnpm' | 'npm' | 'yarn';
+  framework: string; // e.g., 'next-app-router', 'next-pages-router', 'vite-react', 'astro', 'sveltekit', 'nuxt', 'remix'
+  isMonorepo: boolean;
 }
 ```
 

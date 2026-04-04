@@ -107,7 +107,7 @@ or hand the artifact bundle to the release owner.
 
 If any quality gate failed after 3 attempts: Status BLOCKED with failure details.
 
-## 11.4 Temporary File Cleanup
+## 11.5 Temporary File Cleanup
 
 After the handoff report is complete, remove intermediate working files generated during the run:
 

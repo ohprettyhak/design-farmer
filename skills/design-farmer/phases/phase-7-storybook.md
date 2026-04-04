@@ -69,7 +69,17 @@ Use that version throughout — do NOT assume any specific major version number.
    - yarn: `cd {storybookRoot} && yarn dlx storybook@latest init`
    - pnpm: `cd {storybookRoot} && pnpm dlx storybook@latest init`
    - bun: `cd {storybookRoot} && bunx storybook@latest init`
-   - For monorepo Option B (dedicated app): create the package directory first, then run init inside it
+   - For monorepo Option B (dedicated app at e.g. `apps/storybook`):
+     a. Create `apps/storybook/package.json` with the design system as a workspace dependency:
+        `{ "name": "@{scope}/storybook", "version": "0.0.1", "private": true,
+           "dependencies": { "@{scope}/design-system": "workspace:*" } }`
+     b. Register the package in `pnpm-workspace.yaml` (if not already covered by glob, add `- 'apps/*'`)
+     c. If turbo.json exists, add `storybook` and `build-storybook` tasks to the pipeline
+     d. Run init from inside the new package: `cd apps/storybook && {packageManager} dlx storybook@latest init`
+     e. In `apps/storybook/.storybook/main.ts`, set the `stories` glob to reach the design system:
+        `stories: ['../../packages/design-system/src/**/*.stories.@(ts|tsx)']`
+     f. Import the design system's tokens/CSS from the workspace package in `preview.ts`:
+        `import '@{scope}/design-system/src/tokens/index.css'`
    - After init, verify the installed version: `npx storybook --version` (or the equivalent for your package manager)
    - Confirm the installed major version matches the addon versions fetched in Step 1
 2. Configure addons (ensure versions match the installed Storybook major version):

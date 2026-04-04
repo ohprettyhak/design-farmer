@@ -22,3 +22,7 @@ grep -r "oklch\|hsl\|rgb\|#[0-9a-fA-F]\{3,8\}" --include="*.css" --include="*.sc
 
 If an existing design system is detected, report findings and ask:
 > "An existing design system was found at `{path}`. Should I extend it, migrate it to the Design Farmer standard, or start fresh alongside it?"
+
+Report the pre-flight summary (monorepo/single-repo, framework detected, existing components/tokens found, package manager).
+
+**Status: DONE** — Pre-flight complete. Proceed to Phase 1: Discovery Interview.
