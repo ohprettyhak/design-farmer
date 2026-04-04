@@ -27,6 +27,35 @@ If Design Maturity = MATURE (score 6+):
   -> Do NOT break existing consumer code without explicit user approval
 ```
 
+## 6.0.1 Dependency Pre-install
+
+Before implementing any component, install required dependencies and verify versions:
+
+```bash
+# If headless library was chosen, look up the latest version and install
+# Replace {headlessPackage} with the actual package name:
+#   Radix UI:  individual packages e.g. @radix-ui/react-dialog @radix-ui/react-slot
+#   Base UI:   @base-ui-components/react
+#   Ark UI:    @ark-ui/react
+#   Headless UI: @headlessui/react
+#   Melt UI:   @melt-ui/svelte
+#   Bits UI:   bits-ui
+
+if [ "{headlessLibrary}" != "none" ] && [ "{headlessLibrary}" != "" ]; then
+  # Check latest version before installing
+  npm view {headlessPackage} version
+  # Install using the detected package manager
+  {packageManager} add {headlessPackage}
+  # Verify installed version
+  node -e "console.log(require('{headlessPackage}/package.json').version)" 2>/dev/null || \
+    {packageManager} list {headlessPackage}
+fi
+```
+
+Do NOT hardcode a specific version number — always install the latest from npm.
+
+---
+
 ## 6.1 Headless Component Wrapping Pattern
 
 When the user chose a headless library (Radix, Base UI, Ark UI, etc.), each component
