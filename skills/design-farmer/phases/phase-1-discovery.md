@@ -88,14 +88,22 @@ Via AskUserQuestion, ask:
 
 > Let's define the initial component boundary.
 >
-> Design Maturity (from Phase 2): **{GREENFIELD|EMERGING|MATURE}** — this shapes the recommendation below.
+> Based on the Phase 0 pre-flight scan, here is a **preliminary maturity estimate**
+> (Phase 2 will produce the formal score — use this as a directional guide only):
+>
+> - **Likely GREENFIELD**: no design token files, no `design-system/` or `primitives/` directory,
+>   colors and spacing are hardcoded throughout the codebase
+> - **Likely EMERGING**: some CSS custom properties or theme config found, partial component
+>   library (5–15 components), inconsistent naming patterns
+> - **Likely MATURE**: structured token system already in place, component library with consistent
+>   API patterns, existing theme switching mechanism
 >
 > Based on your codebase analysis, these components appear most frequently:
 > {top 5-10 component patterns found in the repo with usage counts}
 >
 > **Which component tier should I implement first?**
 >
-> RECOMMENDATION based on your Design Maturity ({GREENFIELD|EMERGING|MATURE}):
+> RECOMMENDATION based on your preliminary maturity estimate:
 > - GREENFIELD → **A (Foundation only)**: Start small, validate the token system, then expand.
 >   Building 6+ interactive components before the token system is proven adds unnecessary risk.
 > - EMERGING → **B (Core interactive)**: You have partial patterns — standardizing core components
@@ -330,7 +338,7 @@ Via AskUserQuestion, ask:
 
 ### After All Questions Answered
 
-Only after receiving ALL 7 responses, store answers in a structured format for subsequent phases:
+Only after receiving ALL 8 responses (Q0 through Q7, plus any applicable conditional questions), store answers in a structured format for subsequent phases:
 
 ```typescript
 interface DesignFarmerConfig {
@@ -356,7 +364,7 @@ Summarize the user's choices back to them and ask for final confirmation:
 
 Via AskUserQuestion, ask:
 > Here's your design system configuration:
-> {formatted summary of all 7 choices}
+> {formatted summary of all 8 choices (Q0 pain point through Q7 platforms)}
 >
 > **Is this correct? Ready to proceed?**
 >
