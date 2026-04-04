@@ -47,7 +47,8 @@ Use that version throughout — do NOT assume any specific major version number.
    - yarn: `yarn dlx storybook@latest init`
    - pnpm: `pnpm dlx storybook@latest init`
    - bun: `bunx storybook@latest init`
-   - Verify the installed version after init with the matching package-manager command
+   - After init, verify the installed version: `npx storybook --version` (or the equivalent for your package manager)
+   - Confirm the installed major version matches the addon versions fetched in Step 1
 2. Configure addons (ensure versions match the installed Storybook major version):
    - @storybook/addon-a11y (accessibility checking)
    - @storybook/addon-themes (dark mode toggle)
