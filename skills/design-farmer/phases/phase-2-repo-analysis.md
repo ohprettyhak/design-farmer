@@ -9,14 +9,14 @@ Perform deep analysis of the codebase. Token budget is not a concern — thoroug
 ls pnpm-workspace.yaml turbo.json nx.json lerna.json 2>/dev/null
 
 # Package manager detection
-if [ -f "bun.lockb" ]; then echo "bun"
+if [ -f "bun.lock" ] || [ -f "bun.lockb" ]; then echo "bun"
 elif [ -f "pnpm-lock.yaml" ]; then echo "pnpm"
 elif [ -f "yarn.lock" ]; then echo "yarn"
 elif [ -f "package-lock.json" ]; then echo "npm"
 fi
 
 # Framework detection
-grep -l "react\|next\|vue\|nuxt\|svelte\|astro\|solid\|angular" package.json */package.json 2>/dev/null
+grep -rl "react\|next\|vue\|nuxt\|svelte\|astro\|solid\|angular" --include="package.json" . 2>/dev/null
 
 # TypeScript detection
 ls tsconfig.json tsconfig.*.json 2>/dev/null
@@ -34,7 +34,7 @@ ls .gitlab-ci.yml 2>/dev/null                                     # GitLab CI
 ls vercel.json netlify.toml fly.toml 2>/dev/null                  # Platform configs
 
 # Test framework detection
-grep -l '"vitest"\|"jest"\|"@testing-library"\|"playwright"\|"cypress"' package.json 2>/dev/null
+grep -rl '"vitest"\|"jest"\|"@testing-library"\|"playwright"\|"cypress"' --include="package.json" . 2>/dev/null
 ls vitest.config.* jest.config.* playwright.config.* cypress.config.* 2>/dev/null
 
 # Lint/format tooling

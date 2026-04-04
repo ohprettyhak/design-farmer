@@ -176,6 +176,9 @@ src/design-system/
 /* Step 2: Define semantic aliases in @layer tokens (NOT in @theme) */
 /* These use var() references and are consumed by components directly. */
 /* They do NOT generate utility classes — that is intentional. */
+/* Declare layer order so the browser knows tokens cascade before components. */
+@layer base, tokens, components, utilities;
+
 @layer tokens {
   [data-theme="light"] {
     --surface-primary:   var(--color-primary-50);
@@ -212,7 +215,7 @@ const sd = new StyleDictionary({
   platforms: {
     css: {
       transformGroup: 'css',
-      prefix: 'ds',
+      prefix: 'ds',  // generates --ds-color-* names; remove if your codebase uses --color-* (no prefix)
       buildPath: 'src/themes/',
       files: [
         { destination: 'light.css', format: 'css/variables', filter: token => token.$type === 'color' },
@@ -222,7 +225,7 @@ const sd = new StyleDictionary({
     ts: {
       transformGroup: 'js',
       buildPath: 'src/tokens/dist/',
-      files: [{ destination: 'tokens.ts', format: 'javascript/es6' }],
+      files: [{ destination: 'tokens.ts', format: 'javascript/esm' }],  // 'javascript/es6' was removed in SD 4.x
     },
     // ios: { ... }, android: { ... }  — add when targeting native platforms
   },

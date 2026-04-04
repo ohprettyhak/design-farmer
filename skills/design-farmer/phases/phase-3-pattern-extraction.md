@@ -17,10 +17,10 @@ For each extracted color:
 
 ## 3.2 OKLCH Palette Generation
 
-For each identified base color, generate a 9-step palette:
+For each identified base color, generate an 11-step palette:
 
 ```
-Steps: 50, 100, 200, 300, 500, 700, 800, 900, 950
+Steps: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
 
 Algorithm:
 1. Establish lightness bounds:
@@ -28,14 +28,15 @@ Algorithm:
    - L_min = max(0.05, base_L - delta/2)
    - L_max = min(0.95, base_L + delta/2)
 
-2. Distribute lightness evenly across 9 steps:
+2. Distribute lightness evenly across 11 steps:
    - Step 50:  L_max (lightest)
    - Step 950: L_min (darkest)
    - Step 500: base_L (midpoint)
 
-3. Clamp chroma per step:
-   - Use maxChroma(L, H, 'srgb') to ensure gamut safety
-   - Reduce C while maintaining L and H if out of gamut
+3. Clamp chroma per step to sRGB gamut:
+   - Reduce C while preserving L and H until the color is within sRGB gamut
+   - culori:  clampChroma(color, 'oklch', 'srgb')
+   - Color.js: color.toGamut({ space: 'srgb' })
 
 4. Maintain constant hue across all steps:
    - H never changes within a palette
@@ -72,7 +73,10 @@ is required, also verify WCAG 2.x 4.5:1 alongside APCA checks.
 Dark mode palette = reverse the lightness mapping:
 - Light step 50  (L=0.95) -> Dark step 50  (L=0.15)
 - Light step 950 (L=0.15) -> Dark step 950 (L=0.95)
-- Preserve H and C percentages across the inversion
+- H is preserved unchanged; C values are preserved unchanged (not scaled)
+- Note: dark step 50 is the near-black variant (L=0.15), not near-white.
+  Consumers should use semantic tokens (e.g., --surface-primary) rather than
+  bare palette steps so the inversion is transparent to components.
 - Re-validate APCA contrast for all pairs in dark mode
 ```
 

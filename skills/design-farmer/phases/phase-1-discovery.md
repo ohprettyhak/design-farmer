@@ -278,7 +278,7 @@ Via AskUserQuestion, ask:
 > - B) Custom implementation — manual plugin + data-theme attribute
 >
 > {If plain React (Vite/CRA) detected:}
-> RECOMMENDATION: Choose B — for client-only React apps, a custom ThemeProvider
+> RECOMMENDATION: Choose A — for client-only React apps, a custom ThemeProvider
 > is straightforward and avoids unnecessary dependencies.
 >
 > Options:
@@ -366,7 +366,8 @@ Summarize the user's choices back to them and ask for final confirmation:
 
 Via AskUserQuestion, ask:
 > Here's your design system configuration:
-> {formatted summary of all 8 choices (Q0 pain point through Q7 platforms)}
+> {formatted summary of all 8 choices (Q0 pain point through Q7 platforms),
+>  plus Q3-1 headless library choice (if asked) and Q5-1 theme library choice (if asked)}
 >
 > **Is this correct? Ready to proceed?**
 >
