@@ -10,7 +10,7 @@ Generate a self-contained HTML file at `{systemPath}/design-preview.html`:
 Generate a self-contained HTML file at {systemPath}/design-preview.html that visualizes the proposed design system. This file must:
 
 1. **Color Palette Display** — Show all generated OKLCH palettes as color swatches with:
-   - 9-step swatches (50-950) for each hue
+   - 11-step swatches (50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950) for each hue
    - Hex/OKLCH values displayed under each swatch
    - Light and dark theme variants side by side
 

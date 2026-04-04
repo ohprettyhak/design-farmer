@@ -27,6 +27,52 @@ If Design Maturity = MATURE (score 6+):
   -> Do NOT break existing consumer code without explicit user approval
 ```
 
+## 6.0.1 Dependency Pre-install
+
+Before implementing any component, install required dependencies and verify versions:
+
+```bash
+# Headless library → npm package mapping:
+#
+#   Base UI:     @base-ui-components/react          (single package)
+#   Ark UI:      @ark-ui/react                      (single package)
+#   Headless UI: @headlessui/react                  (single package)
+#   Melt UI:     @melt-ui/svelte                    (single package)
+#   Bits UI:     bits-ui                            (single package)
+#
+#   Radix UI: INDIVIDUAL packages per component — install only what is needed:
+#     @radix-ui/react-slot        (required for asChild pattern — install always)
+#     @radix-ui/react-dialog      (Dialog, Modal)
+#     @radix-ui/react-checkbox    (Checkbox)
+#     @radix-ui/react-radio-group (Radio)
+#     @radix-ui/react-select      (Select)
+#     @radix-ui/react-popover     (Popover)
+#     @radix-ui/react-tooltip     (Tooltip)
+#     @radix-ui/react-tabs        (Tabs)
+#     @radix-ui/react-dropdown-menu (Menu)
+#     @radix-ui/react-toast       (Toast)
+#
+#   For componentScope=foundation: install only @radix-ui/react-slot
+#   For componentScope=core: install slot + dialog + checkbox + radio-group + select
+#   For componentScope=full: install all of the above
+
+if [ "{headlessLibrary}" != "none" ] && [ "{headlessLibrary}" != "" ]; then
+  # For single-package libraries: check version and install
+  # For Radix UI: install per-component packages matching componentScope (see mapping above)
+  # Example (core scope, Radix):
+  #   {packageManager} add @radix-ui/react-slot @radix-ui/react-dialog \
+  #     @radix-ui/react-checkbox @radix-ui/react-radio-group @radix-ui/react-select
+  npm view {headlessPackage} version 2>/dev/null || true
+  {packageManager} add {headlessPackages}
+  # Verify: list installed packages
+  {packageManager} list | grep radix 2>/dev/null || {packageManager} list | grep {headlessLibrary}
+fi
+```
+
+Do NOT hardcode a specific version number — always install the latest from npm.
+
+---
+
 ## 6.1 Headless Component Wrapping Pattern
 
 When the user chose a headless library (Radix, Base UI, Ark UI, etc.), each component

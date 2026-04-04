@@ -74,7 +74,11 @@ Do NOT proceed until user responds.
 # Do not hardcode next-themes; use the user's selected library.
 # Skip install when user chose a custom/no-library path.
 if [ "{themeLibrary}" != "" ] && [ "{themeLibrary}" != "custom" ] && [ "{themeLibrary}" != "none" ]; then
+  # Check latest version before installing
+  npm view {themeLibrary} version
   node -e "require.resolve('{themeLibrary}')" 2>/dev/null || {packageManager} add {themeLibrary}
+  # Verify installed version
+  node -e "console.log(require('{themeLibrary}/package.json').version)" 2>/dev/null || true
 fi
 ```
 

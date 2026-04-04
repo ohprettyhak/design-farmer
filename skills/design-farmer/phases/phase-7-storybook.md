@@ -15,9 +15,31 @@ Via AskUserQuestion, ask:
 > - B) Yes, minimal — Install Storybook with basic stories only
 > - C) No, skip Storybook — Rely on tests and code documentation only
 
-**STOP. Do NOT proceed until user responds.**
+**→ STOP — wait for user response before continuing.**
 
 If user chose A or B:
+
+**Step 0 — (Monorepo only) Determine Storybook location:**
+
+If a monorepo was detected in Phase 0 (pnpm-workspace.yaml / turbo.json / nx.json / lerna.json present),
+ask the user via AskUserQuestion:
+
+> Your project is a monorepo. Where should Storybook live?
+>
+> RECOMMENDATION: Choose A — co-locating Storybook with the design system keeps stories next to source,
+> simplifies imports, and avoids cross-package path configuration.
+>
+> Options:
+> - A) Inside the design system package — `{systemPath}/.storybook/` (co-located, recommended)
+> - B) Dedicated storybook app — `apps/storybook/` or `packages/storybook/` (isolated, good for multi-package docs)
+> - C) Custom path — specify where you want it
+>
+> **→ STOP — wait for user response before continuing.**
+
+Store the resolved path as `{storybookRoot}` for all subsequent steps.
+If the project is NOT a monorepo, set `{storybookRoot}` to `{systemPath}` and skip this question.
+
+---
 
 **Step 1 — Look up the latest stable Storybook version before installing:**
 
@@ -37,22 +59,34 @@ installed Storybook major version. Always verify compatibility before installing
 **Step 2 — Delegate installation:**
 
 ```
-Install and configure Storybook for the design system at {systemPath}:
+Install and configure Storybook at {storybookRoot}:
 
 IMPORTANT: First run `npm view storybook version` to determine the latest stable version.
 Use that version throughout — do NOT assume any specific major version number.
 
-1. Install: use the detected package manager's equivalent of `storybook@latest init`
-   - npm: `npx storybook@latest init`
-   - yarn: `yarn dlx storybook@latest init`
-   - pnpm: `pnpm dlx storybook@latest init`
-   - bun: `bunx storybook@latest init`
-   - Verify the installed version after init with the matching package-manager command
+1. Install: run `storybook@latest init` from {storybookRoot} using the detected package manager
+   - npm: `cd {storybookRoot} && npx storybook@latest init`
+   - yarn: `cd {storybookRoot} && yarn dlx storybook@latest init`
+   - pnpm: `cd {storybookRoot} && pnpm dlx storybook@latest init`
+   - bun: `cd {storybookRoot} && bunx storybook@latest init`
+   - For monorepo Option B (dedicated app at e.g. `apps/storybook`):
+     a. Create `apps/storybook/package.json` with the design system as a workspace dependency:
+        `{ "name": "@{scope}/storybook", "version": "0.0.1", "private": true,
+           "dependencies": { "@{scope}/design-system": "workspace:*" } }`
+     b. Register the package in `pnpm-workspace.yaml` (if not already covered by glob, add `- 'apps/*'`)
+     c. If turbo.json exists, add `storybook` and `build-storybook` tasks to the pipeline
+     d. Run init from inside the new package: `cd apps/storybook && {packageManager} dlx storybook@latest init`
+     e. In `apps/storybook/.storybook/main.ts`, set the `stories` glob to reach the design system:
+        `stories: ['../../packages/design-system/src/**/*.stories.@(ts|tsx)']`
+     f. Import the design system's tokens/CSS from the workspace package in `preview.ts`:
+        `import '@{scope}/design-system/src/tokens/index.css'`
+   - After init, verify the installed version: `npx storybook --version` (or the equivalent for your package manager)
+   - Confirm the installed major version matches the addon versions fetched in Step 1
 2. Configure addons (ensure versions match the installed Storybook major version):
    - @storybook/addon-a11y (accessibility checking)
    - @storybook/addon-themes (dark mode toggle)
    - @storybook/addon-docs (auto documentation)
-3. Configure .storybook/preview.ts:
+3. Configure {storybookRoot}/.storybook/preview.ts:
    - Import the design system's global CSS (tokens, reset, theme files)
    - Set up theme decorator for dark mode toggle (see 'Storybook Dark Mode Decorator' below)
    - Configure viewport presets (mobile: 375px, tablet: 768px, desktop: 1280px)
@@ -314,12 +348,12 @@ export const Overflow: Story = {
 
 **Step 4 — Storybook Dark Mode Decorator Configuration:**
 
-The decorator in `.storybook/preview.ts` MUST match the `attribute` used by the app's
+The decorator in `{storybookRoot}/.storybook/preview.ts` MUST match the `attribute` used by the app's
 `ThemeProvider`. A mismatch means the Storybook toggle changes state but components
 render with wrong theme styles.
 
 ```typescript
-// .storybook/preview.ts
+// {storybookRoot}/.storybook/preview.ts
 
 // === Option A: data-attribute based (default for next-themes attribute="data-theme") ===
 import { withThemeByDataAttribute } from '@storybook/addon-themes'

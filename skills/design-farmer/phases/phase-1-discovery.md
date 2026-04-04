@@ -6,6 +6,28 @@ If the user expresses impatience after 3+ questions, offer to use sensible defau
 
 ---
 
+### Question 0: Motivation & Pain Points
+
+Via AskUserQuestion, ask:
+
+> Before we start building, I want to understand what's driving this effort.
+>
+> **What is the biggest pain point this design system should solve?**
+>
+> Options:
+> - A) Visual inconsistency — components look different across pages or teams
+> - B) Accessibility failures — failing audits or user-reported issues
+> - C) Developer experience — too much time spent on UI, slow onboarding
+> - D) Designer-developer handoff — Figma decisions don't translate to code
+> - E) Something else — describe in your own words
+>
+> Your answer shapes every recommendation that follows: accessibility pain → WCAG 2.x AA
+> prioritized; handoff pain → Figma integration highlighted; DX pain → token-first approach.
+
+**→ STOP — wait for user response before continuing.**
+
+---
+
 ### Question 1: Project Vision
 
 Via AskUserQuestion, ask:
@@ -31,7 +53,7 @@ Via AskUserQuestion, ask:
 >
 > Each option shapes token naming, package boundaries, and versioning strategy.
 
-**STOP. Do NOT proceed until user responds.**
+**→ STOP — wait for user response before continuing.**
 
 ---
 
@@ -54,9 +76,9 @@ Via AskUserQuestion, ask:
 > - C) Neutral-first — start with a grayscale system, add brand colors later
 > - D) Custom palette — provide specific colors you want to use
 >
-> I'll use OKLCH for perceptual uniformity and generate a 9-step scale (50-950) with proper contrast ratios.
+> I'll use OKLCH for perceptual uniformity and generate an 11-step scale (50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950) with proper contrast ratios.
 
-**STOP. Do NOT proceed until user responds.**
+**→ STOP — wait for user response before continuing.**
 
 ---
 
@@ -66,13 +88,32 @@ Via AskUserQuestion, ask:
 
 > Let's define the initial component boundary.
 >
+> Based on the Phase 0 pre-flight scan, here is a **preliminary maturity estimate**
+> (Phase 2 will produce the formal score — use this as a directional guide only):
+>
+> - **Likely GREENFIELD**: no design token files, no `design-system/` or `primitives/` directory,
+>   colors and spacing are hardcoded throughout the codebase
+> - **Likely EMERGING**: some CSS custom properties or theme config found, partial component
+>   library (5–15 components), inconsistent naming patterns
+> - **Likely MATURE**: structured token system already in place, component library with consistent
+>   API patterns, existing theme switching mechanism
+>
 > Based on your codebase analysis, these components appear most frequently:
 > {top 5-10 component patterns found in the repo with usage counts}
 >
 > **Which component tier should I implement first?**
 >
-> RECOMMENDATION: Choose B — covers 80% of common UI needs and establishes patterns for everything else.
+> RECOMMENDATION based on your preliminary maturity estimate:
+> - GREENFIELD → **A (Foundation only)**: Start small, validate the token system, then expand.
+>   Building 6+ interactive components before the token system is proven adds unnecessary risk.
+> - EMERGING → **B (Core interactive)**: You have partial patterns — standardizing core components
+>   gives the highest return on investment. Covers 80% of common UI needs.
+> - MATURE → **C or D**: Your existing system is proven. Expand to the full starter kit
+>   or select specific components that fill your current gaps.
 > Completeness: A=4/10, B=7/10, C=9/10, D=varies
+> **Scope & time:** Foundation (A) → fastest MVP (days); Core (B) → 1-2 weeks;
+> Full starter kit (C) → 3-4 weeks; Custom (D) → varies. Choose based on your timeline
+> as well as your maturity level.
 >
 > Options:
 > - A) Foundation only — Tokens + Typography + Color + Spacing + Layout primitives
@@ -82,7 +123,7 @@ Via AskUserQuestion, ask:
 >
 > Each component gets full accessibility (WCAG AA), keyboard navigation, and theme support.
 
-**STOP. Do NOT proceed until user responds.**
+**→ STOP — wait for user response before continuing.**
 
 ---
 
@@ -135,7 +176,7 @@ Via AskUserQuestion, ask:
 > keyboard navigation, ARIA, and focus management. You provide the visual layer using
 > your design tokens and styling approach.
 
-**STOP. Do NOT proceed until user responds.**
+**→ STOP — wait for user response before continuing.**
 
 ---
 
@@ -163,7 +204,7 @@ Via AskUserQuestion, ask:
 >
 > Token files, component source, and tests all live here with their own build configuration.
 
-**STOP. Do NOT proceed until user responds.**
+**→ STOP — wait for user response before continuing.**
 
 ---
 
@@ -184,7 +225,7 @@ Via AskUserQuestion, ask:
 >
 > Implementation: CSS custom properties with `data-theme` attribute switching. All colors stored as OKLCH values.
 
-**STOP. Do NOT proceed until user responds.**
+**→ STOP — wait for user response before continuing.**
 
 ---
 
@@ -237,7 +278,7 @@ Via AskUserQuestion, ask:
 > - B) Custom implementation — manual plugin + data-theme attribute
 >
 > {If plain React (Vite/CRA) detected:}
-> RECOMMENDATION: Choose B — for client-only React apps, a custom ThemeProvider
+> RECOMMENDATION: Choose A — for client-only React apps, a custom ThemeProvider
 > is straightforward and avoids unnecessary dependencies.
 >
 > Options:
@@ -249,7 +290,7 @@ Via AskUserQuestion, ask:
 > - A) Framework-recommended library — I'll research the best option for {framework}
 > - B) Custom implementation — manual data-theme attribute + matchMedia + localStorage
 
-**STOP. Do NOT proceed until user responds.**
+**→ STOP — wait for user response before continuing.**
 
 ---
 
@@ -259,14 +300,22 @@ Via AskUserQuestion, ask:
 
 > **What accessibility standard should we target?**
 >
-> RECOMMENDATION: Choose C — APCA pairs naturally with OKLCH's perceptual uniformity and provides more accurate contrast evaluation than traditional WCAG 2.x ratios.
+> {If Q0 answer was B (Accessibility failures): RECOMMENDATION: Choose A — WCAG 2.2 AA is the
+> legally enforceable standard and directly addresses the audit failures you described. Add APCA
+> on top once the baseline is met.}
+> {Otherwise:} RECOMMENDATION: Choose C — APCA pairs naturally with OKLCH's perceptual uniformity
+> and provides more accurate contrast evaluation than traditional WCAG 2.x ratios.
 >
 > Options:
 > - A) WCAG 2.2 AA — industry standard, legally required in many jurisdictions
 > - B) WCAG 2.2 AAA — highest conformance, stricter contrast and interaction requirements
 > - C) AA with APCA — modern contrast algorithm, better perceptual accuracy with OKLCH
+>   ⚠️ **Legal note:** APCA is part of the WCAG 3.0 Working Draft, not yet a W3C Recommendation.
+>   Legal accessibility requirements (ADA, EN 301 549) mandate WCAG 2.x AA — passing APCA Lc 60
+>   does **not** guarantee WCAG 2.x 4.5:1 compliance. If legal compliance is required, run
+>   WCAG 2.x contrast checks alongside APCA.
 
-**STOP. Do NOT proceed until user responds.**
+**→ STOP — wait for user response before continuing.**
 
 ---
 
@@ -287,16 +336,19 @@ Via AskUserQuestion, ask:
 > - C) Web + Mobile (hybrid) — tokens exported for CSS and native mobile (iOS/Android)
 > - D) Multi-platform — full cross-platform support with platform adapters
 
-**STOP. Do NOT proceed until user responds.**
+**→ STOP — wait for user response before continuing.**
 
 ---
 
 ### After All Questions Answered
 
-Only after receiving ALL 7 responses, store answers in a structured format for subsequent phases:
+Only after receiving ALL 8 responses (Q0 through Q7, plus any applicable conditional questions), store answers in a structured format for subsequent phases:
 
 ```typescript
 interface DesignFarmerConfig {
+  // Q0–Q7 answers
+  painPoint?: 'inconsistency' | 'accessibility' | 'dx' | 'handoff' | 'other';
+  painPointDetail?: string; // if 'other'
   vision: 'internal' | 'multi-product' | 'open-source' | 'design-bridge';
   colorDirection: 'keep' | 'brand' | 'neutral' | 'custom';
   brandColor?: string; // OKLCH primary
@@ -308,6 +360,10 @@ interface DesignFarmerConfig {
   themeLibrary?: string; // e.g., 'next-themes', 'custom', 'mode-watcher', etc.
   accessibilityLevel: 'aa' | 'aaa' | 'apca';
   targetPlatforms: 'web' | 'web-native' | 'web-hybrid' | 'multi-platform';
+  // Detected from Phase 0/2 — carried into all subsequent phases
+  packageManager: 'bun' | 'pnpm' | 'npm' | 'yarn';
+  framework: string; // e.g., 'next-app-router', 'next-pages-router', 'vite-react', 'astro', 'sveltekit', 'nuxt', 'remix'
+  isMonorepo: boolean;
 }
 ```
 
@@ -315,7 +371,8 @@ Summarize the user's choices back to them and ask for final confirmation:
 
 Via AskUserQuestion, ask:
 > Here's your design system configuration:
-> {formatted summary of all 7 choices}
+> {formatted summary of all 8 choices (Q0 pain point through Q7 platforms),
+>  plus Q3-1 headless library choice (if asked) and Q5-1 theme library choice (if asked)}
 >
 > **Is this correct? Ready to proceed?**
 >
@@ -323,4 +380,4 @@ Via AskUserQuestion, ask:
 > - A) Yes, proceed to repository analysis
 > - B) I want to change some answers (specify which)
 
-**STOP. Do NOT proceed until user confirms.**
+**→ STOP — wait for user response before continuing.**

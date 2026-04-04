@@ -9,14 +9,14 @@ Perform deep analysis of the codebase. Token budget is not a concern — thoroug
 ls pnpm-workspace.yaml turbo.json nx.json lerna.json 2>/dev/null
 
 # Package manager detection
-if [ -f "bun.lockb" ]; then echo "bun"
+if [ -f "bun.lock" ] || [ -f "bun.lockb" ]; then echo "bun"
 elif [ -f "pnpm-lock.yaml" ]; then echo "pnpm"
 elif [ -f "yarn.lock" ]; then echo "yarn"
 elif [ -f "package-lock.json" ]; then echo "npm"
 fi
 
 # Framework detection
-grep -l "react\|next\|vue\|nuxt\|svelte\|astro\|solid\|angular" package.json */package.json 2>/dev/null
+grep -rl "react\|next\|vue\|nuxt\|svelte\|astro\|solid\|angular" --include="package.json" . 2>/dev/null
 
 # TypeScript detection
 ls tsconfig.json tsconfig.*.json 2>/dev/null
@@ -34,7 +34,7 @@ ls .gitlab-ci.yml 2>/dev/null                                     # GitLab CI
 ls vercel.json netlify.toml fly.toml 2>/dev/null                  # Platform configs
 
 # Test framework detection
-grep -l '"vitest"\|"jest"\|"@testing-library"\|"playwright"\|"cypress"' package.json 2>/dev/null
+grep -rl '"vitest"\|"jest"\|"@testing-library"\|"playwright"\|"cypress"' --include="package.json" . 2>/dev/null
 ls vitest.config.* jest.config.* playwright.config.* cypress.config.* 2>/dev/null
 
 # Lint/format tooling
@@ -117,6 +117,13 @@ grep -r "export.*function\|export.*const\|export default" --include="*.tsx" --in
 # Find styled-components, CSS modules, Tailwind usage
 grep -rl "styled\.\|css`\|module\.css\|className=" --include="*.tsx" --include="*.ts" | head -20
 grep -rl "tailwind\|@apply\|tw`" --include="*.css" --include="*.tsx" --include="*.ts" --include="*.config.*" | head -10
+
+# Find zero-runtime CSS-in-JS (vanilla-extract, Panda CSS, Linaria)
+find . -name "*.css.ts" 2>/dev/null | head -10                          # vanilla-extract
+grep -rl "@vanilla-extract/css" --include="package.json" . 2>/dev/null | head -10  # vanilla-extract dep
+ls panda.config.ts panda.config.js 2>/dev/null                          # Panda CSS
+find . -type d -name "styled-system" 2>/dev/null | head -5              # Panda CSS output dir
+grep -rl "from 'linaria'\|from '@linaria'" --include="*.ts" --include="*.tsx" | head -5  # Linaria
 ```
 
 ## 2.4 Analysis Report
@@ -132,7 +139,7 @@ Produce a structured report:
 - Language: {TypeScript 5.x / JavaScript}
 - Package Manager: {bun / pnpm / npm / yarn}
 - Build Tool: {Vite / webpack / Turbopack / esbuild / Rollup}
-- Styling: {CSS Modules / Tailwind v{version} / styled-components / vanilla CSS}
+- Styling: {CSS Modules / Tailwind v{version} / styled-components / vanilla-extract / Panda CSS / Linaria / vanilla CSS}
 - Testing: {Vitest / Jest / Playwright / Cypress / none}
 - Linting: {ESLint / Biome / oxlint / none}
 - CI/CD: {GitHub Actions / GitLab CI / Vercel / Netlify / none}

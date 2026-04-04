@@ -20,6 +20,13 @@ plugins or agent frameworks required. Run every reviewer pass; execute them in p
 
 ---
 
+**Before running any reviewer pass:** Read `{systemPath}/DESIGN.md` if it exists.
+All reviewers must calibrate their evaluation against the documented design decisions,
+rationale, and approved visual direction in DESIGN.md. A deviation that contradicts
+DESIGN.md is a finding; a deviation not covered by DESIGN.md should be noted separately.
+
+---
+
 ## 8.1 Design System Critic
 
 **Role:** You are a senior design systems architect who has built and maintained design
@@ -207,7 +214,7 @@ For every oklch() value in the token files:
 a) Parse L, C, H values
 b) Verify L is within [0.05, 0.95] (clamped range)
 c) Verify C does not exceed maxChroma for the given L and H in sRGB gamut
-d) For each 9-step palette, verify lightness distribution:
+d) For each 11-step palette, verify lightness distribution:
    - Step 50 should have highest L, step 950 lowest L
    - Steps should be roughly evenly distributed
    - Hue (H) must be constant across all steps (tolerance: +/-0.5 degrees)

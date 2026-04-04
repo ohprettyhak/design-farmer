@@ -48,7 +48,7 @@ All must pass with zero errors before declaring completion.
 
 ### Color System
 - Color space: OKLCH
-- Palettes: {count} hue palettes, 9 steps each
+- Palettes: {count} hue palettes, 11 steps each (50–950)
 - Contrast: APCA validated, all pairs meet Lc 60+ threshold
 - Gamut: sRGB safe with P3 enhancement where supported
 
