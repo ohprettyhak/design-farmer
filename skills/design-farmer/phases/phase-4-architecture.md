@@ -592,11 +592,13 @@ If styled-components / Emotion detected:
 If vanilla-extract detected (*.css.ts files, @vanilla-extract/css in package.json):
   -> Use createThemeContract + createTheme for token implementation
   -> Token hierarchy maps directly to vanilla-extract's contract structure:
-     - Primitive tokens  → createThemeContract({ color: { primary: { 500: '' } } })
-     - Semantic tokens   → createTheme(contract, { color: { primary: { 500: 'oklch(0.55 0.20 250)' } } })
-     - Dark theme        → createTheme(contract, { ... dark values ... })
+     - Primitive tokens  → define raw scale values in a plain object (not a contract)
+     - Semantic contract → createThemeContract({ color: { interactive: { primary: '' }, surface: { default: '' } } })
+     - Light theme       → createTheme(contract, { color: { interactive: { primary: 'oklch(0.55 0.20 250)' }, surface: { default: 'oklch(0.98 0.00 0)' } } })
+     - Dark theme        → createTheme(contract, { color: { interactive: { primary: 'oklch(0.70 0.18 250)' }, surface: { default: 'oklch(0.12 0.00 0)' } } })
   -> Components use style() or recipe() with contract references:
-     background: vars.color.interactive.primary
+     background: vars.color.interactive.primary   // TypeScript-safe: key exists in contract
+  -> Contract shape must exactly match consumption paths (vars.color.X.Y); mismatches are TypeScript errors
   -> Zero runtime overhead, RSC compatible, full TypeScript safety
   -> No separate CSS file needed — .css.ts files generate static CSS at build time
 

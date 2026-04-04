@@ -120,7 +120,7 @@ grep -rl "tailwind\|@apply\|tw`" --include="*.css" --include="*.tsx" --include="
 
 # Find zero-runtime CSS-in-JS (vanilla-extract, Panda CSS, Linaria)
 find . -name "*.css.ts" 2>/dev/null | head -10                          # vanilla-extract
-grep -l "@vanilla-extract/css" package.json */package.json 2>/dev/null  # vanilla-extract dep
+grep -rl "@vanilla-extract/css" --include="package.json" . 2>/dev/null | head -10  # vanilla-extract dep
 ls panda.config.ts panda.config.js 2>/dev/null                          # Panda CSS
 find . -type d -name "styled-system" 2>/dev/null | head -5              # Panda CSS output dir
 grep -rl "from 'linaria'\|from '@linaria'" --include="*.ts" --include="*.tsx" | head -5  # Linaria
