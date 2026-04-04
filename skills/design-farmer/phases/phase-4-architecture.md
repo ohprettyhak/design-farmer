@@ -149,18 +149,15 @@ src/design-system/
 /* tokens.css — Tailwind v4 @theme integration */
 @import "tailwindcss";
 
+/* Step 1: Register primitive values in @theme for utility class generation */
 @theme {
-  /* Colors from OKLCH palette */
-  --color-primary-50: oklch(0.95 0.02 250);
+  /* Primitive color palette → generates bg-primary-50, text-primary-500, etc. */
+  --color-primary-50:  oklch(0.95 0.02 250);
   --color-primary-100: oklch(0.90 0.04 250);
   --color-primary-500: oklch(0.55 0.20 250);
   --color-primary-900: oklch(0.22 0.11 250);
 
-  /* Semantic aliases */
-  --color-surface: var(--surface-primary);
-  --color-on-surface: var(--text-primary);
-
-  /* Spacing from token scale */
+  /* Spacing from token scale → generates p-1, m-2, gap-4, etc. */
   --spacing-0: 0px;
   --spacing-1: 4px;
   --spacing-2: 8px;
@@ -169,16 +166,81 @@ src/design-system/
   --spacing-6: 24px;
   --spacing-8: 32px;
 
-  /* Radius from token scale */
+  /* Radius → generates rounded-sm, rounded-md, etc. */
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 12px;
   --radius-full: 9999px;
 }
+
+/* Step 2: Define semantic aliases in @layer tokens (NOT in @theme) */
+/* These use var() references and are consumed by components directly. */
+/* They do NOT generate utility classes — that is intentional. */
+@layer tokens {
+  [data-theme="light"] {
+    --surface-primary:   var(--color-primary-50);
+    --text-on-surface:   var(--color-primary-900);
+    --interactive-primary: var(--color-primary-500);
+  }
+
+  [data-theme="dark"] {
+    --surface-primary:   var(--color-primary-900);
+    --text-on-surface:   var(--color-primary-50);
+    --interactive-primary: var(--color-primary-100);
+  }
+}
+
+/* Components consume semantic tokens (var(--surface-primary)), not primitive ones. */
+/* Tailwind utilities use primitive tokens (bg-primary-500). */
+/* This separation keeps a single source of truth while supporting both paradigms. */
 ```
 
 This auto-generates Tailwind utility classes (e.g., `bg-primary-500`, `p-4`, `rounded-md`)
 from your design tokens, maintaining a single source of truth.
+
+**Alternative: Style Dictionary 4.x**
+
+For projects requiring multi-platform token output (CSS + iOS Swift + Android Kotlin + React Native JS),
+consider Style Dictionary 4.x as an alternative to the custom `build.ts` approach:
+
+```js
+// style-dictionary.config.js
+import StyleDictionary from 'style-dictionary';
+
+const sd = new StyleDictionary({
+  source: ['src/tokens/**/*.json'],  // DTCG-format token files
+  platforms: {
+    css: {
+      transformGroup: 'css',
+      prefix: 'ds',
+      buildPath: 'src/themes/',
+      files: [
+        { destination: 'light.css', format: 'css/variables', filter: token => token.$type === 'color' },
+        { destination: 'dark.css',  format: 'css/variables', filter: token => token.$extensions?.mode === 'dark' },
+      ],
+    },
+    ts: {
+      transformGroup: 'js',
+      buildPath: 'src/tokens/dist/',
+      files: [{ destination: 'tokens.ts', format: 'javascript/es6' }],
+    },
+    // ios: { ... }, android: { ... }  — add when targeting native platforms
+  },
+});
+
+await sd.buildAllPlatforms();
+```
+
+**When to choose Style Dictionary vs custom build.ts:**
+
+| Scenario | Recommendation |
+|----------|---------------|
+| Web-only output (CSS + TS) | Custom `build.ts` — simpler, fewer dependencies |
+| Multi-platform (CSS + iOS + Android) | Style Dictionary — built-in transforms, active ecosystem |
+| Design Token Community Group (DTCG) format already in use | Style Dictionary 4.x — native DTCG support |
+| Team already uses Style Dictionary | Style Dictionary — avoid introducing a second build pipeline |
+
+Style Dictionary 4.x natively supports the DTCG `$value`/`$type` format used in this design system.
 
 ## 4.4 CSS Layer Strategy
 
@@ -370,6 +432,21 @@ module.exports = { darkMode: 'selector' }  // Tailwind >= 3.4.1
 // or: darkMode: 'class'                   // Tailwind < 3.4.1
 ```
 
+```css
+/* Tailwind v4: dark mode is configured in CSS, not tailwind.config.js */
+/* In your main CSS entry point (e.g., globals.css or tokens.css): */
+@import "tailwindcss";
+
+/* Option A: data-theme attribute strategy */
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+/* Option B: class strategy (for next-themes attribute="class") */
+/* @custom-variant dark (&:where(.dark, .dark *)); */
+
+/* After this, Tailwind's dark: variant works with your chosen strategy: */
+/* dark:bg-primary-900, dark:text-primary-50, etc. */
+```
+
 When using `attribute="class"`, `ThemeProvider` toggles `class="dark"` on `<html>`,
 which Tailwind's `dark:` variant reads. When using `attribute="data-theme"` (default),
 configure Tailwind's dark mode selector accordingly:
@@ -511,6 +588,29 @@ If CSS Modules detected:
 If styled-components / Emotion detected:
   -> Generate theme object from tokens for ThemeProvider
   -> Components consume via theme prop or css`` template
+
+If vanilla-extract detected (*.css.ts files, @vanilla-extract/css in package.json):
+  -> Use createThemeContract + createTheme for token implementation
+  -> Token hierarchy maps directly to vanilla-extract's contract structure:
+     - Primitive tokens  → createThemeContract({ color: { primary: { 500: '' } } })
+     - Semantic tokens   → createTheme(contract, { color: { primary: { 500: 'oklch(0.55 0.20 250)' } } })
+     - Dark theme        → createTheme(contract, { ... dark values ... })
+  -> Components use style() or recipe() with contract references:
+     background: vars.color.interactive.primary
+  -> Zero runtime overhead, RSC compatible, full TypeScript safety
+  -> No separate CSS file needed — .css.ts files generate static CSS at build time
+
+If Panda CSS detected (panda.config.ts, styled-system/ directory):
+  -> Define tokens in panda.config defineConfig():
+     theme: {
+       tokens: { colors: { primary: { 500: { value: 'oklch(0.55 0.20 250)' } } } },
+       semanticTokens: { colors: { surface: { value: { base: '{colors.primary.50}', _dark: '{colors.primary.900}' } } } }
+     }
+  -> The Panda config's tokens/semanticTokens structure mirrors this design system's
+     primitive/semantic two-tier naming convention directly
+  -> Components use css() or styled() with semantic token references
+  -> Zero runtime overhead, RSC compatible, automatic dark mode via semanticTokens conditions
+  -> Built-in OKLCH support: value: 'oklch(0.55 0.20 250)' works natively
 
 If no styling framework detected:
   -> Default to CSS custom properties + vanilla CSS

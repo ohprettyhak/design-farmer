@@ -46,7 +46,25 @@ Key hue ranges:
 Contrast rules (APCA):
   Light bg (L > 0.85): fg L <= 0.45
   Dark bg  (L < 0.25): fg L >= 0.75
-  Normal text: Lc 60 (pass), Lc 75 (preferred)
+
+  APCA thresholds vary by font size and weight — Lc 60/75 are NOT universal:
+
+  | Text category         | Size       | Weight | Min Lc (pass) | Preferred Lc |
+  |-----------------------|------------|--------|---------------|--------------|
+  | Large display / hero  | ≥ 36px     | any    | Lc 45         | Lc 60        |
+  | UI labels / headings  | 24–35px    | any    | Lc 55         | Lc 68        |
+  | Body text (default)   | 16–23px    | 400+   | Lc 60         | Lc 75        |
+  | Small / caption       | 14–15px    | 400    | Lc 75         | Lc 90        |
+  | Small / caption       | 14–15px    | 700    | Lc 60         | Lc 75        |
+  | Minimum readable      | ≤ 13px     | any    | Lc 90         | avoid        |
+
+  Rule: NEVER adjust chroma for contrast — only modify the L channel.
+  Rule: Re-validate APCA after every theme inversion (dark mode).
+  Reference: https://www.myndex.com/APCA/ (APCA Readability Criterion)
+
+  ⚠️  Legal note: APCA is a WCAG 3.0 Working Draft algorithm, not yet a W3C standard.
+  For legally required accessibility (ADA, EN 301 549), also verify WCAG 2.x 4.5:1 (body)
+  and 3:1 (large text ≥ 18pt or 14pt bold). APCA Lc 60 ≠ WCAG 2.x 4.5:1.
 
 Gamut safety:
   sRGB:      reduce C while keeping L and H

@@ -6,6 +6,28 @@ If the user expresses impatience after 3+ questions, offer to use sensible defau
 
 ---
 
+### Question 0: Motivation & Pain Points
+
+Via AskUserQuestion, ask:
+
+> Before we start building, I want to understand what's driving this effort.
+>
+> **What is the biggest pain point this design system should solve?**
+>
+> Options:
+> - A) Visual inconsistency — components look different across pages or teams
+> - B) Accessibility failures — failing audits or user-reported issues
+> - C) Developer experience — too much time spent on UI, slow onboarding
+> - D) Designer-developer handoff — Figma decisions don't translate to code
+> - E) Something else — describe in your own words
+>
+> Your answer shapes every recommendation that follows: accessibility pain → WCAG 2.x AA
+> prioritized; handoff pain → Figma integration highlighted; DX pain → token-first approach.
+
+**→ STOP — wait for user response before continuing.**
+
+---
+
 ### Question 1: Project Vision
 
 Via AskUserQuestion, ask:
@@ -31,7 +53,7 @@ Via AskUserQuestion, ask:
 >
 > Each option shapes token naming, package boundaries, and versioning strategy.
 
-**STOP. Do NOT proceed until user responds.**
+**→ STOP — wait for user response before continuing.**
 
 ---
 
@@ -56,7 +78,7 @@ Via AskUserQuestion, ask:
 >
 > I'll use OKLCH for perceptual uniformity and generate a 9-step scale (50-950) with proper contrast ratios.
 
-**STOP. Do NOT proceed until user responds.**
+**→ STOP — wait for user response before continuing.**
 
 ---
 
@@ -66,13 +88,24 @@ Via AskUserQuestion, ask:
 
 > Let's define the initial component boundary.
 >
+> Design Maturity (from Phase 2): **{GREENFIELD|EMERGING|MATURE}** — this shapes the recommendation below.
+>
 > Based on your codebase analysis, these components appear most frequently:
 > {top 5-10 component patterns found in the repo with usage counts}
 >
 > **Which component tier should I implement first?**
 >
-> RECOMMENDATION: Choose B — covers 80% of common UI needs and establishes patterns for everything else.
+> RECOMMENDATION based on your Design Maturity ({GREENFIELD|EMERGING|MATURE}):
+> - GREENFIELD → **A (Foundation only)**: Start small, validate the token system, then expand.
+>   Building 6+ interactive components before the token system is proven adds unnecessary risk.
+> - EMERGING → **B (Core interactive)**: You have partial patterns — standardizing core components
+>   gives the highest return on investment. Covers 80% of common UI needs.
+> - MATURE → **C or D**: Your existing system is proven. Expand to the full starter kit
+>   or select specific components that fill your current gaps.
 > Completeness: A=4/10, B=7/10, C=9/10, D=varies
+> **Scope & time:** Foundation (A) → fastest MVP (days); Core (B) → 1-2 weeks;
+> Full starter kit (C) → 3-4 weeks; Custom (D) → varies. Choose based on your timeline
+> as well as your maturity level.
 >
 > Options:
 > - A) Foundation only — Tokens + Typography + Color + Spacing + Layout primitives
@@ -82,7 +115,7 @@ Via AskUserQuestion, ask:
 >
 > Each component gets full accessibility (WCAG AA), keyboard navigation, and theme support.
 
-**STOP. Do NOT proceed until user responds.**
+**→ STOP — wait for user response before continuing.**
 
 ---
 
@@ -135,7 +168,7 @@ Via AskUserQuestion, ask:
 > keyboard navigation, ARIA, and focus management. You provide the visual layer using
 > your design tokens and styling approach.
 
-**STOP. Do NOT proceed until user responds.**
+**→ STOP — wait for user response before continuing.**
 
 ---
 
@@ -163,7 +196,7 @@ Via AskUserQuestion, ask:
 >
 > Token files, component source, and tests all live here with their own build configuration.
 
-**STOP. Do NOT proceed until user responds.**
+**→ STOP — wait for user response before continuing.**
 
 ---
 
@@ -184,7 +217,7 @@ Via AskUserQuestion, ask:
 >
 > Implementation: CSS custom properties with `data-theme` attribute switching. All colors stored as OKLCH values.
 
-**STOP. Do NOT proceed until user responds.**
+**→ STOP — wait for user response before continuing.**
 
 ---
 
@@ -249,7 +282,7 @@ Via AskUserQuestion, ask:
 > - A) Framework-recommended library — I'll research the best option for {framework}
 > - B) Custom implementation — manual data-theme attribute + matchMedia + localStorage
 
-**STOP. Do NOT proceed until user responds.**
+**→ STOP — wait for user response before continuing.**
 
 ---
 
@@ -265,8 +298,12 @@ Via AskUserQuestion, ask:
 > - A) WCAG 2.2 AA — industry standard, legally required in many jurisdictions
 > - B) WCAG 2.2 AAA — highest conformance, stricter contrast and interaction requirements
 > - C) AA with APCA — modern contrast algorithm, better perceptual accuracy with OKLCH
+>   ⚠️ **Legal note:** APCA is part of the WCAG 3.0 Working Draft, not yet a W3C Recommendation.
+>   Legal accessibility requirements (ADA, EN 301 549) mandate WCAG 2.x AA — passing APCA Lc 60
+>   does **not** guarantee WCAG 2.x 4.5:1 compliance. If legal compliance is required, run
+>   WCAG 2.x contrast checks alongside APCA.
 
-**STOP. Do NOT proceed until user responds.**
+**→ STOP — wait for user response before continuing.**
 
 ---
 
@@ -287,7 +324,7 @@ Via AskUserQuestion, ask:
 > - C) Web + Mobile (hybrid) — tokens exported for CSS and native mobile (iOS/Android)
 > - D) Multi-platform — full cross-platform support with platform adapters
 
-**STOP. Do NOT proceed until user responds.**
+**→ STOP — wait for user response before continuing.**
 
 ---
 
@@ -308,6 +345,10 @@ interface DesignFarmerConfig {
   themeLibrary?: string; // e.g., 'next-themes', 'custom', 'mode-watcher', etc.
   accessibilityLevel: 'aa' | 'aaa' | 'apca';
   targetPlatforms: 'web' | 'web-native' | 'web-hybrid' | 'multi-platform';
+  painPoint?: 'inconsistency' | 'accessibility' | 'dx' | 'handoff' | 'other';
+  painPointDetail?: string; // if 'other'
+  visualTone?: 'minimalist' | 'expressive' | 'utility' | 'existing';
+  mvpScope?: 'foundation-first' | 'core-first' | 'full' | 'custom';
 }
 ```
 
@@ -323,4 +364,4 @@ Via AskUserQuestion, ask:
 > - A) Yes, proceed to repository analysis
 > - B) I want to change some answers (specify which)
 
-**STOP. Do NOT proceed until user confirms.**
+**→ STOP — wait for user response before continuing.**
