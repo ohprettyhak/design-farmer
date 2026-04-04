@@ -300,7 +300,11 @@ Via AskUserQuestion, ask:
 
 > **What accessibility standard should we target?**
 >
-> RECOMMENDATION: Choose C — APCA pairs naturally with OKLCH's perceptual uniformity and provides more accurate contrast evaluation than traditional WCAG 2.x ratios.
+> {If Q0 answer was B (Accessibility failures): RECOMMENDATION: Choose A — WCAG 2.2 AA is the
+> legally enforceable standard and directly addresses the audit failures you described. Add APCA
+> on top once the baseline is met.}
+> {Otherwise:} RECOMMENDATION: Choose C — APCA pairs naturally with OKLCH's perceptual uniformity
+> and provides more accurate contrast evaluation than traditional WCAG 2.x ratios.
 >
 > Options:
 > - A) WCAG 2.2 AA — industry standard, legally required in many jurisdictions
@@ -355,8 +359,6 @@ interface DesignFarmerConfig {
   targetPlatforms: 'web' | 'web-native' | 'web-hybrid' | 'multi-platform';
   painPoint?: 'inconsistency' | 'accessibility' | 'dx' | 'handoff' | 'other';
   painPointDetail?: string; // if 'other'
-  visualTone?: 'minimalist' | 'expressive' | 'utility' | 'existing';
-  mvpScope?: 'foundation-first' | 'core-first' | 'full' | 'custom';
 }
 ```
 
