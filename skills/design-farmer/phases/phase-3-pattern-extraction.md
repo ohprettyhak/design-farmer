@@ -126,6 +126,8 @@ Dark mode palette = reverse the lightness mapping:
 - Note: dark step 50 is the near-black variant (L=0.15), not near-white.
   Consumers should use semantic tokens (e.g., --surface-default) rather than
   bare palette steps so the inversion is transparent to components.
+- Re-clamp chroma to sRGB gamut after inversion (changing L with constant C
+  can push high-chroma hues out of gamut)
 - Re-validate APCA contrast for all pairs in dark mode
 ```
 
