@@ -73,6 +73,110 @@ Do NOT hardcode a specific version number — always install the latest from npm
 
 ---
 
+## 6.0.2 React Import Rules
+
+**CRITICAL:** Always use named imports from React. Never use the React namespace.
+
+```typescript
+// ✅ CORRECT — named imports
+import { forwardRef, useId, useState, type ComponentProps, type ReactNode, type CSSProperties } from "react";
+
+// ❌ WRONG — namespace import (banned)
+import * as React from "react";
+import React from "react";
+
+// ❌ WRONG — React namespace types (banned)
+type Props = { children: React.ReactNode };      // use: type ReactNode
+type Ref = React.Ref<HTMLButtonElement>;          // use: type Ref<HTMLButtonElement>
+const El = React.ElementRef<typeof Button>;       // use: ComponentRef<typeof Button>
+
+// ❌ WRONG — React.FC (banned)
+const Button: React.FC<ButtonProps> = () => {};  // use: function Button(props: ButtonProps) {}
+```
+
+**Component typing patterns:**
+
+```typescript
+// ✅ Extending native HTML props — use ComponentProps
+import { forwardRef, type ComponentProps } from "react";
+
+// For extending a component's own props:
+type ButtonWithIconProps = ComponentProps<typeof Button> & { icon?: ReactNode };
+
+// For forwardRef with generic HTML elements:
+export const Input = forwardRef<HTMLInputElement, InputProps>(
+  function Input({ size = "medium", ...props }, ref) { ... }
+);
+
+// ✅ For compound components (namespace export):
+export const Dialog = {
+  Root: DialogRoot,
+  Trigger: DialogTrigger,
+  Portal: DialogPortal,
+  Popup: DialogPopup,
+  Title: DialogTitle,
+  Description: DialogDescription,
+  Close: DialogClose,
+};
+
+// ❌ WRONG — defaultProps (deprecated in React 19)
+Button.defaultProps = { variant: "primary" };  // use default parameters instead
+```
+
+**Why:** React 19 encourages named imports. Namespace imports (`import * as React`) add unnecessary bundle overhead and make tree-shaking harder. `React.FC` explicitly removes the `children` prop type in React 18+, causing type errors. Named imports make dependencies explicit and improve IDE autocompletion.
+
+---
+
+## 6.0.3 Border vs Box-Shadow Approach
+
+For interactive elements (Input, Select trigger, Textarea, etc.), use **box-shadow** for borders instead of CSS `border`:
+
+```css
+/* ✅ CORRECT — box-shadow approach */
+.input {
+  box-shadow: 0 0 0 1px var(--border-default), var(--shadow-sm);
+}
+.input:focus {
+  box-shadow: 0 0 0 1px var(--border-focus), var(--shadow-sm);
+}
+.input[data-error] {
+  box-shadow: 0 0 0 1px var(--state-error);
+}
+
+/* ❌ WRONG — CSS border (causes layout shift) */
+.input {
+  border: 1px solid var(--border-default);
+}
+.input:focus {
+  border-color: var(--border-focus);
+  /* width stays 1px but box model recalculates → layout shift */
+}
+```
+
+**Why box-shadow:**
+- No layout shift when switching between default/focus/error states (box-shadow has zero width impact)
+- Can combine multiple box-shadows: `0 0 0 1px var(--border-default), var(--shadow-sm)` adds both a border and a drop shadow in one property
+- Smooth CSS transitions via `transition: box-shadow` are cleaner than `transition: border-color`
+
+**Define these tokens in `src/styles/tokens.css`:**
+
+```css
+:root {
+  --input-shadow:       0 0 0 1px var(--border-default), var(--shadow-sm);
+  --input-shadow-focus: 0 0 0 1px var(--border-focus), var(--shadow-sm);
+  --input-shadow-error: 0 0 0 1px var(--state-error), var(--shadow-sm);
+}
+```
+
+**When to use CSS `border` (normal, structural dividers):**
+- Card borders: `border: 1px solid var(--border-default)` (non-interactive, no state changes)
+- Table row dividers: `border-bottom: 1px solid var(--border-subtle)`
+- Section separators: `border-top: 1px solid var(--border-subtle)`
+
+**Rule:** If the element has interactive states (focus, error, disabled) → use box-shadow. If purely structural → use CSS border.
+
+---
+
 ## 6.1 Headless Component Wrapping Pattern
 
 When the user chose a headless library (Radix, Base UI, Ark UI, etc.), each component

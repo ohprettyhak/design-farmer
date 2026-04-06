@@ -34,6 +34,8 @@ never primitive tokens directly. This enables theming without component API chan
 
 ## 5.5 Token Snapshot Tests
 
+Tests use vitest globals (`describe`, `it`, `expect`) available via `tsconfig.json` types — see section 5.6 for setup.
+
 ```typescript
 // __tests__/tokens.test.ts
 // - Verify generated CSS is deterministic (snapshot comparison)
@@ -41,6 +43,49 @@ never primitive tokens directly. This enables theming without component API chan
 // - Verify light/dark theme CSS files contain identical property names
 // - Verify no primitive token is directly consumed by any component
 ```
+
+## 5.6 Test Infrastructure Setup
+
+Install dev dependencies:
+
+```bash
+{packageManager} add -D vitest @testing-library/react @testing-library/jest-dom jsdom
+```
+
+Create `vitest.config.ts` at the project root:
+
+```typescript
+import { defineConfig } from "vitest/config";
+
+export default defineConfig({
+  esbuild: {
+    jsx: "automatic",
+  },
+  test: {
+    environment: "jsdom",
+    globals: true,
+    setupFiles: ["./src/test-setup.ts"],
+  },
+});
+```
+
+Create `src/test-setup.ts`:
+
+```typescript
+import "@testing-library/jest-dom/vitest";
+```
+
+Add `"types": ["vitest/globals"]` to `tsconfig.json` compilerOptions so TypeScript recognizes `describe`, `it`, `expect`, and other globals in test files without explicit imports:
+
+```json
+{
+  "compilerOptions": {
+    "types": ["vitest/globals"]
+  }
+}
+```
+
+> **Why `vitest/config` not `vite`?** React 19's development build has a known TDZ (Temporal Dead Zone) issue with `let fnName` that only triggers when loaded directly via a non-Vite module evaluator. Using `vitest/config` with `esbuild.jsx: "automatic"` resolves module initialization order correctly and avoids the issue without patching `node_modules`.
 
 Optional implementation brief:
 ```

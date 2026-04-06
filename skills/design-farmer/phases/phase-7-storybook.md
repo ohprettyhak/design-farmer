@@ -80,6 +80,11 @@ Use that version throughout — do NOT assume any specific major version number.
         `stories: ['../../packages/design-system/src/**/*.stories.@(ts|tsx)']`
      f. Import the design system's tokens/CSS from the workspace package in `preview.ts`:
         `import '@{scope}/design-system/src/tokens/index.css'`
+   - IMPORTANT: After init, add `@storybook/react` to the design system package's devDependencies:
+     `{packageManager} --filter {systemPackageName} add -D @storybook/react@latest`
+     This installs the @storybook/react type definitions inside the design system package so
+     the IDE recognizes `Meta`, `StoryObj`, etc. in `.stories.tsx` files without the TypeScript
+     TS17004/TS6142 errors that appear when stories are excluded from the main tsconfig.
    - After init, verify the installed version: `npx storybook --version` (or the equivalent for your package manager)
    - Confirm the installed major version matches the addon versions fetched in Step 1
 2. Configure addons (ensure versions match the installed Storybook major version):
@@ -94,6 +99,80 @@ Use that version throughout — do NOT assume any specific major version number.
 4. Create stories for every implemented component following the Polymorphic Coverage
    Matrix defined in Step 3 below.
 ```
+
+**Step 2.5 — Concrete configuration file templates:**
+
+After `storybook@latest init` generates the base config, update the configuration files to match these templates:
+
+**`apps/storybook/.storybook/main.ts`:**
+```typescript
+import type { StorybookConfig } from "@storybook/react-vite";
+
+const config: StorybookConfig = {
+  stories: ["../../packages/{designSystemDir}/src/**/*.stories.@(ts|tsx)"],
+  addons: [
+    "@storybook/addon-docs",
+    "@storybook/addon-a11y",
+  ],
+  framework: {
+    name: "@storybook/react-vite",
+    options: {},
+  },
+};
+
+export default config;
+```
+
+Note: Use `@storybook/react-vite` framework for Vite-based projects (most monorepos). Use `@storybook/react-webpack5` only if the project uses webpack.
+
+**`apps/storybook/.storybook/preview.tsx`:**
+```typescript
+import type { Preview } from "@storybook/react";
+import "../../packages/{designSystemDir}/src/styles/index.css";
+
+const preview: Preview = {
+  parameters: {
+    layout: "centered",
+    docs: {
+      toc: true,
+    },
+  },
+  tags: ["autodocs"],
+};
+
+export default preview;
+```
+
+**`apps/storybook/package.json`:**
+```json
+{
+  "name": "@{scope}/storybook",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "storybook": "storybook dev --port 6006",
+    "build-storybook": "storybook build"
+  },
+  "dependencies": {
+    "@{scope}/{designSystemPackage}": "workspace:*"
+  },
+  "devDependencies": {
+    "@storybook/addon-a11y": "latest",
+    "@storybook/addon-docs": "latest",
+    "@storybook/react-vite": "latest",
+    "storybook": "latest"
+  }
+}
+```
+
+**Critical rules for story files:**
+1. Always use the EXACT prop values defined in the component's TypeScript interface
+   - ✅ `size="small"` if the component defines `"small" | "medium" | "large"`
+   - ❌ `size="sm"` — this will fail TypeScript and show errors in the IDE
+2. Import types from the design system package: `import type { Meta, StoryObj } from "@storybook/react"`
+3. Always define `meta.component` so autodocs generates the props table
+4. Use `render: () => (...)` for complex multi-instance stories
+5. Use `args` for single-instance stories where possible
 
 **Step 3 — Polymorphic Coverage Story Generation:**
 

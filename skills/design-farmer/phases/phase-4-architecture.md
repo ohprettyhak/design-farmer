@@ -128,6 +128,85 @@ src/design-system/
   (same internal structure as above)
 ```
 
+### 4.2.1 package.json Template
+
+```json
+{
+  "name": "@{scope}/{packageName}",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./styles": "./src/styles/index.css"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.build.json --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18"
+  },
+  "sideEffects": ["*.css"],
+  "devDependencies": {}
+}
+```
+
+Notes:
+- `"type": "module"` enables ESM throughout
+- `exports` maps the package entry to source files (consumers import directly from source in a monorepo)
+- `"build": "tsc -p tsconfig.build.json"` uses a separate build tsconfig to exclude tests/stories
+- `"sideEffects": ["*.css"]` tells bundlers not to tree-shake CSS imports
+- Add actual devDependencies when installing in Phase 5/6/7
+
+### 4.2.2 TypeScript Configuration (Split Strategy)
+
+Use **two tsconfig files** — one for IDE/typecheck, one for production build:
+
+**`tsconfig.json`** (IDE + typecheck — includes everything):
+```json
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "noEmit": true,
+    "types": ["vitest/globals"]
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx"]
+}
+```
+
+**`tsconfig.build.json`** (production build — excludes tests/stories):
+```json
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "declaration": true,
+    "noEmit": false,
+    "types": []
+  },
+  "exclude": [
+    "src/**/*.stories.ts",
+    "src/**/*.stories.tsx",
+    "src/**/*.test.ts",
+    "src/**/*.test.tsx",
+    "src/test-setup.ts"
+  ]
+}
+```
+
+**Why split?**
+- `tsconfig.json` includes stories (`.stories.tsx`) and tests (`.test.tsx`) so the IDE shows proper types for `@storybook/react` and `vitest` globals
+- `tsconfig.build.json` excludes stories/tests and emits `.d.ts` declaration files for the published package
+- `vitest/globals` types in `tsconfig.json` provide `describe`, `it`, `expect` etc. without needing explicit imports
+- `"types": []` in `tsconfig.build.json` prevents vitest globals from leaking into production type declarations
+
 ## 4.3 Token Build Pipeline
 
 ```typescript
