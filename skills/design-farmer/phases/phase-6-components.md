@@ -212,10 +212,10 @@ Layer 3: Composed Components (optional higher-level)
 
 ```typescript
 // primitives/button/button.tsx
-import * as React from 'react'
+import { forwardRef, type ButtonHTMLAttributes } from 'react'
 // import { Slot } from '@radix-ui/react-slot'  // for asChild pattern
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'ghost' | 'danger' | 'outline'
   size?: 'x-small' | 'small' | 'medium' | 'large'
   loading?: boolean

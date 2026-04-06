@@ -115,7 +115,7 @@ packages/design-system/
     utils/
       oklch.ts              # OKLCH utility functions
       contrast.ts           # APCA contrast checking
-      classnames.ts         # Class merging utility
+      cn.ts                 # Class merging utility (clsx + tailwind-merge)
     index.ts                # Public API barrel export
   __tests__/
     tokens.test.ts          # Token snapshot tests

@@ -87,6 +87,46 @@ Add `"types": ["vitest/globals"]` to `tsconfig.json` compilerOptions so TypeScri
 
 > **Why `vitest/config` not `vite`?** React 19's development build has a known TDZ (Temporal Dead Zone) issue with `let fnName` that only triggers when loaded directly via a non-Vite module evaluator. Using `vitest/config` with `esbuild.jsx: "automatic"` resolves module initialization order correctly and avoids the issue without patching `node_modules`.
 
+## 5.7 Class Merging Utility (`cn`)
+
+For Tailwind-based design systems, install and create the `cn` helper:
+
+```bash
+{packageManager} add clsx tailwind-merge
+```
+
+Create `src/utils/cn.ts`:
+
+```typescript
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+```
+
+Export from `src/index.ts` (barrel export):
+
+```typescript
+export { cn } from "./utils/cn";
+export type { ClassValue } from "clsx";
+```
+
+**Why clsx + tailwind-merge:**
+- `clsx` handles conditional class logic: `cn("base", isActive && "active", { "disabled": props.disabled })`
+- `tailwind-merge` resolves conflicting Tailwind utilities: `cn("px-4", "px-6")` → `"px-6"` (last wins)
+- Components expose `className` prop and merge it with their own classes: `cn("base-classes", className)`
+- Without this, Tailwind class conflicts (e.g., two `rounded-*` classes) produce unpredictable results
+
+Skip this step if the project is not using Tailwind. For CSS Modules or vanilla CSS projects, a simple `clsx`-only approach suffices:
+
+```typescript
+// Non-Tailwind projects: clsx only
+import { clsx, type ClassValue } from "clsx";
+export function cn(...inputs: ClassValue[]) { return clsx(inputs); }
+```
+
 Optional implementation brief:
 ```
 Implement the token system at {systemPath}/src/tokens/ following the architecture
