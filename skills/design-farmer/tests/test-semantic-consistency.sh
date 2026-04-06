@@ -39,15 +39,14 @@ if [ -n "$handoff_line" ]; then
   if [ -z "$referenced_sections" ]; then
     fail "Phase 4 handoff references non-4b section numbers (possible stale reference to old numbering)"
   else
-    all_match=true
     section_fail_marker=$(mktemp "${TMPDIR:-/tmp}/df_test_section_XXXXXX")
     rm -f "$section_fail_marker"
-    echo "$referenced_sections" | while IFS= read -r section; do
+    while IFS= read -r section; do
       if ! grep -qE "^## $section " "$PHASES_DIR/phase-4b-theming.md"; then
         echo "  ✗ Phase 4 handoff references §$section but it doesn't exist in phase-4b-theming.md"
         touch "$section_fail_marker"
       fi
-    done
+    done <<< "$referenced_sections"
     if [ -f "$section_fail_marker" ]; then
       rm -f "$section_fail_marker"
       FAIL=$((FAIL + 1))
