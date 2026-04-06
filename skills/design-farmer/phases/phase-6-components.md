@@ -96,13 +96,13 @@ if [ "{headlessLibrary}" != "none" ] && [ "{headlessLibrary}" != "" ]; then
   # Resolve package name from headlessLibrary choice:
   # base-ui    → @base-ui-components/react
   # ark        → @ark-ui/react
-  # headlessui → @headlessui/react
+  # headless-ui → @headlessui/react
   # melt       → @melt-ui/svelte
   # bits       → bits-ui
   # radix      → per-component packages (see mapping above)
   #
   # For single-package libraries:
-  HEADLESS_PKG=$(node -e "const m={'base-ui':'@base-ui-components/react','ark':'@ark-ui/react','headlessui':'@headlessui/react','bits':'bits-ui'};console.log(m['{headlessLibrary}']||'')" 2>/dev/null)
+  HEADLESS_PKG=$(node -e "const m={'base-ui':'@base-ui-components/react','ark':'@ark-ui/react','headless-ui':'@headlessui/react','bits':'bits-ui'};console.log(m['{headlessLibrary}']||'')" 2>/dev/null)
   [ -n "$HEADLESS_PKG" ] && npm view "$HEADLESS_PKG" version 2>/dev/null && {packageManager} add "$HEADLESS_PKG"
   # For Radix UI: install per-component packages matching componentScope (already handled above)
   # Verify: list installed packages

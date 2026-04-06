@@ -1,9 +1,9 @@
 # Phase 4b: Theme & Styling
 
 > Companion to Phase 4: Architecture Design. Load this file when the project
-> has reached the theme system and styling approach decisions (Phase 4 §4.5 onward).
+> has reached the theme system and styling approach decisions (§4b.1 onward).
 
-## 4.5 Theme System
+## 4b.1 Theme System
 
 ```css
 /* light.css */
@@ -97,7 +97,7 @@
 }
 ```
 
-## 4.6 Theme Provider Implementation
+## 4b.2 Theme Provider Implementation
 
 The theme provider depends on whether the user chose a library (Question 5-1) or custom:
 
@@ -254,7 +254,7 @@ module.exports = { darkMode: ['selector', '[data-theme="dark"]'] }
 // 7. Provide a mounted guard hook for SSR-safe theme-dependent rendering
 ```
 
-## 4.7 Scoped Theming
+## 4b.3 Scoped Theming
 
 Support nested themes for sections that need different color schemes within the same page:
 
@@ -276,7 +276,7 @@ Scoped theming works automatically with CSS custom property inheritance — no a
 JavaScript needed. The nearest `[data-theme]` ancestor wins. Components consume
 `var(--token-name)` and automatically get the correct value for their theme context.
 
-## 4.8 Dark Mode Implementation Checklist & Common Failures
+## 4b.4 Dark Mode Implementation Checklist & Common Failures
 
 **MANDATORY verification after implementing dark mode. Check every item before proceeding.**
 
@@ -336,7 +336,7 @@ Strategy B — class attribute (recommended for Tailwind-first projects):
 **Pick ONE strategy and use it consistently. Mixing strategies is the #1 cause of
 dark mode failures in design systems.**
 
-## 4.9 Styling Approach Decision
+## 4b.5 Styling Approach Decision
 
 Based on the codebase analysis (Phase 2), recommend the appropriate styling strategy:
 

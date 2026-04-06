@@ -205,6 +205,8 @@ Phase 3.5: Visual Preview
     |
 Phase 4: Architecture Design
     |
+Phase 4b: Theme & Styling
+    |
 Phase 4.5: Design Source of Truth (DESIGN.md)
     |
 Phase 5: Token Implementation

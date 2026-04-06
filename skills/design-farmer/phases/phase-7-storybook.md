@@ -81,7 +81,7 @@ Use that version throughout — do NOT assume any specific major version number.
      f. Import the design system's tokens/CSS from the workspace package in `preview.tsx`:
         `import '@{scope}/design-system/src/tokens/index.css'`
    - IMPORTANT: After init, add `@storybook/react` to the design system package's devDependencies:
-     `{packageManager} --filter {systemPackageName} add -D @storybook/react@latest`
+     `{packageManager} --filter {designSystemPackage} add -D @storybook/react@latest`
      This installs the @storybook/react type definitions inside the design system package so
      the IDE recognizes `Meta`, `StoryObj`, etc. in `.stories.tsx` files without the TypeScript
      TS17004/TS6142 errors that appear when stories are excluded from the main tsconfig.

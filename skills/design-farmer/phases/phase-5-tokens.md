@@ -9,7 +9,7 @@ If targetPlatforms = 'web' (or field is absent):
   → Continue to 5.1 (standard web CSS token implementation)
 
 If targetPlatforms = 'web-native' or 'multi-platform':
-  → Use Style Dictionary 4.x multi-platform output (see Phase 4 section on Style Dictionary)
+  → Use Style Dictionary 4.x multi-platform output (see Phase 4 §4.3 Token Build Pipeline)
   → Token formats to generate:
       css:          CSS custom properties (for the web layer)
       ios-swift:    Swift enum or struct (for iOS UIKit/SwiftUI)
