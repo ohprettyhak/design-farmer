@@ -26,10 +26,8 @@ If targetPlatforms = 'web-hybrid' (e.g. Capacitor, Tauri):
   → No conversion needed; continue to 5.1
 ```
 
-**OKLCH → sRGB conversion for native targets (quick reference):**
-
 ```typescript
-// Install: npm add oklch
+// OKLCH → sRGB (native targets): npm add oklch
 import { formatHex } from 'oklch';
 // formatHex({ l: 0.55, c: 0.22, h: 264 }) → '#4f46e5'
 ```

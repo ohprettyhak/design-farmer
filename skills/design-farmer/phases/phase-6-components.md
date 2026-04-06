@@ -4,14 +4,10 @@ Implement components ONE AT A TIME, in dependency order.
 
 ## 6.0 Framework Guardrail
 
-**Read `framework` from `{systemPath}/.design-farmer/config.json` before proceeding.**
+Read `framework` from `{systemPath}/.design-farmer/config.json`.
 
-React-based frameworks (full component implementation supported):
-- `next-app-router`, `next-pages-router`, `vite-react`, `remix`
-
-Non-React frameworks (limited support):
-- `astro`, `sveltekit`, `nuxt` — token output is complete (Phase 5), but the component
-  patterns in this phase (forwardRef, JSX, headless libraries) are React-specific.
+- React (full support): `next-app-router`, `next-pages-router`, `vite-react`, `remix`
+- Non-React (token output only): `astro`, `sveltekit`, `nuxt` — component patterns in this phase (forwardRef, JSX, headless libraries) are React-specific.
 
 ```
 If framework is in [next-app-router, next-pages-router, vite-react, remix]:
@@ -168,8 +164,6 @@ export const Dialog = {
 Button.defaultProps = { variant: "primary" };  // use default parameters instead
 ```
 
-**Why:** React 19 encourages named imports. Namespace imports (`import * as React`) add unnecessary bundle overhead and make tree-shaking harder. `React.FC` explicitly removes the `children` prop type in React 18+, causing type errors. Named imports make dependencies explicit and improve IDE autocompletion.
-
 ---
 
 ## 6.0.4 Border vs Box-Shadow Approach
@@ -198,10 +192,7 @@ For interactive elements (Input, Select trigger, Textarea, etc.), use **box-shad
 }
 ```
 
-**Why box-shadow:**
-- No layout shift when switching between default/focus/error states (box-shadow has zero width impact)
-- Can combine multiple box-shadows: `0 0 0 1px var(--border-default), var(--shadow-sm)` adds both a border and a drop shadow in one property
-- Smooth CSS transitions via `transition: box-shadow` are cleaner than `transition: border-color`
+**Why box-shadow:** No layout shift (zero width impact), composable with drop shadows in one property, and `transition: box-shadow` is cleaner than `transition: border-color`.
 
 **Define these tokens in `src/styles/tokens.css`:**
 
