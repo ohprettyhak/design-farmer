@@ -236,6 +236,7 @@ Phase 11: Release Readiness & Handoff
 - **DESIGN.md** (from Phase 4.5) is the persistent design source of truth for Phases 5–11.
 - **Fix Loop Protocol** (from `operational-notes.md`) is mandatory at implementation checkpoints in Phases 5, 6, 7, 9, 10, and 11. Each phase must pass typecheck/lint/build/test before proceeding. The loop retries up to 5 times, then escalates to BLOCKED. This works without external plugins.
 - **Semantic-token-only rule**: Components must NEVER consume primitive tokens directly.
+- **Section vs Phase numbering**: Internal sections within a phase file use `{phase}.{N}` numbering and are scoped to that file. A section number may coincide with a sub-phase file number (e.g., section 8.5 within Phase 8 vs Phase 8.5) — they are distinguished by file context since each phase file is loaded independently. Where feasible, structural merging eliminates the overlap: Phase 3 absorbed section 3.5 (Gamut Safety) into section 3.2. Where merging is not feasible (Phase 8's five distinct reviewer roles), the shared number is accepted.
 - **Completion statuses are mandatory**: Every phase must end with DONE, DONE_WITH_CONCERNS, BLOCKED, or NEEDS_CONTEXT.
 - **User-question gating**: Discovery interview questions are one-at-a-time. Other AskUserQuestion calls require user response before proceeding.
 - **Final completion requires explicit verification evidence** from Phase 9.2 and, if Phase 11 runs, a readiness handoff report.

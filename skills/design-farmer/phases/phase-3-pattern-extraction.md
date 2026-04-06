@@ -87,6 +87,15 @@ Algorithm:
 4. Maintain constant hue across all steps:
    - H never changes within a palette
    - If source had hue drift (HSL artifact), normalize to constant H
+
+5. Verify gamut safety and optionally enhance for Display P3:
+   - Check sRGB gamut boundary for every generated color
+   - If out-of-gamut: reduce C while preserving L and H
+   - Optionally provide Display P3 enhanced version:
+     @media (color-gamut: p3) {
+       --color-primary-500: oklch(0.623 0.214 250);
+     }
+   - P3 gains by hue: greens/cyans +35% chroma, blues/purples +10-13%
 ```
 
 ## 3.3 Contrast Validation (APCA)
@@ -118,19 +127,6 @@ Dark mode palette = reverse the lightness mapping:
   Consumers should use semantic tokens (e.g., --surface-default) rather than
   bare palette steps so the inversion is transparent to components.
 - Re-validate APCA contrast for all pairs in dark mode
-```
-
-## 3.5 Gamut Safety
-
-```
-For every generated color:
-1. Check sRGB gamut boundary
-2. If out-of-gamut: reduce C while preserving L and H
-3. Optionally provide Display P3 enhanced version:
-   @media (color-gamut: p3) {
-     --color-primary-500: oklch(0.623 0.214 250);
-   }
-4. P3 gains by hue: greens/cyans +35% chroma, blues/purples +10-13%
 ```
 
 ## 3.6 Typography Extraction

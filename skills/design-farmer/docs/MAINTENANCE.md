@@ -67,6 +67,7 @@ skills/design-farmer/
 
 - [ ] Phase names in `SKILL.md` phase index match files in `phases/` directory.
 - [ ] Phase names in `SKILL.md` and `docs/PHASE-INDEX.md` are aligned.
+- [ ] Section-vs-phase number overlaps are resolved by merging or explicitly accepted (see `docs/PHASE-INDEX.md` § Section vs Phase Numbering).
 - [ ] Quality requirements in `docs/QUALITY-GATES.md` still match current behavior.
 - [ ] Any new mandatory status/token/keyword is reflected in `scripts/validate-skill-md.sh`.
 - [ ] Installer ships every file referenced by `SKILL.md`.

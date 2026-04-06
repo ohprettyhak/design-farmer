@@ -58,6 +58,20 @@ This index provides a compact map of the Design Farmer router + phase bundle for
 - User-question gating in Discovery must remain one-at-a-time.
 - Final completion requires explicit verification evidence.
 
+## Section vs Phase Numbering
+
+Internal sections within a phase file use `{phase}.{N}` numbering scoped to that file.
+A section number may coincide with a sub-phase file number — they are distinguished by
+file context since each phase file is loaded independently.
+
+| Sub-phase file | Overlap | Resolution |
+|----------------|---------|------------|
+| Phase 3.5 (`phase-3.5-visual-preview.md`) | Eliminated | Section 3.5 (Gamut Safety) absorbed into section 3.2 |
+| Phase 8.5 (`phase-8.5-design-review.md`) | Accepted | Section 8.5 (Design Systems Engineer) is a distinct reviewer role that cannot be merged; file context distinguishes it from Phase 8.5 |
+
+When adding new sections or sub-phases, prefer structural merging to eliminate overlaps.
+Accept shared numbers only when the content cannot be merged without losing clarity.
+
 ## Maintenance Rule
 
 If phase boundaries or criteria in `SKILL.md` change, update this file in the same PR.
