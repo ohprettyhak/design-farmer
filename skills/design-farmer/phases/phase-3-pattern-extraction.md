@@ -122,12 +122,13 @@ also verify WCAG 2.x 4.5:1 alongside APCA checks.
 Dark mode palette = reverse the lightness mapping:
 - Light step 50  (L=0.95) -> Dark step 50  (L=0.15)
 - Light step 950 (L=0.15) -> Dark step 950 (L=0.95)
-- H is preserved unchanged; C values are preserved unchanged (not scaled)
+- H is preserved unchanged; C is carried over from the light palette (not scaled)
+- After inversion, clamp C to sRGB gamut only when the new L pushes the color
+  out of bounds (high-chroma hues at extreme L values). This is a gamut-safety
+  pass, not an intentional chroma adjustment.
 - Note: dark step 50 is the near-black variant (L=0.15), not near-white.
   Consumers should use semantic tokens (e.g., --surface-default) rather than
   bare palette steps so the inversion is transparent to components.
-- Re-clamp chroma to sRGB gamut after inversion (changing L with constant C
-  can push high-chroma hues out of gamut)
 - Re-validate APCA contrast for all pairs in dark mode
 ```
 
