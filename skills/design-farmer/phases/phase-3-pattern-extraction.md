@@ -97,20 +97,14 @@ For every foreground/background pair in the palette:
 - Dark backgrounds (L < 0.25): foreground L must be >= 0.75
 - NEVER adjust chroma for contrast — only modify the L channel
 
-APCA thresholds depend on font size and weight (simplified guide):
-  - Large text (≥ 36px, any weight):         Lc 45 pass / Lc 60 preferred
-  - UI labels / headings (24–35px, any):     Lc 55 pass / Lc 68 preferred
-  - Body text (16–23px, weight 400+):        Lc 60 pass / Lc 75 preferred  ← most common
-  - Small text (14–15px, weight 400):        Lc 75 pass / Lc 90 preferred
-  - Small text (14–15px, weight 700):        Lc 60 pass / Lc 75 preferred
-  - Minimum readable (≤ 13px):               Lc 90 pass / avoid
+APCA threshold table → see operational-notes.md "APCA thresholds vary by font size and weight"
 
 At palette generation time (before component usage is known), use Lc 60 as the
 working threshold for step-500 as body-text candidate. Final validation per
 component occurs in Phase 8 (Review), where actual font sizes are known.
 
-⚠️  APCA is part of the WCAG 3.0 Working Draft. If legal compliance (ADA, EN 301 549)
-is required, also verify WCAG 2.x 4.5:1 alongside APCA checks.
+⚠️  APCA is part of the WCAG 3.0 Working Draft. For legal compliance (ADA, EN 301 549),
+also verify WCAG 2.x 4.5:1 alongside APCA checks.
 ```
 
 ## 3.4 Dark Mode Derivation

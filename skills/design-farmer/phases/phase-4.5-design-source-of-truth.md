@@ -342,10 +342,9 @@ Populate with:
 - Component design principles from Phase 4 architecture
 - Decisions log from all user interactions (Phases 1-4)
 
-Config: {serialized DesignFarmerConfig}
-Extraction results: {serialized Phase 3 results}
-Architecture decisions: {serialized Phase 4 decisions}
-User interaction log: {collected decisions from Phases 1-4}
+Read DesignFarmerConfig from {systemPath}/.design-farmer/config.json
+Read extraction results from Phase 3 output (colors, typography, spacing)
+Read architecture decisions from Phase 4 output (token hierarchy, styling approach)
 ```
 
 ## 4.5.3 Subsequent Run Behavior

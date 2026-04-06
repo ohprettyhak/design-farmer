@@ -95,7 +95,8 @@ the current phase plus any explicitly referenced companion file.
 | 2 | `phases/phase-2-repo-analysis.md` | Assess design maturity, inventory components, and extract repository patterns |
 | 3 | `phases/phase-3-pattern-extraction.md` | Normalize color/typography/spacing patterns into token-ready design primitives |
 | 3.5 | `phases/phase-3.5-visual-preview.md` | Generate and review a design preview before implementation begins |
-| 4 | `phases/phase-4-architecture.md` | Define token hierarchy, directory structure, theme strategy, and CSS layering |
+| 4 | `phases/phase-4-architecture.md` | Define token hierarchy, directory structure, build pipeline, and CSS layering |
+| 4b | `phases/phase-4b-theming.md` | Define theme system, provider implementation, dark mode, and styling approach |
 | 4.5 | `phases/phase-4.5-design-source-of-truth.md` | Generate and maintain `DESIGN.md` as the persistent design reference |
 | 5 | `phases/phase-5-tokens.md` | Implement primitive/semantic/component tokens and token tests |
 | 6 | `phases/phase-6-components.md` | Implement components in dependency order |
@@ -229,6 +230,7 @@ Phase 11: Release Readiness & Handoff
 - **Design Maturity** (from Phase 2) is written to `DesignFarmerConfig.designMaturity` and determines the implementation path in Phases 3, 3.5, 4, 5, and 6.
 - **Existing DESIGN.md** detected in Phase 0 triggers a re-entry prompt — user can skip Phases 1–4 and jump directly to Phase 5.
 - **Phase 3.5 is a hard gate** before Phase 4 unless preview generation falls back to a text-only approval path.
+- **Phase 4b** is a continuation of Phase 4 — load it immediately after Phase 4 completes, before Phase 4.5.
 - **DESIGN.md** (from Phase 4.5) is the persistent design source of truth for Phases 5–11.
 - **Semantic-token-only rule**: Components must NEVER consume primitive tokens directly.
 - **Completion statuses are mandatory**: Every phase must end with DONE, DONE_WITH_CONCERNS, BLOCKED, or NEEDS_CONTEXT.

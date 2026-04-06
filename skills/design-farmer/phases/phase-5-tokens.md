@@ -186,8 +186,8 @@ Optional implementation brief:
 Implement the token system at {systemPath}/src/tokens/ following the architecture
 defined in Phase 4. Use OKLCH values throughout. Generate light.css and dark.css
 theme files. Include TypeScript type exports for all tokens.
-Config: {serialized DesignFarmerConfig}
-Extracted patterns: {serialized extraction results}
+Read DesignFarmerConfig from {systemPath}/.design-farmer/config.json
+Read extracted patterns from Phase 3 output (colors, typography, spacing)
 ```
 
 **Status: DONE** — Token system implemented with primitive, semantic, and component tokens. Tests passing. Proceed to Phase 6: Component Implementation.
