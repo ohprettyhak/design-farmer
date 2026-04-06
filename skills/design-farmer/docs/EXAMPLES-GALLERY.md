@@ -133,6 +133,7 @@ Product ships only a light theme, and dark mode requests are blocked by hardcode
 
 - Phase 3: Design Pattern Extraction & OKLCH Conversion
 - Phase 4: Architecture Design
+- Phase 4b: Theme & Styling
 - Phase 5: Token Implementation
 
 ---

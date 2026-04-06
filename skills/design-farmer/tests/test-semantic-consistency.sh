@@ -348,7 +348,7 @@ else
 fi
 
 # Implementation phases must reference the protocol
-for phase_file in "phase-5-tokens.md" "phase-6-components.md" "phase-7-storybook.md" "phase-10-integration.md" "phase-11-readiness-handoff.md"; do
+for phase_file in "phase-5-tokens.md" "phase-6-components.md" "phase-7-storybook.md" "phase-9-documentation.md" "phase-10-integration.md" "phase-11-readiness-handoff.md"; do
   if grep -qF "Fix Loop" "$PHASES_DIR/$phase_file"; then
     pass "$phase_file references Fix Loop Protocol"
   else

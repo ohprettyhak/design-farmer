@@ -31,6 +31,13 @@ Create documentation at `{systemPath}/docs/` or inline in source:
 {packageManager} run build-storybook
 ```
 
+Run the **Fix Loop Protocol** (see `operational-notes.md`) with the full check suite:
+
+```
+Checks: typecheck, lint, build, test
+Max attempts: 5
+```
+
 All must pass with zero errors before declaring completion.
 
 ## 9.3 Completion Report

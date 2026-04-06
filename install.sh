@@ -20,6 +20,7 @@ BUNDLE_FILES=(
   "$SKILL_ROOT/phases/phase-3-pattern-extraction.md"
   "$SKILL_ROOT/phases/phase-3.5-visual-preview.md"
   "$SKILL_ROOT/phases/phase-4-architecture.md"
+  "$SKILL_ROOT/phases/phase-4b-theming.md"
   "$SKILL_ROOT/phases/phase-4.5-design-source-of-truth.md"
   "$SKILL_ROOT/phases/phase-5-tokens.md"
   "$SKILL_ROOT/phases/phase-6-components.md"
@@ -29,6 +30,7 @@ BUNDLE_FILES=(
   "$SKILL_ROOT/phases/phase-9-documentation.md"
   "$SKILL_ROOT/phases/phase-10-integration.md"
   "$SKILL_ROOT/phases/phase-11-readiness-handoff.md"
+  "$SKILL_ROOT/examples/DESIGN.md"
 )
 
 if [ -t 1 ]; then
