@@ -70,7 +70,8 @@ Use that version throughout — do NOT assume any specific major version number.
    - pnpm: `cd {storybookRoot} && pnpm dlx storybook@latest init`
    - bun: `cd {storybookRoot} && bunx storybook@latest init`
    - For monorepo Option B (dedicated app at e.g. `apps/storybook`):
-     a. Create `apps/storybook/package.json` with the design system as a workspace dependency:
+     a. Create `apps/storybook/package.json` with the design system as a workspace dependency
+        (`{scope}` is the npm scope from `designSystemPackage`, e.g. `@acme` from `@acme/design-system`):
         `{ "name": "@{scope}/storybook", "version": "0.0.1", "private": true,
            "dependencies": { "{designSystemPackage}": "workspace:*" } }`
      b. Register the package in `pnpm-workspace.yaml` (if not already covered by glob, add `- 'apps/*'`)

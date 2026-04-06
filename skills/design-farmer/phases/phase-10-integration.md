@@ -225,7 +225,7 @@ DO NOT replace values inside:
 - [ ] Design tokens are visible in rendered output
 ```
 
-## 10.4 Fix Loop Checkpoint
+## 10.7 Fix Loop Checkpoint
 
 Integration is the highest-risk phase for lint/build/type errors because the design system meets the application's existing code.
 
