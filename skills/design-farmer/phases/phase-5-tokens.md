@@ -185,9 +185,10 @@ Optional implementation brief:
 ```
 Implement the token system at {systemPath}/src/tokens/ following the architecture
 defined in Phase 4. Use OKLCH values throughout. Generate light.css and dark.css
-theme files. Include TypeScript type exports for all tokens.
+theme files (skip dark.css if themeStrategy = 'light-only'). Include TypeScript type exports for all tokens.
 Read DesignFarmerConfig from {systemPath}/.design-farmer/config.json
-Read extracted patterns from Phase 3 output (colors, typography, spacing)
+Read design direction from {systemPath}/DESIGN.md (the persistent source of truth)
+Read extracted patterns from Phase 3 output — or from DESIGN.md if Phase 3 was skipped (re-entry path)
 ```
 
 ## 5.8 Fix Loop Checkpoint

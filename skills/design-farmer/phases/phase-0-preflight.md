@@ -42,7 +42,7 @@ If user chose **A**:
 
 1. **Read the `## Config` YAML block** from DESIGN.md (if present). Parse it to reconstruct `DesignFarmerConfig`:
    - `packageManager`, `framework`, `isMonorepo`, `systemPath`, `designSystemPackage`
-   - `componentScope`, `headlessLibrary`, `themeStrategy`, `accessibilityLevel`
+   - `componentScope`, `headlessLibrary`, `themeStrategy`, `themeLibrary`, `accessibilityLevel`
    - `targetPlatforms`, `designMaturity`, `maturityScore`
 
 2. **Fill gaps from preflight scan** (steps 1–5 above already ran):

@@ -21,6 +21,7 @@ designSystemPackage: "{designSystemPackage}"
 componentScope: {foundation|core|full|custom}
 headlessLibrary: {radix|base-ui|ark|headless-ui|melt|bits|none}
 themeStrategy: {light-dark|light-only|multi-brand|custom}
+themeLibrary: {next-themes|astro-color-scheme|remix-themes|mode-watcher|@nuxtjs/color-mode|custom|none}
 accessibilityLevel: {aa|aaa|apca}
 targetPlatforms: {web|web-native|web-hybrid|multi-platform}
 designMaturity: {greenfield|emerging|mature}

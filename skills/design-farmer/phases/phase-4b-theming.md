@@ -3,6 +3,22 @@
 > Companion to Phase 4: Architecture Design. Load this file when the project
 > has reached the theme system and styling approach decisions (§4b.1 onward).
 
+## 4b.0 Theme Strategy Gate
+
+Read `themeStrategy` from `DesignFarmerConfig` (set by Phase 1 Q5).
+
+```
+If themeStrategy = 'light-only':
+  → Generate ONLY the light theme CSS in 4b.1 (skip [data-theme="dark"] block entirely)
+  → Skip 4b.2 ThemeProvider (no theme switching needed — apply light tokens at :root)
+  → Skip 4b.3 Scoped Theming
+  → Skip 4b.4 Dark Mode Checklist
+  → Proceed to 4b.5 Styling Approach Decision
+
+If themeStrategy = 'light-dark', 'multi-brand', or 'custom':
+  → Proceed to 4b.1 as written (generate both light and dark themes)
+```
+
 ## 4b.1 Theme System
 
 ```css

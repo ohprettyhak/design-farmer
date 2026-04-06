@@ -29,7 +29,26 @@ If framework is in [astro, sveltekit, nuxt] AND componentScope ≠ 'foundation':
     - B) Downgrade to foundation-only — skip components, use tokens only
     - C) Stop here — I'll write {framework}-native components manually using the DESIGN.md as reference"
   
-  → Wait for user response. If A: proceed to 6.0.1. If B: emit DONE_WITH_CONCERNS and jump to Phase 8 (no components to document in Storybook). If C: emit DONE_WITH_CONCERNS and jump to Phase 8.
+  → Wait for user response. If A: validate headless library compatibility (see below), then proceed to 6.0.1. If B: emit DONE_WITH_CONCERNS and jump to Phase 8 (no components to document in Storybook). If C: emit DONE_WITH_CONCERNS and jump to Phase 8.
+
+  **If user chose A (generate React components for a non-React framework):**
+  The headless library selected in Phase 1 Q3-1 may be framework-specific (e.g., Melt UI for Svelte,
+  Radix Vue for Vue). These libraries are NOT compatible with React component generation.
+  
+  Check `headlessLibrary` from config.json. If it maps to a non-React package:
+  - `melt` → @melt-ui/svelte (Svelte-only)
+  - `bits` → bits-ui (Svelte-only)
+  - `headless-ui` with Vue framework → @headlessui/vue (Vue-only)
+  
+  Ask via AskUserQuestion:
+  > Your headless library (`{headlessLibrary}`) is {framework}-specific and won't work with React components.
+  > Choose a React-compatible replacement:
+  > - A) Radix UI — Rich primitives, widely adopted
+  > - B) Base UI — Maximum flexibility, by MUI
+  > - C) Ark UI — Framework-agnostic
+  > - D) No library — Build from scratch
+  
+  Update `headlessLibrary` in config.json with the user's choice before proceeding to 6.0.1.
 ```
 
 The implementation path depends on **Design Maturity** (from Phase 2) and **Headless Library**

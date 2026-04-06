@@ -25,6 +25,19 @@ All reviewers must calibrate their evaluation against the documented design deci
 rationale, and approved visual direction in DESIGN.md. A deviation that contradicts
 DESIGN.md is a finding; a deviation not covered by DESIGN.md should be noted separately.
 
+**Scope adaptation:** Read `componentScope` and `framework` from `{systemPath}/.design-farmer/config.json`.
+If no components were implemented (non-React token-only path, or `componentScope = 'foundation'` with
+non-React framework), skip component-specific review criteria in all 5 reviewers:
+- 8.1 Critic: skip API consistency, component token tiers; focus on token hierarchy + OKLCH + contrast
+- 8.2 Code Quality: skip forwardRef, component patterns, CSS architecture; focus on TypeScript + import hygiene
+- 8.3 Scientist: skip component CSS metrics; focus on token coverage + OKLCH validation + spacing
+- 8.4 Visual Design: skip component craft, interactive states; focus on color harmony + typography + spacing
+- 8.5 Engineer: skip component scalability + performance; focus on token pipeline + DX + reliability
+
+If `themeStrategy = 'light-only'`, skip dark mode evaluation in all reviewers (8.1 theme completeness
+compares only that light CSS exists, 8.4 category 7 Dark Mode Quality is scored N/A, 8.5 dark mode
+infrastructure checks are skipped).
+
 ---
 
 ## 8.1 Design System Critic

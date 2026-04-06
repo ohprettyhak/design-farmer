@@ -18,6 +18,7 @@ designSystemPackage: "@acme/design-system"
 componentScope: core
 headlessLibrary: radix
 themeStrategy: light-dark
+themeLibrary: next-themes
 accessibilityLevel: apca
 targetPlatforms: web
 designMaturity: greenfield
