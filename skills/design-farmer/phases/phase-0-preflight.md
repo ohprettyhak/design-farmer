@@ -53,11 +53,16 @@ If user chose **A**:
 
 3. **If critical fields are still missing** (packageManager, framework, systemPath), ask ONE AskUserQuestion with all missing fields at once — do not ask one-at-a-time for this recovery step.
 
-4. **Persist** the reconstructed `DesignFarmerConfig` to `{systemPath}/.design-farmer/config.json`.
+4. **Derive computed identifiers** from the parsed fields:
+   - `designSystemDir`: `basename(systemPath)` (e.g., `design-system`)
+   - `designSystemPackage`: read from `{systemPath}/package.json` `"name"` field (e.g., `@acme/design-system`)
+   - `productName`: strip `@scope/` prefix from `designSystemPackage`, then title-case (e.g., `Design System`)
 
-5. **Run a quick architecture scan** — read the existing `{systemPath}/` directory structure to determine the styling strategy (Tailwind/CSS Modules/vanilla CSS) and token directory layout. This substitutes for Phase 4 when jumping directly to Phase 5.
+5. **Persist** the reconstructed `DesignFarmerConfig` (including derived fields) to `{systemPath}/.design-farmer/config.json`.
 
-6. **Jump directly to Phase 5.** Do not run Phases 1–4.
+6. **Run a quick architecture scan** — read the existing `{systemPath}/` directory structure to determine the styling strategy (Tailwind/CSS Modules/vanilla CSS) and token directory layout. This substitutes for Phase 4 when jumping directly to Phase 5.
+
+7. **Jump directly to Phase 5.** Do not run Phases 1–4.
 
 If user chose **B** or **C**: continue to Phase 1 (Discovery Interview) as normal.
 

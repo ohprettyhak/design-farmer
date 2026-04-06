@@ -17,7 +17,7 @@ If framework is in [astro, sveltekit, nuxt] AND componentScope = 'foundation':
   → SKIP component implementation (tokens only — already done in Phase 5)
   → Emit DONE: "Token-only implementation complete for {framework}. Phase 6 skipped: component
     patterns require React. Use the generated CSS tokens directly in your {framework} components."
-  → Jump to Phase 7
+  → Jump to Phase 8 (skip Phase 7 — Storybook is React-oriented and has no components to document)
 
 If framework is in [astro, sveltekit, nuxt] AND componentScope ≠ 'foundation':
   → NEEDS_CONTEXT: ask via AskUserQuestion:
@@ -29,7 +29,7 @@ If framework is in [astro, sveltekit, nuxt] AND componentScope ≠ 'foundation':
     - B) Downgrade to foundation-only — skip components, use tokens only
     - C) Stop here — I'll write {framework}-native components manually using the DESIGN.md as reference"
   
-  → Wait for user response. If A: proceed to 6.0.1. If B or C: emit DONE_WITH_CONCERNS and jump to Phase 7.
+  → Wait for user response. If A: proceed to 6.0.1. If B: emit DONE_WITH_CONCERNS and jump to Phase 8 (no components to document in Storybook). If C: emit DONE_WITH_CONCERNS and jump to Phase 8.
 ```
 
 The implementation path depends on **Design Maturity** (from Phase 2) and **Headless Library**

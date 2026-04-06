@@ -49,7 +49,7 @@ Use the extracted patterns from Phase 3:
 **Greenfield framing (if designMaturity = GREENFIELD):** All values shown are generated defaults,
 not extracted from existing code. Label the preview header clearly:
 `"Proposed Design Direction — Greenfield Defaults (nothing was extracted from your codebase)"`.
-Reference `skills/design-farmer/examples/DESIGN.md` for the full Nova UI example to calibrate
+Reference `examples/DESIGN.md` for the full Nova UI example to calibrate
 whether your generated defaults are complete and reasonable before rendering the preview.
 ```
 

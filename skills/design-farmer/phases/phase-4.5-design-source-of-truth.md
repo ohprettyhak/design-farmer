@@ -328,7 +328,7 @@ Shape: `border-radius: 9999px` (pill)
 ## 4.5.2 Generation
 
 For greenfield projects (`designMaturity = GREENFIELD`) where many placeholder values are uncertain,
-reference `skills/design-farmer/examples/DESIGN.md` (Nova UI example) for concrete default values.
+reference `examples/DESIGN.md` (Nova UI example) for concrete default values.
 Use its OKLCH colors, typography scale, spacing values, and component specs as a starting point —
 replace them with the user's brand color and any choices made in Phases 1–4.
 

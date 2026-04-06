@@ -22,7 +22,7 @@ MATURE (score 6+): Full extraction. Run sections 3.1–3.7 as written.
 **Color**: Generate 11-step OKLCH palette from `DesignFarmerConfig.brandColor`.
 If no brand color was provided (user chose neutral-first in Q2), start from `oklch(0.55 0.22 264)` (indigo).
 
-See `skills/design-farmer/examples/DESIGN.md` for a fully filled-in example of all token values
+See `examples/DESIGN.md` for a fully filled-in example of all token values
 and component design decisions. Use it as the concrete reference when building greenfield output.
 
 **Typography defaults:**
