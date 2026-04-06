@@ -27,8 +27,8 @@ Design a three-tier token structure following the Design Tokens Community Group 
 // Tier 2: Semantic Tokens (purpose-driven aliases)
 {
   "surface": {
-    "primary":   { "$value": "{color.white}", "$type": "color" },
-    "secondary": { "$value": "{color.gray.50}", "$type": "color" },
+    "default":   { "$value": "{color.white}", "$type": "color" },
+    "subtle":    { "$value": "{color.gray.50}", "$type": "color" },
     "inverse":   { "$value": "{color.gray.900}", "$type": "color" }
   },
   "text": {
@@ -262,19 +262,19 @@ Use **two tsconfig files** — one for IDE/typecheck, one for production build:
 
 @layer tokens {
   [data-theme="light"] {
-    --surface-primary:   var(--color-primary-50);
+    --surface-default:   var(--color-primary-50);
     --text-on-surface:   var(--color-primary-900);
     --interactive-primary: var(--color-primary-500);
   }
 
   [data-theme="dark"] {
-    --surface-primary:   var(--color-primary-900);
+    --surface-default:   var(--color-primary-900);
     --text-on-surface:   var(--color-primary-50);
     --interactive-primary: var(--color-primary-100);
   }
 }
 
-/* Components consume semantic tokens (var(--surface-primary)), not primitive ones. */
+/* Components consume semantic tokens (var(--surface-default)), not primitive ones. */
 /* Tailwind utilities use primitive tokens (bg-primary-500). */
 /* This separation keeps a single source of truth while supporting both paradigms. */
 ```
@@ -376,39 +376,89 @@ This prevents:
 @layer tokens {
   [data-theme="light"] {
     /* Surface */
-    --surface-primary: oklch(1 0 0);
-    --surface-secondary: oklch(0.97 0.005 250);
+    --surface-default: oklch(1 0 0);
+    --surface-subtle: oklch(0.97 0.005 250);
     --surface-inverse: oklch(0.15 0.01 250);
 
     /* Text */
     --text-primary: oklch(0.15 0.01 250);
     --text-secondary: oklch(0.45 0.02 250);
     --text-inverse: oklch(1 0 0);
+    --text-disabled: oklch(0.70 0.01 250);
+    --text-brand: oklch(0.55 0.20 250);
 
     /* Interactive */
     --interactive-primary: oklch(0.55 0.20 250);
     --interactive-primary-hover: oklch(0.45 0.18 250);
+    --interactive-bg: oklch(0.94 0.03 250);
+    --interactive-text: oklch(0.45 0.18 250);
+    --interactive-primary-active: oklch(0.38 0.16 250);
 
     /* Border */
     --border-default: oklch(0.87 0.01 250);
     --border-strong: oklch(0.70 0.02 250);
+    --border-subtle: oklch(0.93 0.005 250);
+    --border-focus: oklch(0.55 0.20 250);
+
+    /* State */
+    --state-success: oklch(0.55 0.18 145);
+    --state-success-bg: oklch(0.94 0.05 145);
+    --state-warning: oklch(0.65 0.18 75);
+    --state-warning-text: oklch(0.45 0.14 75);
+    --state-warning-bg: oklch(0.95 0.06 75);
+    --state-error: oklch(0.55 0.22 25);
+    --state-error-hover: oklch(0.45 0.20 25);
+    --state-error-bg: oklch(0.95 0.06 25);
+    --state-info: oklch(0.55 0.18 250);
+    --state-info-bg: oklch(0.94 0.04 250);
+
+    /* Shadows */
+    --shadow-sm: 0 1px 3px oklch(0 0 0 / 0.06);
+    --shadow-md: 0 4px 12px oklch(0 0 0 / 0.08);
+    --shadow-lg: 0 8px 24px oklch(0 0 0 / 0.12);
+    --shadow-xl: 0 16px 40px oklch(0 0 0 / 0.16);
   }
 
   /* dark.css — lightness inverted, hue/chroma preserved */
   [data-theme="dark"] {
-    --surface-primary: oklch(0.15 0.01 250);
-    --surface-secondary: oklch(0.20 0.015 250);
+    --surface-default: oklch(0.15 0.01 250);
+    --surface-subtle: oklch(0.20 0.015 250);
     --surface-inverse: oklch(0.97 0.005 250);
 
     --text-primary: oklch(0.95 0.005 250);
     --text-secondary: oklch(0.70 0.02 250);
     --text-inverse: oklch(0.15 0.01 250);
+    --text-disabled: oklch(0.45 0.01 250);
+    --text-brand: oklch(0.70 0.20 250);
 
     --interactive-primary: oklch(0.65 0.20 250);
     --interactive-primary-hover: oklch(0.72 0.18 250);
+    --interactive-bg: oklch(0.22 0.04 250);
+    --interactive-text: oklch(0.72 0.18 250);
+    --interactive-primary-active: oklch(0.78 0.16 250);
 
     --border-default: oklch(0.30 0.015 250);
     --border-strong: oklch(0.45 0.02 250);
+    --border-subtle: oklch(0.25 0.01 250);
+    --border-focus: oklch(0.65 0.20 250);
+
+    /* State */
+    --state-success: oklch(0.65 0.18 145);
+    --state-success-bg: oklch(0.20 0.05 145);
+    --state-warning: oklch(0.72 0.18 75);
+    --state-warning-text: oklch(0.82 0.14 75);
+    --state-warning-bg: oklch(0.22 0.06 75);
+    --state-error: oklch(0.65 0.22 25);
+    --state-error-hover: oklch(0.72 0.20 25);
+    --state-error-bg: oklch(0.22 0.06 25);
+    --state-info: oklch(0.65 0.18 250);
+    --state-info-bg: oklch(0.20 0.04 250);
+
+    /* Shadows */
+    --shadow-sm: 0 1px 3px oklch(0 0 0 / 0.20);
+    --shadow-md: 0 4px 12px oklch(0 0 0 / 0.25);
+    --shadow-lg: 0 8px 24px oklch(0 0 0 / 0.30);
+    --shadow-xl: 0 16px 40px oklch(0 0 0 / 0.35);
   }
 }
 ```
@@ -429,9 +479,10 @@ warnings. This prop only applies one level deep, so it does NOT mask errors in c
 
 ```tsx
 // app/layout.tsx
+import { type ReactNode } from 'react'
 import { ThemeProvider } from '@/components/theme-provider'
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head />
@@ -454,9 +505,10 @@ before React hydrates.**
 // components/theme-provider.tsx
 "use client"
 
+import { type ReactNode } from 'react'
 import { ThemeProvider as NextThemesProvider } from 'next-themes'
 
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
+export function ThemeProvider({ children }: { children: ReactNode }) {
   return (
     <NextThemesProvider
       attribute="data-theme"          // matches our CSS selectors ([data-theme="dark"])

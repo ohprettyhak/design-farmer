@@ -75,7 +75,7 @@ Dark mode palette = reverse the lightness mapping:
 - Light step 950 (L=0.15) -> Dark step 950 (L=0.95)
 - H is preserved unchanged; C values are preserved unchanged (not scaled)
 - Note: dark step 50 is the near-black variant (L=0.15), not near-white.
-  Consumers should use semantic tokens (e.g., --surface-primary) rather than
+  Consumers should use semantic tokens (e.g., --surface-default) rather than
   bare palette steps so the inversion is transparent to components.
 - Re-validate APCA contrast for all pairs in dark mode
 ```

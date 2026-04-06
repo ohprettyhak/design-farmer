@@ -62,8 +62,19 @@ if [ "{headlessLibrary}" != "none" ] && [ "{headlessLibrary}" != "" ]; then
   # Example (core scope, Radix):
   #   {packageManager} add @radix-ui/react-slot @radix-ui/react-dialog \
   #     @radix-ui/react-checkbox @radix-ui/react-radio-group @radix-ui/react-select
-  npm view {headlessPackage} version 2>/dev/null || true
-  {packageManager} add {headlessPackages}
+  #
+  # Resolve package name from headlessLibrary choice:
+  # base-ui    → @base-ui-components/react
+  # ark        → @ark-ui/react
+  # headlessui → @headlessui/react
+  # melt       → @melt-ui/svelte
+  # bits       → bits-ui
+  # radix      → per-component packages (see mapping above)
+  #
+  # For single-package libraries:
+  HEADLESS_PKG=$(node -e "const m={'base-ui':'@base-ui-components/react','ark':'@ark-ui/react','headlessui':'@headlessui/react','bits':'bits-ui'};console.log(m['{headlessLibrary}']||'')" 2>/dev/null)
+  [ -n "$HEADLESS_PKG" ] && npm view "$HEADLESS_PKG" version 2>/dev/null && {packageManager} add "$HEADLESS_PKG"
+  # For Radix UI: install per-component packages matching componentScope (already handled above)
   # Verify: list installed packages
   {packageManager} list | grep radix 2>/dev/null || {packageManager} list | grep {headlessLibrary}
 fi
@@ -206,7 +217,7 @@ import * as React from 'react'
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'ghost' | 'danger' | 'outline'
-  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
+  size?: 'x-small' | 'small' | 'medium' | 'large'
   loading?: boolean
   asChild?: boolean  // Radix slot pattern: render as child element
 }
@@ -270,11 +281,11 @@ For each component:
    ```typescript
    interface ButtonProps {
      variant: 'primary' | 'secondary' | 'ghost' | 'danger' | 'outline';
-     size: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+     size: 'x-small' | 'small' | 'medium' | 'large';
      disabled?: boolean;
      loading?: boolean;
      asChild?: boolean;  // slot pattern (if headless library supports it)
-     children: React.ReactNode;
+     children: ReactNode;
    }
    ```
    Reference `DESIGN.md` for sizing values when building greenfield.

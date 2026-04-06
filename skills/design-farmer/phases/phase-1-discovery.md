@@ -364,7 +364,17 @@ interface DesignFarmerConfig {
   packageManager: 'bun' | 'pnpm' | 'npm' | 'yarn';
   framework: string; // e.g., 'next-app-router', 'next-pages-router', 'vite-react', 'astro', 'sveltekit', 'nuxt', 'remix'
   isMonorepo: boolean;
+  // Derived identifiers (computed from systemPath / package.json in Phase 0/2)
+  productName: string;       // e.g., 'Acme UI' — from package.json name or user input
+  designSystemDir: string;   // directory name only, e.g., 'design-system' (= basename(systemPath))
+  designSystemPackage: string; // npm package name, e.g., '@acme/design-system' (= package.json name)
 }
+
+// derivation rules:
+// designSystemDir = path.basename(systemPath)
+// designSystemPackage = the "name" field from {systemPath}/package.json
+// systemPackageName (used in some phase files) = designSystemPackage (same thing, use designSystemPackage)
+// productName = derived from designSystemPackage (strip @scope/ prefix, title-case)
 ```
 
 Summarize the user's choices back to them and ask for final confirmation:

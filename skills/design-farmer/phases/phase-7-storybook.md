@@ -78,7 +78,7 @@ Use that version throughout — do NOT assume any specific major version number.
      d. Run init from inside the new package: `cd apps/storybook && {packageManager} dlx storybook@latest init`
      e. In `apps/storybook/.storybook/main.ts`, set the `stories` glob to reach the design system:
         `stories: ['../../packages/design-system/src/**/*.stories.@(ts|tsx)']`
-     f. Import the design system's tokens/CSS from the workspace package in `preview.ts`:
+     f. Import the design system's tokens/CSS from the workspace package in `preview.tsx`:
         `import '@{scope}/design-system/src/tokens/index.css'`
    - IMPORTANT: After init, add `@storybook/react` to the design system package's devDependencies:
      `{packageManager} --filter {systemPackageName} add -D @storybook/react@latest`
@@ -91,7 +91,7 @@ Use that version throughout — do NOT assume any specific major version number.
    - @storybook/addon-a11y (accessibility checking)
    - @storybook/addon-themes (dark mode toggle)
    - @storybook/addon-docs (auto documentation)
-3. Configure {storybookRoot}/.storybook/preview.ts:
+3. Configure {storybookRoot}/.storybook/preview.tsx:
    - Import the design system's global CSS (tokens, reset, theme files)
    - Set up theme decorator for dark mode toggle (see 'Storybook Dark Mode Decorator' below)
    - Configure viewport presets (mobile: 375px, tablet: 768px, desktop: 1280px)
@@ -113,6 +113,7 @@ const config: StorybookConfig = {
   addons: [
     "@storybook/addon-docs",
     "@storybook/addon-a11y",
+    "@storybook/addon-themes",
   ],
   framework: {
     name: "@storybook/react-vite",
@@ -159,6 +160,7 @@ export default preview;
   "devDependencies": {
     "@storybook/addon-a11y": "latest",
     "@storybook/addon-docs": "latest",
+    "@storybook/addon-themes": "latest",
     "@storybook/react-vite": "latest",
     "storybook": "latest"
   }
@@ -210,14 +212,14 @@ export const AllVariants: Story = {
 Every size option gets a dedicated story, PLUS an AllSizes comparison story.
 
 ```tsx
-export const Small: Story = { args: { size: 'sm', children: 'Small' } }
-export const Medium: Story = { args: { size: 'md', children: 'Medium' } }
-export const Large: Story = { args: { size: 'lg', children: 'Large' } }
+export const Small: Story = { args: { size: 'small', children: 'Small' } }
+export const Medium: Story = { args: { size: 'medium', children: 'Medium' } }
+export const Large: Story = { args: { size: 'large', children: 'Large' } }
 
 export const AllSizes: Story = {
   render: () => (
     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-      {['sm', 'md', 'lg'].map(s => (
+      {['small', 'medium', 'large'].map(s => (
         <Button key={s} size={s}>{s}</Button>
       ))}
     </div>
@@ -249,10 +251,10 @@ comparison story per component:
 export const ThemeComparison: Story = {
   render: () => (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
-      <div data-theme="light" style={{ padding: '1rem', background: 'var(--surface-primary)' }}>
+      <div data-theme="light" style={{ padding: '1rem', background: 'var(--surface-default)' }}>
         <Button variant="primary">Light Mode</Button>
       </div>
-      <div data-theme="dark" style={{ padding: '1rem', background: 'var(--surface-primary)' }}>
+      <div data-theme="dark" style={{ padding: '1rem', background: 'var(--surface-default)' }}>
         <Button variant="primary">Dark Mode</Button>
       </div>
     </div>
@@ -427,7 +429,7 @@ export const Overflow: Story = {
 
 **Step 4 — Storybook Dark Mode Decorator Configuration:**
 
-The decorator in `{storybookRoot}/.storybook/preview.ts` MUST match the `attribute` used by the app's
+The decorator in `{storybookRoot}/.storybook/preview.tsx` MUST match the `attribute` used by the app's
 `ThemeProvider`. A mismatch means the Storybook toggle changes state but components
 render with wrong theme styles.
 
