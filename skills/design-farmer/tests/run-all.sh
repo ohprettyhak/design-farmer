@@ -14,6 +14,13 @@
 #      - Status message completeness and handoff chain
 #      - Docs alignment (PHASE-INDEX, MAINTENANCE, QUALITY-GATES)
 #
+#   3. Exhaustive simulation (tests/test-exhaustive-simulation.sh)
+#      - All execution path combinations (1152 paths)
+#      - Conditional question flows, maturity branches
+#      - Framework guardrails, skip/jump path validity
+#      - Cross-phase data dependency chain integrity
+#      - Fallback registry, Fix Loop activation, risk regulation
+#
 # Usage: bash skills/design-farmer/tests/run-all.sh
 
 set -eo pipefail
@@ -48,6 +55,18 @@ if bash "$TESTS_DIR/test-semantic-consistency.sh"; then
 else
   echo ""
   echo "Suite 2: FAILED"
+  SUITE_FAIL=1
+fi
+
+echo ""
+echo "── Suite 3: Exhaustive Simulation ──"
+echo ""
+if bash "$TESTS_DIR/test-exhaustive-simulation.sh"; then
+  echo ""
+  echo "Suite 3: PASSED"
+else
+  echo ""
+  echo "Suite 3: FAILED"
   SUITE_FAIL=1
 fi
 
