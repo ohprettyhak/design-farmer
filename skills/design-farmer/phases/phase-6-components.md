@@ -392,7 +392,14 @@ For each component:
    # expect(results).toHaveNoViolations()
    ```
 
-6. **Verify and proceed** — Run tests, check for zero errors, then move to next component.
+6. **Fix Loop Checkpoint** — Run the **Fix Loop Protocol** (see `operational-notes.md`) after each component:
+
+   ```
+   Checks: typecheck, lint, test
+   Max attempts: 5
+   ```
+
+   Do NOT move to the next component until the loop passes. After ALL components in scope are implemented, run one final full-suite Fix Loop before proceeding to Phase 7.
 
 ## 6.3 Component Priority Order
 

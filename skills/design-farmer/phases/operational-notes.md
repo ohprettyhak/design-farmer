@@ -82,6 +82,115 @@ Semantic:   {role}.{variant}                -> text.primary, surface.inverse
 Component:  {component}.{part}.{state}      -> button.background.hover
 ```
 
+## Fix Loop Protocol
+
+Implementation phases (5, 6, 7, 10) generate code that must compile, lint, and pass tests.
+Errors are expected — especially during integration. This protocol defines a built-in retry
+loop that keeps fixing until all checks pass, without requiring external plugins or tools.
+
+### Loop Structure
+
+```
+MAX_ATTEMPTS = 5
+
+for attempt in 1..MAX_ATTEMPTS:
+  1. RUN all applicable checks:
+     - typecheck:  {packageManager} run typecheck  (or tsc --noEmit)
+     - lint:       {packageManager} run lint        (if configured)
+     - build:      {packageManager} run build       (if applicable)
+     - test:       {packageManager} run test        (if tests exist for changed files)
+
+  2. READ the full error output. Do not skip or summarize.
+
+  3. If ALL checks pass (exit code 0):
+     → BREAK — emit "Fix Loop: PASSED on attempt {attempt}/{MAX_ATTEMPTS}"
+     → Continue to next phase step
+
+  4. If ANY check fails:
+     a. CATEGORIZE each error:
+        - TYPE_ERROR:  TypeScript type mismatch, missing export, wrong import path
+        - LINT_ERROR:  ESLint/Biome rule violation, unused variable, formatting
+        - BUILD_ERROR: Module resolution, missing dependency, config issue
+        - TEST_ERROR:  Assertion failure, snapshot mismatch, missing mock
+
+     b. FIX errors in priority order:
+        BUILD_ERROR > TYPE_ERROR > LINT_ERROR > TEST_ERROR
+        (Build errors often cascade into type errors; fix root cause first)
+
+     c. APPLY fixes directly — do not ask the user for permission on
+        mechanical fixes (import paths, missing exports, type annotations).
+        DO ask before changing component APIs, test assertions, or config files.
+
+     d. Log: "Fix Loop: attempt {attempt}/{MAX_ATTEMPTS} — fixed {count} errors ({categories})"
+
+  5. If attempt == MAX_ATTEMPTS and checks still fail:
+     → STOP — emit BLOCKED status:
+       "Fix Loop: FAILED after {MAX_ATTEMPTS} attempts.
+        Remaining errors: {count} ({category breakdown})
+        Last error output: {paste truncated output}
+        AskUserQuestion: These errors could not be auto-resolved. Options:
+        - A) Show me the full error log — I'll fix it manually
+        - B) Skip this check and continue (I'll fix later)
+        - C) Increase attempts and keep trying"
+     → Wait for user response before continuing.
+```
+
+### When to Activate
+
+The fix loop activates automatically at these checkpoints:
+
+| Phase | Checkpoint | Checks to Run |
+|-------|-----------|---------------|
+| Phase 5 (Tokens) | After token files + tests written | typecheck, test |
+| Phase 6 (Components) | After EACH component implemented | typecheck, lint, test |
+| Phase 6 (Components) | After ALL components done | typecheck, lint, test (full suite) |
+| Phase 7 (Storybook) | After storybook config + stories | build (storybook build), typecheck |
+| Phase 9 (Docs) | Final verification | typecheck, lint, build, test |
+| Phase 10 (Integration) | After app integration changes | typecheck, lint, build |
+| Phase 11 (Readiness) | Release gate | typecheck, lint, build, test |
+
+### Rules
+
+- **Never delete a failing test to make the loop pass.** Fix the implementation or the test, not the existence of the test.
+- **Never disable a lint rule to bypass an error.** Fix the code to comply with the rule.
+- **Build errors take priority.** A missing dependency or broken import cascades into dozens of type errors. Fix the root cause.
+- **Snapshot mismatches are expected** after implementation changes. Update snapshots (`{packageManager} run test -- -u`) only when the new output is correct.
+- **Log every attempt.** When the loop completes, include the attempt count in the phase status: `"Status: DONE (Fix Loop: passed on attempt 2/5)"`
+
+### Example Fix Loop Session
+
+```
+Fix Loop: attempt 1/5
+  typecheck: FAIL (3 errors)
+    - TS2307: Cannot find module './tokens/semantic/colors'
+    - TS2345: Argument of type 'string' is not assignable to 'ButtonVariant'
+    - TS7006: Parameter 'props' implicitly has an 'any' type
+  lint: SKIP (typecheck must pass first)
+  build: SKIP
+  test: SKIP
+
+  → Fix: add missing barrel export in tokens/semantic/index.ts
+  → Fix: narrow type from string to ButtonVariant union
+  → Fix: add explicit type annotation to props parameter
+
+Fix Loop: attempt 2/5
+  typecheck: PASS
+  lint: FAIL (1 error)
+    - no-unused-vars: 'oldTheme' is defined but never used
+  build: PASS
+  test: PASS
+
+  → Fix: remove unused 'oldTheme' variable
+
+Fix Loop: attempt 3/5
+  typecheck: PASS
+  lint: PASS
+  build: PASS
+  test: PASS
+
+Fix Loop: PASSED on attempt 3/5
+```
+
 ## Forbidden Patterns
 
 - Hardcoded color values in component files (use semantic tokens).

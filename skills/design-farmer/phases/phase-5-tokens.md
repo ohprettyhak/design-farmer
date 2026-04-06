@@ -190,4 +190,15 @@ Read DesignFarmerConfig from {systemPath}/.design-farmer/config.json
 Read extracted patterns from Phase 3 output (colors, typography, spacing)
 ```
 
-**Status: DONE** — Token system implemented with primitive, semantic, and component tokens. Tests passing. Proceed to Phase 6: Component Implementation.
+## 5.8 Fix Loop Checkpoint
+
+After all token files, utilities, and tests are written, run the **Fix Loop Protocol** (see `operational-notes.md`):
+
+```
+Checks: typecheck, test
+Max attempts: 5
+```
+
+Do NOT proceed to Phase 6 until typecheck and tests pass. If the loop exhausts all attempts, emit BLOCKED and ask the user.
+
+**Status: DONE** (Fix Loop: passed on attempt {N}/5) — Token system implemented with primitive, semantic, and component tokens. Tests passing. Proceed to Phase 6: Component Implementation.

@@ -225,4 +225,27 @@ DO NOT replace values inside:
 - [ ] Design tokens are visible in rendered output
 ```
 
-**Status: DONE** — Design system integrated into application. Theme toggle working, tokens visible in rendered output. Proceed to Phase 11: Release Readiness & Handoff.
+## 10.4 Fix Loop Checkpoint
+
+Integration is the highest-risk phase for lint/build/type errors because the design system meets the application's existing code.
+
+Run the **Fix Loop Protocol** (see `operational-notes.md`):
+
+```
+Checks: typecheck, lint, build
+Max attempts: 5
+```
+
+Common integration errors and their root causes:
+
+| Error Pattern | Root Cause | Fix |
+|--------------|-----------|-----|
+| `Cannot find module '@scope/design-system'` | Package not linked in monorepo | `{packageManager} install` or add workspace dependency |
+| `Module has no exported member 'Button'` | Missing barrel export | Add export to `src/index.ts` |
+| `Type 'string' is not assignable to 'ButtonVariant'` | Consumer passes untyped string | Import and use the variant type from the design system |
+| `Could not resolve './styles/index.css'` | CSS entry point not in `exports` field | Add `"./styles"` to package.json exports map |
+| `Duplicate identifier 'React'` | Conflicting React type versions | Align `@types/react` version across workspace |
+
+Do NOT emit DONE until the Fix Loop passes on all three checks.
+
+**Status: DONE** (Fix Loop: passed on attempt {N}/5) — Design system integrated into application. Theme toggle working, tokens visible in rendered output. Proceed to Phase 11: Release Readiness & Handoff.

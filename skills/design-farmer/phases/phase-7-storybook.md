@@ -480,4 +480,21 @@ If the app uses `attribute="class"` but Storybook uses `withThemeByDataAttribute
 or vice versa, dark mode will appear to work in the app but fail silently in Storybook.
 Always verify both sides use the same mechanism.
 
-**Status: DONE** — Storybook configured with stories for all components, accessibility addon, and dark mode support. Proceed to Phase 8: Multi-Reviewer Verification.
+## Fix Loop Checkpoint
+
+After Storybook installation, configuration, and story generation, run the **Fix Loop Protocol** (see `operational-notes.md`):
+
+```
+Checks: typecheck, build (storybook build)
+Max attempts: 5
+```
+
+Common Storybook errors:
+
+| Error Pattern | Root Cause | Fix |
+|--------------|-----------|-----|
+| `Cannot find module '@storybook/react'` | Missing devDependency in design system package | `{packageManager} --filter {designSystemPackage} add -D @storybook/react@latest` |
+| `TS6142: Module was resolved to .stories.tsx but jsx is not set` | Stories not covered by tsconfig | Add `@storybook/react` types or check tsconfig include paths |
+| `Addon version mismatch` | Storybook core and addon major versions differ | Align all @storybook/* packages to same major |
+
+**Status: DONE** (Fix Loop: passed on attempt {N}/5) — Storybook configured with stories for all components, accessibility addon, and dark mode support. Proceed to Phase 8: Multi-Reviewer Verification.

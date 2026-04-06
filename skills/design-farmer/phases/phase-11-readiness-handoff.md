@@ -25,8 +25,15 @@ Run all quality checks before committing:
 {packageManager} run build-storybook 2>/dev/null
 ```
 
-If any check fails, fix the issue and re-run. Loop until all checks pass.
-Status: BLOCKED if same issue persists after 3 attempts.
+Run the **Fix Loop Protocol** (see `operational-notes.md`) with the full check suite:
+
+```
+Checks: typecheck, lint, build, test
+Max attempts: 5
+```
+
+This is the final gate — do NOT emit DONE until every check passes.
+Status: BLOCKED if the loop exhausts all attempts.
 
 ## 11.2 Readiness Checklist
 
