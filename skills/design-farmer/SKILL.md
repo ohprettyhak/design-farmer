@@ -67,17 +67,21 @@ If the script is missing, fails, or times out, continue silently — never block
 This skill is distributed as a **bundle**: the router `SKILL.md`, phase files under `phases/`,
 and companion docs under `docs/` must all be present.
 
-Before starting work:
+Before starting work, Read `phases/operational-notes.md` to verify the bundle is accessible.
 
-1. Read `phases/operational-notes.md`.
-2. Verify the phase file for the current step exists before proceeding.
-3. If any required phase file or companion file is missing, STOP immediately and report:
+Before each phase, Read the corresponding phase file using the **Read** tool with its full path
+(e.g., `Read("~/.claude/skills/design-farmer/phases/phase-0-preflight.md")`).
+If the Read call fails (file not found), the bundle is incomplete — STOP immediately and report:
 
 ```
 Status: BLOCKED
 Reason: Incomplete Design Farmer bundle — required file missing: {path}
 AskUserQuestion: "The installed Design Farmer skill bundle is incomplete (`{path}` is missing). Please reinstall or provide the missing file before I continue."
 ```
+
+**Important**: Do NOT use Glob or Search tools with patterns like `phases/*.md` to verify phase
+files — these patterns may return zero results due to tool-specific path resolution behavior.
+Always use Read with the exact file path.
 
 Do NOT guess missing phase behavior from memory.
 
