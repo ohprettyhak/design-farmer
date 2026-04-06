@@ -167,3 +167,15 @@ Produce a structured report:
 - Styling strategy: {Tailwind v4 @theme / CSS Modules / CSS custom properties only}
 - Headless library compatibility: {confirmed compatible / needs adapter / N/A}
 ```
+
+After completing the analysis report, update `DesignFarmerConfig` with the maturity assessment result:
+
+```bash
+# Update {systemPath}/.design-farmer/config.json with:
+# "designMaturity": "greenfield" | "emerging" | "mature"
+# "maturityScore": <N>   (0–10 from the scoring criteria above)
+```
+
+All downstream phases branch on `DesignFarmerConfig.designMaturity` — this update is required before proceeding.
+
+**Status: DONE** — Repository analysis complete. Design maturity assessed and written to config. Proceed to Phase 3: Design Pattern Extraction.

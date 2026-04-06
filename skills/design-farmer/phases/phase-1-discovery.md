@@ -368,6 +368,9 @@ interface DesignFarmerConfig {
   productName: string;       // e.g., 'Acme UI' — from package.json name or user input
   designSystemDir: string;   // directory name only, e.g., 'design-system' (= basename(systemPath))
   designSystemPackage: string; // npm package name, e.g., '@acme/design-system' (= package.json name)
+  // Set from Phase 2 output — propagate to all subsequent phases
+  designMaturity?: 'greenfield' | 'emerging' | 'mature';
+  maturityScore?: number; // 0–10 from Phase 2 scoring criteria
 }
 
 // derivation rules:
@@ -391,3 +394,13 @@ Via AskUserQuestion, ask:
 > - B) I want to change some answers (specify which)
 
 **→ STOP — wait for user response before continuing.**
+
+After user confirms (chose A), persist the config to disk so subsequent phases can load it
+even if earlier context has been compressed:
+
+```bash
+mkdir -p {systemPath}/.design-farmer
+# Write DesignFarmerConfig as JSON to {systemPath}/.design-farmer/config.json
+```
+
+**Status: DONE** — Discovery interview complete. `DesignFarmerConfig` built and persisted. Proceed to Phase 2: Repository Analysis.

@@ -115,6 +115,7 @@ the current phase plus any explicitly referenced companion file.
 | `docs/QUALITY-GATES.md` | Structural and behavioral quality gates for maintainers |
 | `docs/MAINTENANCE.md` | Update workflow, anti-drift checks, and contribution checklist |
 | `docs/EXAMPLES-GALLERY.md` | Example outcomes and reference scenarios |
+| `examples/DESIGN.md` | Fully filled-in DESIGN.md example (Nova UI) for greenfield reference |
 
 ---
 
@@ -224,8 +225,9 @@ Phase 11: Release Readiness & Handoff
 
 ### Cross-Phase Contracts
 
-- **DesignFarmerConfig** (from Phase 1) is passed to all subsequent phases.
-- **Design Maturity** (from Phase 2) determines the implementation path in Phase 6.
+- **DesignFarmerConfig** (from Phase 1) is passed to all subsequent phases. Persisted to `{systemPath}/.design-farmer/config.json` for context-window resilience.
+- **Design Maturity** (from Phase 2) is written to `DesignFarmerConfig.designMaturity` and determines the implementation path in Phases 3, 3.5, 4, 5, and 6.
+- **Existing DESIGN.md** detected in Phase 0 triggers a re-entry prompt — user can skip Phases 1–4 and jump directly to Phase 5.
 - **Phase 3.5 is a hard gate** before Phase 4 unless preview generation falls back to a text-only approval path.
 - **DESIGN.md** (from Phase 4.5) is the persistent design source of truth for Phases 5–11.
 - **Semantic-token-only rule**: Components must NEVER consume primitive tokens directly.

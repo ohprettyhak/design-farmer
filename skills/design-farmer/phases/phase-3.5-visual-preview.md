@@ -45,6 +45,12 @@ Use the extracted patterns from Phase 3:
 - Typography: {serialized font data}
 - Spacing: {serialized spacing scale}
 - Component scope: {from DesignFarmerConfig}
+
+**Greenfield framing (if designMaturity = GREENFIELD):** All values shown are generated defaults,
+not extracted from existing code. Label the preview header clearly:
+`"Proposed Design Direction — Greenfield Defaults (nothing was extracted from your codebase)"`.
+Reference `skills/design-farmer/examples/DESIGN.md` for the full Nova UI example to calibrate
+whether your generated defaults are complete and reasonable before rendering the preview.
 ```
 
 ## 3.5.2 Preview Review Gate
@@ -59,6 +65,10 @@ Via AskUserQuestion, ask:
 > Open it in your browser to review the visual direction.
 >
 > **What do you think of the visual direction?**
+>
+> {If designMaturity = GREENFIELD: prepend with —
+> "These are **proposed defaults** generated from your brand color — nothing was extracted from your
+> codebase. This is a clean starting point you can adjust freely before any code is written."}
 >
 > Options:
 > - A) Looks great — proceed to architecture and implementation
@@ -85,3 +95,5 @@ If preview generation fails (e.g., no color palette extracted, tooling error):
 2. Present the raw extracted data as a text summary instead
 3. Ask user to confirm the text-based direction before proceeding
 4. Continue to Phase 4 with user's textual approval
+
+**Status: DONE** — Visual preview reviewed and approved. Proceed to Phase 4: Architecture Design.

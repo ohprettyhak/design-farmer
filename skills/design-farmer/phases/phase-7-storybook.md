@@ -155,7 +155,7 @@ export default preview;
     "build-storybook": "storybook build"
   },
   "dependencies": {
-    "@{scope}/{designSystemPackage}": "workspace:*"
+    "{designSystemPackage}": "workspace:*"
   },
   "devDependencies": {
     "@storybook/addon-a11y": "latest",
@@ -479,3 +479,5 @@ const preview = {
 If the app uses `attribute="class"` but Storybook uses `withThemeByDataAttribute`,
 or vice versa, dark mode will appear to work in the app but fail silently in Storybook.
 Always verify both sides use the same mechanism.
+
+**Status: DONE** — Storybook configured with stories for all components, accessibility addon, and dark mode support. Proceed to Phase 8: Multi-Reviewer Verification.

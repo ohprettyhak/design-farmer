@@ -1,5 +1,51 @@
 # Phase 3: Design Pattern Extraction & OKLCH Conversion
 
+## 3.0 Path Selection
+
+Read `designMaturity` from `DesignFarmerConfig` (set by Phase 2). If unavailable, read from `{systemPath}/.design-farmer/config.json`.
+
+```
+GREENFIELD (score 0–2): No significant patterns to extract. Skip sections 3.1–3.7 extraction loops.
+  → Generate defaults from the brand color (DesignFarmerConfig.brandColor).
+  → Apply typography and spacing defaults defined below.
+  → Output uses the same structure as extracted values — downstream phases treat them identically.
+
+EMERGING (score 3–5): Partial extraction. Run sections 3.1–3.7 but fill gaps with generated defaults.
+  → Mark extracted values as [EXTRACTED] and generated defaults as [GENERATED] in the output.
+
+MATURE (score 6+): Full extraction. Run sections 3.1–3.7 as written.
+  → Extraction is authoritative; do not substitute defaults.
+```
+
+### Greenfield Defaults (apply when designMaturity = GREENFIELD)
+
+**Color**: Generate 11-step OKLCH palette from `DesignFarmerConfig.brandColor`.
+If no brand color was provided (user chose neutral-first in Q2), start from `oklch(0.55 0.22 264)` (indigo).
+
+See `skills/design-farmer/examples/DESIGN.md` for a fully filled-in example of all token values
+and component design decisions. Use it as the concrete reference when building greenfield output.
+
+**Typography defaults:**
+- Primary font: `Inter`, fallback: `system-ui, -apple-system, sans-serif`
+- Monospace: `JetBrains Mono`, fallback: `ui-monospace, SFMono-Regular, monospace`
+- Scale ratio: 1.25 (Major Third)
+- Base sizes: 12px (small), 14px (body), 16px (body-large), 18–36px (headings)
+- Weights: 300 (display), 400 (body), 500 (label), 600 (heading)
+
+**Spacing defaults**: Base-4 scale: `4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96` px
+
+**Border radius defaults:**
+- Tight: `4px` (badges, tags)
+- Default: `6px` (buttons, inputs)
+- Loose: `8px` (cards, dialogs, popovers)
+
+**Shadow defaults** using `oklch(0 0 0 / alpha)`:
+- SM: `0 1px 3px oklch(0 0 0 / 0.06)`
+- MD: `0 4px 12px oklch(0 0 0 / 0.08)`
+- LG: `0 8px 24px oklch(0 0 0 / 0.12)`
+
+---
+
 ## 3.1 Color Extraction & Conversion
 
 Extract all color values and convert to OKLCH:
