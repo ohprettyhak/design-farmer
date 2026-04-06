@@ -892,6 +892,12 @@ echo "=== DIMENSION S: Combinatorial Path Simulation ==="
 #   8. storybook_choice: A(full)/B(minimal)/C(skip)
 #   9. integration_choice: A(full)/B(guided)/C(skip)
 
+# Preserve locale for UTF-8 arrow concatenation in path strings (macOS bash
+# truncates multi-byte characters during repeated string concatenation under
+# certain locale settings).
+_saved_lc_all="${LC_ALL:-}"
+export LC_ALL=C
+
 # Count total paths
 total_paths=0
 valid_paths=0
@@ -963,7 +969,71 @@ for designmd_exists in "true" "false"; do
                   # Phase 11 always runs
                   phases_executed="$phases_executed→11"
 
-                  valid_paths=$((valid_paths + 1))
+                  # Validate path invariants (use [[ ]] glob matching to avoid
+                  # pipe/grep issues under set -eo pipefail)
+                  path_valid=true
+
+                  # Invariant 1: non-react + foundation must skip Phase 6
+                  if [ "$fw_type" = "non-react" ] && [ "$comp_scope" = "foundation" ]; then
+                    if [[ "$phases_executed" != *"6(skip)"* ]]; then
+                      fail "Path [$fw_type/$comp_scope]: expected 6(skip) in $phases_executed"
+                      path_valid=false
+                    fi
+                  fi
+
+                  # Invariant 2: storybook=C must skip Phase 7 (when Phase 7 is reached)
+                  if [ "$storybook" = "C" ] && [[ "$phases_executed" == *7* ]]; then
+                    if [[ "$phases_executed" != *"7(skip)"* ]]; then
+                      fail "Path [storybook=$storybook]: expected 7(skip) in $phases_executed"
+                      path_valid=false
+                    fi
+                  fi
+
+                  # Invariant 3: integration=C must skip Phase 10
+                  if [ "$integration" = "C" ]; then
+                    if [[ "$phases_executed" != *"10(skip)"* ]]; then
+                      fail "Path [integration=$integration]: expected 10(skip) in $phases_executed"
+                      path_valid=false
+                    fi
+                  fi
+
+                  # Invariant 4: DESIGN.md re-entry (Path A) must skip Phases 1-4
+                  if [ "$designmd_exists" = "true" ] && [ "$designmd_choice" = "A" ]; then
+                    if [[ "$phases_executed" == *"→1→"* ]]; then
+                      fail "Path [designmd=A]: should skip Phase 1 but found it in $phases_executed"
+                      path_valid=false
+                    fi
+                  fi
+
+                  # Invariant 5: Phase 0 and Phase 11 always present
+                  if [[ "$phases_executed" != 0* ]] || [[ "$phases_executed" != *"→11" ]]; then
+                    fail "Path missing Phase 0 start or Phase 11 end: $phases_executed"
+                    path_valid=false
+                  fi
+
+                  # Invariant 6: non-react + non-foundation must use NEEDS_CONTEXT for Phase 6
+                  if [ "$fw_type" = "non-react" ] && [ "$comp_scope" != "foundation" ]; then
+                    if [[ "$phases_executed" != *"6(needs_context)"* ]]; then
+                      fail "Path [$fw_type/$comp_scope]: expected 6(needs_context) in $phases_executed"
+                      path_valid=false
+                    fi
+                  fi
+
+                  # Invariant 7: non-react paths must not reach Phase 7
+                  # Note: the loop models NEEDS_CONTEXT as always choosing B (downgrade).
+                  # If the loop adds sub-choice A (proceed with React), this invariant must be updated.
+                  if [ "$fw_type" = "non-react" ]; then
+                    if [[ "$phases_executed" == *"→7"* ]]; then
+                      fail "Path [$fw_type]: non-react should not reach Phase 7 but found it in $phases_executed"
+                      path_valid=false
+                    fi
+                  fi
+
+                  if [ "$path_valid" = true ]; then
+                    valid_paths=$((valid_paths + 1))
+                  else
+                    invalid_paths=$((invalid_paths + 1))
+                  fi
                 done
               done
             done
@@ -974,10 +1044,17 @@ for designmd_exists in "true" "false"; do
   done
 done
 
-if [ "$valid_paths" -gt 0 ]; then
-  pass "Combinatorial simulation: $valid_paths valid paths out of $total_paths enumerated"
+if [ "$valid_paths" -gt 0 ] && [ "$invalid_paths" -eq 0 ]; then
+  pass "Combinatorial simulation: $valid_paths valid paths out of $total_paths enumerated (0 invalid)"
 else
-  fail "Combinatorial simulation: no valid paths found"
+  fail "Combinatorial simulation: $invalid_paths invalid paths out of $total_paths enumerated"
+fi
+
+# Restore locale
+if [ -n "$_saved_lc_all" ]; then
+  export LC_ALL="$_saved_lc_all"
+else
+  unset LC_ALL
 fi
 
 # Verify specific critical combinations
