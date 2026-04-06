@@ -1,5 +1,41 @@
 # Phase 5: Token Implementation
 
+## 5.0 Platform Branch
+
+Read `targetPlatforms` from `{systemPath}/.design-farmer/config.json` before proceeding.
+
+```
+If targetPlatforms = 'web' (or field is absent):
+  → Continue to 5.1 (standard web CSS token implementation)
+
+If targetPlatforms = 'web-native' or 'multi-platform':
+  → Use Style Dictionary 4.x multi-platform output (see Phase 4 section on Style Dictionary)
+  → Token formats to generate:
+      css:          CSS custom properties (for the web layer)
+      ios-swift:    Swift enum or struct (for iOS UIKit/SwiftUI)
+      android:      XML resources (for Jetpack Compose use compose/object format)
+      js:           JS/TS constants (for React Native / Expo)
+  → OKLCH color values MUST be converted to sRGB (hex) before writing iOS/Android/RN outputs:
+      CSS layer:       oklch(0.55 0.22 264)   → keep as-is (CSS supports OKLCH)
+      iOS/Android/RN:  oklch(0.55 0.22 264)   → convert to #4f46e5 (sRGB hex)
+      Use: https://oklch.com or a build-time conversion (oklch npm package)
+  → After generating multi-platform tokens, continue to 5.3–5.7 for the web layer only
+
+If targetPlatforms = 'web-hybrid' (e.g. Capacitor, Tauri):
+  → Treat as 'web' — HTML/CSS renders in WebView, OKLCH is fully supported
+  → No conversion needed; continue to 5.1
+```
+
+**OKLCH → sRGB conversion for native targets (quick reference):**
+
+```typescript
+// Install: npm add oklch
+import { formatHex } from 'oklch';
+// formatHex({ l: 0.55, c: 0.22, h: 264 }) → '#4f46e5'
+```
+
+---
+
 Implement tokens in this order. Use the following implementation brief by default when specialized delegation is available; otherwise execute the same work directly:
 
 ## 5.1 OKLCH Utility Functions

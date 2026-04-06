@@ -2,10 +2,44 @@
 
 Implement components ONE AT A TIME, in dependency order.
 
+## 6.0 Framework Guardrail
+
+**Read `framework` from `{systemPath}/.design-farmer/config.json` before proceeding.**
+
+React-based frameworks (full component implementation supported):
+- `next-app-router`, `next-pages-router`, `vite-react`, `remix`
+
+Non-React frameworks (limited support):
+- `astro`, `sveltekit`, `nuxt` — token output is complete (Phase 5), but the component
+  patterns in this phase (forwardRef, JSX, headless libraries) are React-specific.
+
+```
+If framework is in [next-app-router, next-pages-router, vite-react, remix]:
+  → Proceed to 6.0.1 (full component implementation)
+
+If framework is in [astro, sveltekit, nuxt] AND componentScope = 'foundation':
+  → SKIP component implementation (tokens only — already done in Phase 5)
+  → Emit DONE: "Token-only implementation complete for {framework}. Phase 6 skipped: component
+    patterns require React. Use the generated CSS tokens directly in your {framework} components."
+  → Jump to Phase 7
+
+If framework is in [astro, sveltekit, nuxt] AND componentScope ≠ 'foundation':
+  → NEEDS_CONTEXT: ask via AskUserQuestion:
+    "Your project uses {framework}, which doesn't use React component patterns (forwardRef, JSX,
+    headless React libraries). Phase 6 generates React components — these won't compile for {framework}.
+    
+    How should I proceed?
+    - A) Generate React components anyway — I'm using React inside {framework} (e.g. React islands in Astro)
+    - B) Downgrade to foundation-only — skip components, use tokens only
+    - C) Stop here — I'll write {framework}-native components manually using the DESIGN.md as reference"
+  
+  → Wait for user response. If A: proceed to 6.0.1. If B or C: emit DONE_WITH_CONCERNS and jump to Phase 7.
+```
+
 The implementation path depends on **Design Maturity** (from Phase 2) and **Headless Library**
 choice (from Question 3-1):
 
-## 6.0 Path Selection
+## 6.0.1 Path Selection
 
 ```
 If Design Maturity = GREENFIELD (score 0-2):
@@ -27,7 +61,7 @@ If Design Maturity = MATURE (score 6+):
   -> Do NOT break existing consumer code without explicit user approval
 ```
 
-## 6.0.1 Dependency Pre-install
+## 6.0.2 Dependency Pre-install
 
 Before implementing any component, install required dependencies and verify versions:
 
@@ -84,7 +118,7 @@ Do NOT hardcode a specific version number — always install the latest from npm
 
 ---
 
-## 6.0.2 React Import Rules
+## 6.0.3 React Import Rules
 
 **CRITICAL:** Always use named imports from React. Never use the React namespace.
 
@@ -138,7 +172,7 @@ Button.defaultProps = { variant: "primary" };  // use default parameters instead
 
 ---
 
-## 6.0.3 Border vs Box-Shadow Approach
+## 6.0.4 Border vs Box-Shadow Approach
 
 For interactive elements (Input, Select trigger, Textarea, etc.), use **box-shadow** for borders instead of CSS `border`:
 
