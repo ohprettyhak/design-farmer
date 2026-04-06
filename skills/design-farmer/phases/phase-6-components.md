@@ -213,6 +213,7 @@ Layer 3: Composed Components (optional higher-level)
 ```typescript
 // primitives/button/button.tsx
 import { forwardRef, type ButtonHTMLAttributes } from 'react'
+import { cn } from '../../utils/cn'
 // import { Slot } from '@radix-ui/react-slot'  // for asChild pattern
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -227,6 +228,24 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 //   sm: h-32px px-12px text-14px
 //   md: h-36px px-16px text-14px
 //   lg: h-40px px-20px text-16px
+
+const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ variant = 'primary', size = 'medium', loading, className, ...props }, ref) => (
+    <button
+      ref={ref}
+      className={cn(
+        'btn',                              // base token class
+        `btn-${variant}`,                   // variant token class
+        `btn-${size}`,                      // size token class
+        loading && 'btn-loading',
+        className                           // consumer override — always last
+      )}
+      disabled={loading || props.disabled}
+      {...props}
+    />
+  )
+)
+Button.displayName = 'Button'
 ```
 
 **Example: Dialog with Base UI**

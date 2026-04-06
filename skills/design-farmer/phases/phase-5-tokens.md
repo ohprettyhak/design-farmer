@@ -119,12 +119,32 @@ export type { ClassValue } from "clsx";
 - Components expose `className` prop and merge it with their own classes: `cn("base-classes", className)`
 - Without this, Tailwind class conflicts (e.g., two `rounded-*` classes) produce unpredictable results
 
+**Usage in components:**
+
+```typescript
+import { cn } from '../utils/cn'
+
+function Button({ variant = 'primary', className, ...props }: ButtonProps) {
+  return (
+    <button
+      className={cn(
+        'rounded-md px-4 py-2 text-sm font-medium',     // base classes
+        variant === 'primary' && 'bg-primary text-primary-foreground',
+        variant === 'ghost' && 'hover:bg-accent',
+        className                                         // consumer override — always last
+      )}
+      {...props}
+    />
+  )
+}
+```
+
 Skip this step if the project is not using Tailwind. For CSS Modules or vanilla CSS projects, a simple `clsx`-only approach suffices:
 
 ```typescript
 // Non-Tailwind projects: clsx only
 import { clsx, type ClassValue } from "clsx";
-export function cn(...inputs: ClassValue[]) { return clsx(inputs); }
+export function cn(...inputs: ClassValue[]) { return clsx(...inputs); }
 ```
 
 Optional implementation brief:
