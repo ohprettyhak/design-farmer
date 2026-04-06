@@ -30,7 +30,7 @@ and component design decisions. Use it as the concrete reference when building g
 - Monospace: `JetBrains Mono`, fallback: `ui-monospace, SFMono-Regular, monospace`
 - Scale ratio: 1.25 (Major Third)
 - Base sizes: 12px (small), 14px (body), 16px (body-large), 18–36px (headings)
-- Weights: 300 (display), 400 (body), 500 (label), 600 (heading)
+- Weights: 300 (display), 400 (body), 500 (label), 600 (heading), 700 (emphasis/bold)
 
 **Spacing defaults**: Base-4 scale: `2, 4, 6, 8, 10, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96` px
 
@@ -149,7 +149,7 @@ Extract and normalize:
 - Font families -> map to font-family tokens
 - Font sizes -> normalize to a modular scale (1.125, 1.2, or 1.25 ratio)
 - Line heights -> map to unitless ratios (1.2, 1.4, 1.5, 1.6)
-- Font weights -> map to standard weight tokens (400, 500, 600, 700)
+- Font weights -> map to standard weight tokens (300 display, 400 body, 500 label, 600 heading, 700 emphasis)
 - Letter spacing -> map to tracking tokens
 ```
 
@@ -159,8 +159,9 @@ Extract and normalize:
 Extract and normalize:
 - All margin/padding/gap values
 - Normalize to a base-4 or base-8 scale
-- Generate spacing tokens: 0, 1(4px), 2(8px), 3(12px), 4(16px), 5(20px),
-  6(24px), 8(32px), 10(40px), 12(48px), 16(64px), 20(80px), 24(96px)
+- Generate spacing tokens: 0, 0.5(2px), 1(4px), 1.5(6px), 2(8px), 2.5(10px),
+  3(12px), 4(16px), 5(20px), 6(24px), 8(32px), 10(40px), 12(48px),
+  16(64px), 20(80px), 24(96px)
 ```
 
 **Status: DONE** — Pattern extraction complete. Proceed to Phase 3.5: Visual Preview.

@@ -72,7 +72,7 @@ for spec in "${required_phase_specs[@]}"; do
     exit 1
   fi
 
-  if ! grep -Fq "# $phase" "$phase_file"; then
+  if ! grep -q "^# ${phase//./\\.}" "$phase_file"; then
     echo "ERROR: Phase file header mismatch in $relative_path: expected '# $phase'"
     exit 1
   fi
