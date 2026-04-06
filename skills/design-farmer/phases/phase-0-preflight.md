@@ -42,7 +42,8 @@ If user chose **A**:
 
 1. **Read the `## Config` YAML block** from DESIGN.md (if present). Parse it to reconstruct `DesignFarmerConfig`:
    - `packageManager`, `framework`, `isMonorepo`, `systemPath`, `designSystemPackage`
-   - `componentScope`, `headlessLibrary`, `themeStrategy`, `designMaturity`
+   - `componentScope`, `headlessLibrary`, `themeStrategy`, `accessibilityLevel`
+   - `targetPlatforms`, `designMaturity`, `maturityScore`
 
 2. **Fill gaps from preflight scan** (steps 1–5 above already ran):
    - `packageManager`: infer from lock file (bun.lock → bun, pnpm-lock.yaml → pnpm, etc.)

@@ -37,6 +37,7 @@ required_phase_specs=(
   "Phase 3: Design Pattern Extraction & OKLCH Conversion|phases/phase-3-pattern-extraction.md"
   "Phase 3.5: Visual Preview|phases/phase-3.5-visual-preview.md"
   "Phase 4: Architecture Design|phases/phase-4-architecture.md"
+  "Phase 4b: Theme & Styling|phases/phase-4b-theming.md"
   "Phase 4.5: Design Source of Truth (DESIGN.md)|phases/phase-4.5-design-source-of-truth.md"
   "Phase 5: Token Implementation|phases/phase-5-tokens.md"
   "Phase 6: Component Implementation|phases/phase-6-components.md"
@@ -121,11 +122,11 @@ while IFS= read -r index_phase; do
     echo "  Contract: phase map alignment (SKILL.md <-> PHASE-INDEX.md)"
     exit 1
   fi
-done < <(sed -n 's/.*\*\*\(Phase [0-9][0-9.]*: [^*]*\)\*\*.*/\1/p' "$PHASE_INDEX_FILE")
+done < <(sed -n 's/.*\*\*\(Phase [0-9][0-9a-z.]*: [^*]*\)\*\*.*/\1/p' "$PHASE_INDEX_FILE")
 
 echo "Validating PHASE-INDEX.md phase format consistency..."
 PHASE_MAP_SECTION=$(awk '/^## Phase Map/{found=1; next} found && /^## /{exit} found' "$PHASE_INDEX_FILE")
-unformatted=$(echo "$PHASE_MAP_SECTION" | grep -E 'Phase [0-9]+(\.[0-9]+)?:' | grep -Fv '**Phase' || true)
+unformatted=$(echo "$PHASE_MAP_SECTION" | grep -E 'Phase [0-9]+[a-z]?(\.[0-9]+)?:' | grep -Fv '**Phase' || true)
 if [[ -n "$unformatted" ]]; then
   echo "ERROR: PHASE-INDEX.md contains unformatted phase references in Phase Map section:"
   echo "$unformatted"

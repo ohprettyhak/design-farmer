@@ -25,7 +25,9 @@ This index provides a compact map of the Design Farmer router + phase bundle for
    - User approval gate before Phase 4 begins.
 
 6. **Phase 4: Architecture Design**
-   - Define token hierarchy, theme architecture, directory and build strategy.
+   - Define token hierarchy, directory structure, build pipeline, and CSS layering.
+6b. **Phase 4b: Theme & Styling**
+   - Define theme system, provider implementation, dark mode checklist, and styling approach.
 7. **Phase 4.5: Design Source of Truth (DESIGN.md)**
    - Generate DESIGN.md capturing all design decisions as a persistent, machine-readable reference.
 8. **Phase 5: Token Implementation**

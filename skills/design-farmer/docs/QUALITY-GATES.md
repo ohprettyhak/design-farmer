@@ -4,7 +4,7 @@ This document defines release-quality checks for maintainers updating the Design
 
 ## 1) Structure Gates
 
-- `SKILL.md` (router) references all phases from `Phase 0` through `Phase 11` (including `Phase 3.5`, `Phase 4.5`, and `Phase 8.5`) in its phase index table.
+- `SKILL.md` (router) references all phases from `Phase 0` through `Phase 11` (including `Phase 3.5`, `Phase 4b`, `Phase 4.5`, and `Phase 8.5`) in its phase index table.
 - Each phase has a corresponding file in `phases/` directory.
 - Every phase file listed in `SKILL.md` exists exactly once in `phases/`.
 - No extra `phases/phase-*.md` file exists without a matching phase-table entry.

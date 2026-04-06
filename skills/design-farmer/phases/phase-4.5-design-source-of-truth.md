@@ -274,7 +274,7 @@ Shape: `border-radius: 9999px` (pill)
 - Don't use `import * as React from "react"` (use named imports)
 - Don't hardcode color values in components (always use semantic tokens)
 - Don't use CSS `border` on inputs/selects (use box-shadow to avoid layout shift)
-- Don't use inline `style={{}}` for component styling (use Tailwind classes)
+- Don't use inline `style={{}}` for component styling (use your project's styling approach — Tailwind classes, CSS Modules, or CSS custom properties)
 - Don't use JS state (onMouseEnter/onMouseLeave) for hover/active — use CSS :hover/:active
 - Don't use primitive tokens in components (`--color-blue-500`, only `--interactive-primary`)
 

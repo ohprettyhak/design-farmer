@@ -17,6 +17,7 @@ skills/design-farmer/
     phase-3-pattern-extraction.md # Phase 3 instructions
     phase-3.5-visual-preview.md   # Phase 3.5 instructions
     phase-4-architecture.md       # Phase 4 instructions
+    phase-4b-theming.md            # Phase 4b instructions
     phase-4.5-design-source-of-truth.md # Phase 4.5 instructions
     phase-5-tokens.md             # Phase 5 instructions
     phase-6-components.md         # Phase 6 instructions

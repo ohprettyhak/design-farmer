@@ -369,6 +369,6 @@ This prevents:
 - Utility classes losing to component specificity
 - Third-party CSS interfering with the design system
 
-**→ Continue in `phases/phase-4b-theming.md`** — Theme System (4.5), Theme Provider (4.6), Scoped Theming (4.7), Dark Mode Checklist (4.8), and Styling Approach Decision (4.9).
+**→ Continue in `phases/phase-4b-theming.md`** — Theme System (4b.1), Theme Provider (4b.2), Scoped Theming (4b.3), Dark Mode Checklist (4b.4), and Styling Approach Decision (4b.5).
 
 **Status: DONE** — Architecture design complete. Token hierarchy, directory structure, build pipeline, and CSS layer strategy defined. Proceed to Phase 4b: Theme & Styling (phase-4b-theming.md).
