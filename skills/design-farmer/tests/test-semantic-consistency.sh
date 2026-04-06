@@ -40,15 +40,16 @@ if [ -n "$handoff_line" ]; then
     fail "Phase 4 handoff references non-4b section numbers (possible stale reference to old numbering)"
   else
     all_match=true
+    section_fail_marker=$(mktemp "${TMPDIR:-/tmp}/df_test_section_XXXXXX")
+    rm -f "$section_fail_marker"
     echo "$referenced_sections" | while IFS= read -r section; do
       if ! grep -qE "^## $section " "$PHASES_DIR/phase-4b-theming.md"; then
         echo "  ✗ Phase 4 handoff references §$section but it doesn't exist in phase-4b-theming.md"
-        # Can't set all_match in subshell, so we use a temp file
-        touch "/tmp/df_test_section_fail"
+        touch "$section_fail_marker"
       fi
     done
-    if [ -f "/tmp/df_test_section_fail" ]; then
-      rm -f "/tmp/df_test_section_fail"
+    if [ -f "$section_fail_marker" ]; then
+      rm -f "$section_fail_marker"
       FAIL=$((FAIL + 1))
     else
       pass "Phase 4 → 4b handoff section numbers all valid"

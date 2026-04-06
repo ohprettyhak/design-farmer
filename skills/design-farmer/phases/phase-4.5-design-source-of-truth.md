@@ -340,11 +340,13 @@ Populate with:
 - Typography choices from Phase 3 extraction
 - Spacing philosophy from Phase 3 extraction
 - Component design principles from Phase 4 architecture
-- Decisions log from all user interactions (Phases 1-4)
+- Theming decisions from Phase 4b (theme strategy, dark mode, styling approach)
+- Decisions log from all user interactions (Phases 1-4b)
 
 Read DesignFarmerConfig from {systemPath}/.design-farmer/config.json
 Read extraction results from Phase 3 output (colors, typography, spacing)
-Read architecture decisions from Phase 4 output (token hierarchy, styling approach)
+Read architecture decisions from Phase 4 output (token hierarchy, component architecture)
+Read theming decisions from Phase 4b output (theme strategy, provider pattern, dark mode, styling approach)
 ```
 
 ## 4.5.3 Subsequent Run Behavior
