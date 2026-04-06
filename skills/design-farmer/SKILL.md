@@ -234,7 +234,7 @@ Phase 11: Release Readiness & Handoff
 - **Phase 3.5 is a hard gate** before Phase 4 unless preview generation falls back to a text-only approval path.
 - **Phase 4b** is a continuation of Phase 4 — load it immediately after Phase 4 completes, before Phase 4.5.
 - **DESIGN.md** (from Phase 4.5) is the persistent design source of truth for Phases 5–11.
-- **Fix Loop Protocol** (from `operational-notes.md`) is mandatory at implementation checkpoints in Phases 5, 6, 7, 10, and 11. Each phase must pass typecheck/lint/build/test before proceeding. The loop retries up to 5 times, then escalates to BLOCKED. This works without external plugins.
+- **Fix Loop Protocol** (from `operational-notes.md`) is mandatory at implementation checkpoints in Phases 5, 6, 7, 9, 10, and 11. Each phase must pass typecheck/lint/build/test before proceeding. The loop retries up to 5 times, then escalates to BLOCKED. This works without external plugins.
 - **Semantic-token-only rule**: Components must NEVER consume primitive tokens directly.
 - **Completion statuses are mandatory**: Every phase must end with DONE, DONE_WITH_CONCERNS, BLOCKED, or NEEDS_CONTEXT.
 - **User-question gating**: Discovery interview questions are one-at-a-time. Other AskUserQuestion calls require user response before proceeding.

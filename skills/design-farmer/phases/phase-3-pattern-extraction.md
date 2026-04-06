@@ -32,7 +32,7 @@ and component design decisions. Use it as the concrete reference when building g
 - Base sizes: 12px (small), 14px (body), 16px (body-large), 18–36px (headings)
 - Weights: 300 (display), 400 (body), 500 (label), 600 (heading)
 
-**Spacing defaults**: Base-4 scale: `4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96` px
+**Spacing defaults**: Base-4 scale: `2, 4, 6, 8, 10, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96` px
 
 **Border radius defaults:**
 - Tight: `4px` (badges, tags)

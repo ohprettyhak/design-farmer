@@ -84,7 +84,7 @@ Component:  {component}.{part}.{state}      -> button.background.hover
 
 ## Fix Loop Protocol
 
-Implementation phases (5, 6, 7, 10) generate code that must compile, lint, and pass tests.
+Implementation and verification phases (5, 6, 7, 9, 10, 11) generate or validate code that must compile, lint, and pass tests.
 Errors are expected — especially during integration. This protocol defines a built-in retry
 loop that keeps fixing until all checks pass, without requiring external plugins or tools.
 

@@ -72,14 +72,14 @@ Use that version throughout — do NOT assume any specific major version number.
    - For monorepo Option B (dedicated app at e.g. `apps/storybook`):
      a. Create `apps/storybook/package.json` with the design system as a workspace dependency:
         `{ "name": "@{scope}/storybook", "version": "0.0.1", "private": true,
-           "dependencies": { "@{scope}/design-system": "workspace:*" } }`
+           "dependencies": { "{designSystemPackage}": "workspace:*" } }`
      b. Register the package in `pnpm-workspace.yaml` (if not already covered by glob, add `- 'apps/*'`)
      c. If turbo.json exists, add `storybook` and `build-storybook` tasks to the pipeline
      d. Run init from inside the new package: `cd apps/storybook && {packageManager} dlx storybook@latest init`
      e. In `apps/storybook/.storybook/main.ts`, set the `stories` glob to reach the design system:
-        `stories: ['../../packages/design-system/src/**/*.stories.@(ts|tsx)']`
+        `stories: ['../../packages/{designSystemDir}/src/**/*.stories.@(ts|tsx)']`
      f. Import the design system's tokens/CSS from the workspace package in `preview.tsx`:
-        `import '@{scope}/design-system/src/tokens/index.css'`
+        `import '{designSystemPackage}/src/tokens/index.css'`
    - IMPORTANT: After init, add `@storybook/react` to the design system package's devDependencies:
      `{packageManager} --filter {designSystemPackage} add -D @storybook/react@latest`
      This installs the @storybook/react type definitions inside the design system package so

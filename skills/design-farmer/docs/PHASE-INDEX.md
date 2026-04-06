@@ -26,27 +26,27 @@ This index provides a compact map of the Design Farmer router + phase bundle for
 
 6. **Phase 4: Architecture Design**
    - Define token hierarchy, directory structure, build pipeline, and CSS layering.
-6b. **Phase 4b: Theme & Styling**
+7. **Phase 4b: Theme & Styling**
    - Define theme system, provider implementation, dark mode checklist, and styling approach.
-7. **Phase 4.5: Design Source of Truth (DESIGN.md)**
+8. **Phase 4.5: Design Source of Truth (DESIGN.md)**
    - Generate DESIGN.md capturing all design decisions as a persistent, machine-readable reference.
-8. **Phase 5: Token Implementation**
+9. **Phase 5: Token Implementation**
    - Implement primitive + semantic tokens and utilities with tests.
-9. **Phase 6: Component Implementation**
-   - Build component library using selected path (headless/custom) with accessibility requirements.
-10. **Phase 7: Storybook Integration**
-   - Document components and states visually (optional for light mode-only scenarios as configured).
-11. **Phase 8: Multi-Reviewer Verification**
+10. **Phase 6: Component Implementation**
+    - Build component library using selected path (headless/custom) with accessibility requirements.
+11. **Phase 7: Storybook Integration**
+    - Document components and states visually (optional for light mode-only scenarios as configured).
+12. **Phase 8: Multi-Reviewer Verification**
     - Execute multi-angle quality review and aggregate risk.
-12. **Phase 8.5: Design Review (Live Visual QA)**
+13. **Phase 8.5: Design Review (Live Visual QA)**
     - Detect project-declared browser tooling (for example, an existing Playwright setup) or fall back to manual verification.
     - Perform visual QA loop with strict triage and risk thresholds.
     - Responsive viewport testing at mobile, tablet, and desktop breakpoints.
-13. **Phase 9: Documentation & Completion**
+14. **Phase 9: Documentation & Completion**
     - Generate docs, run final verification commands, emit completion report.
-14. **Phase 10: App Integration**
+15. **Phase 10: App Integration**
     - Wire design system into application layout, imports, dependencies.
-15. **Phase 11: Release Readiness & Handoff**
+16. **Phase 11: Release Readiness & Handoff**
     - Final verification (tests, typecheck, lint, build).
     - Readiness checklist for artifacts, docs, and degradations.
     - Handoff summary for the next publication step.

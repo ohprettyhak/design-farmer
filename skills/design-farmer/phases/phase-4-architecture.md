@@ -132,7 +132,7 @@ src/design-system/
 
 ```json
 {
-  "name": "@{scope}/{packageName}",
+  "name": "{designSystemPackage}",
   "version": "0.1.0",
   "private": true,
   "type": "module",

@@ -40,11 +40,11 @@ Generate a self-contained HTML file at {systemPath}/design-preview.html that vis
    - All JS inline in a script tag
    - OKLCH values must work in modern browsers (96%+ support)
 
-Use the extracted patterns from Phase 3:
-- Color palettes: {serialized OKLCH palettes}
-- Typography: {serialized font data}
-- Spacing: {serialized spacing scale}
-- Component scope: {from DesignFarmerConfig}
+Read the extracted patterns from Phase 3 output and DesignFarmerConfig from {systemPath}/.design-farmer/config.json:
+- Color palettes (OKLCH values from Phase 3 extraction or greenfield generation)
+- Typography (font families, sizes, weights, line heights)
+- Spacing (scale values)
+- Component scope (from config.json)
 
 **Greenfield framing (if designMaturity = GREENFIELD):** All values shown are generated defaults,
 not extracted from existing code. Label the preview header clearly:
