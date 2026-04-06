@@ -87,6 +87,14 @@ Algorithm:
 4. Maintain constant hue across all steps:
    - H never changes within a palette
    - If source had hue drift (HSL artifact), normalize to constant H
+
+5. Optionally enhance for Display P3:
+   - sRGB gamut safety was already ensured in step 3; do not re-clamp here.
+   - For Display P3 targets, provide enhanced-chroma variants:
+     @media (color-gamut: p3) {
+       --color-primary-500: oklch(0.623 0.214 250);
+     }
+   - P3 gains by hue: greens/cyans +35% chroma, blues/purples +10-13%
 ```
 
 ## 3.3 Contrast Validation (APCA)
@@ -105,6 +113,11 @@ component occurs in Phase 8 (Review), where actual font sizes are known.
 
 ⚠️  APCA is part of the WCAG 3.0 Working Draft. For legal compliance (ADA, EN 301 549),
 also verify WCAG 2.x 4.5:1 alongside APCA checks.
+
+After contrast adjustments, re-verify sRGB gamut for every modified color.
+If adjusting L pushed any color out of gamut, reduce C while preserving the
+new L and H (same algorithm as 3.2 step 3). This ensures the light-mode
+palette remains in-gamut before entering dark mode derivation.
 ```
 
 ## 3.4 Dark Mode Derivation
@@ -113,25 +126,21 @@ also verify WCAG 2.x 4.5:1 alongside APCA checks.
 Dark mode palette = reverse the lightness mapping:
 - Light step 50  (L=0.95) -> Dark step 50  (L=0.15)
 - Light step 950 (L=0.15) -> Dark step 950 (L=0.95)
-- H is preserved unchanged; C values are preserved unchanged (not scaled)
+- H is preserved unchanged; C is carried over from the final light-mode palette
+  (after any contrast-driven L adjustments in 3.3 and their resulting gamut
+  corrections). C is not scaled or intentionally modified.
+- After inversion, clamp C to sRGB gamut only when the new L pushes the color
+  out of bounds (high-chroma hues at extreme L values). Use the same sRGB gamut
+  clamping as 3.2 step 3 (e.g., culori: clampChroma or Color.js: toGamut).
+  This is a gamut-safety pass, not an intentional chroma adjustment.
 - Note: dark step 50 is the near-black variant (L=0.15), not near-white.
   Consumers should use semantic tokens (e.g., --surface-default) rather than
   bare palette steps so the inversion is transparent to components.
-- Re-validate APCA contrast for all pairs in dark mode
+- Re-validate APCA contrast for all dark-mode pairs using the same thresholds
+  and rules as 3.3 (working threshold Lc 60; full table in operational-notes.md)
 ```
 
-## 3.5 Gamut Safety
-
-```
-For every generated color:
-1. Check sRGB gamut boundary
-2. If out-of-gamut: reduce C while preserving L and H
-3. Optionally provide Display P3 enhanced version:
-   @media (color-gamut: p3) {
-     --color-primary-500: oklch(0.623 0.214 250);
-   }
-4. P3 gains by hue: greens/cyans +35% chroma, blues/purples +10-13%
-```
+<!-- Section 3.5 (Gamut Safety) was merged into 3.2 step 5. Numbering preserved for cross-reference stability. -->
 
 ## 3.6 Typography Extraction
 
