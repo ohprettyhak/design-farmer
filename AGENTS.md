@@ -4,7 +4,7 @@
 - All repository-wide rules must be defined in this `AGENTS.md`.
 - List files in `docs/` before starting each task, and keep `docs/` up-to-date.
 - After completing each task, update the relevant `AGENTS.md` and `docs/` files in the same change when policies, structure, or contracts changed.
-- Write all code and comments in English.
+- Write all content in English, including code, comments, commit messages, PR titles, PR descriptions, issue titles, and issue bodies.
 - Run `bash scripts/validate-skill-md.sh` before finishing any task that modifies skill bundle files.
 - Run `bash skills/design-farmer/tests/run-all.sh` before finishing any task that modifies phase files, tests, or cross-phase contracts.
 - Commit when each logical unit of work is complete; do NOT use the `--no-verify` flag.
