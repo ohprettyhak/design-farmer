@@ -123,10 +123,12 @@ If user chose E:
 1. Delete `{systemPath}/DESIGN.md` if it exists (partial draft from Phase 3)
 2. Read `{systemPath}/.design-farmer/config.json` if it exists
 3. Reset completedPhases to `["0"]` (Phase 0 pre-flight is still valid)
-4. Clear design-specific fields: `brandColor`, `colorDirection`, `designMaturity`, `maturityScore`, `generatePreview`
+4. Clear design-specific fields: `brandColor`, `colorDirection`, `customComponents`, `designMaturity`, `maturityScore`, `generatePreview`
 5. Preserve project-specific fields: `packageManager`, `framework`, `isMonorepo`, `systemPath`, `designSystemPackage`, `componentScope`, `headlessLibrary`, `themeStrategy`, `themeLibrary`, `accessibilityLevel`, `targetPlatforms`, `vision`, `painPoint`, `productName`, `designSystemDir`
 6. Persist the reset config back to `{systemPath}/.design-farmer/config.json`
 7. Log: "Phase 3.5: User chose to start over. Resetting design extraction state. Project structure settings preserved."
+
+Note: Phase 1 will re-run from Q0. Preserved Q3–Q7 values serve as defaults — the agent should present them as pre-filled answers, allowing the user to accept or change each one.
 
 ## 3.5.3 Fallback Path
 
