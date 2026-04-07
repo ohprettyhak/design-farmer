@@ -1581,8 +1581,8 @@ else
   fail "Phase 11: keyboard nav is unconditional"
 fi
 
-# Components count must be conditional
-if grep -q "If componentScope\|If.*framework is React" "$PHASES_DIR/phase-11-readiness-handoff.md"; then
+# Components count must be conditional on componentScope + framework (compound gate)
+if grep -q "componentScope.*foundation.*framework is React\|componentScope.*framework" "$PHASES_DIR/phase-11-readiness-handoff.md"; then
   pass "Phase 11: component count is conditional"
 else
   fail "Phase 11: component count is unconditional"
