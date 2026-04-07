@@ -91,7 +91,18 @@ If user chose **A**:
 8. **Jump directly to Phase 5.** Do not run Phases 1–4.
 
 If user chose **B**:
-- **If DRAFT**: Load the draft's `## Config` YAML to reconstruct `DesignFarmerConfig`, persist to config.json (and config.backup.json), then **resume from Phase 3.5** (extraction is already done in the draft).
+- **If DRAFT**: Load the draft's `## Config` YAML to reconstruct `DesignFarmerConfig`. If `designMaturity` is missing from the parsed config, ask via AskUserQuestion:
+
+  > Your draft DESIGN.md doesn't specify design maturity. This determines the visual preview behavior.
+  >
+  > Options:
+  > - A) Greenfield — no existing design system, build from scratch
+  > - B) Emerging — some patterns exist, extract and normalize them
+  > - C) Mature — comprehensive design system exists, extract and document
+
+  Set `designMaturity` and `maturityScore` (0 for greenfield, 5 for emerging, 8 for mature) from user's choice.
+
+  Persist to config.json (and config.backup.json), then **resume from Phase 3.5** (extraction is already done in the draft).
 - **If finalized**: continue to Phase 1 (Discovery Interview) as normal — run fresh Phases 1–4.
 
 If user chose **C**: continue to Phase 1 (Discovery Interview) as normal.

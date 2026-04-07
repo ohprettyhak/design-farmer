@@ -7,6 +7,12 @@
 
 Read `themeStrategy` from `DesignFarmerConfig` (set by Phase 1 Q5).
 
+**Validation:** If `themeStrategy` is not one of `light-only`, `light-dark`, `multi-brand`, or `custom`, emit:
+
+**Status: BLOCKED** — Invalid themeStrategy: `{themeStrategy}`. Expected one of: light-only, light-dark, multi-brand, custom. Recovery: re-run Phase 1 Q5 or manually correct `themeStrategy` in `{systemPath}/.design-farmer/config.json`.
+
+Do NOT proceed until `themeStrategy` is valid.
+
 ```
 If themeStrategy = 'light-only':
   → Generate ONLY the light theme CSS in 4b.1 (skip [data-theme="dark"] block entirely)
@@ -273,6 +279,148 @@ module.exports = { darkMode: ['selector', '[data-theme="dark"]'] }
 // 6. Apply data-theme attribute on documentElement
 // 7. Provide a mounted guard hook for SSR-safe theme-dependent rendering
 ```
+
+## 4b.2a Multi-Brand ThemeProvider
+
+**Only applies when `themeStrategy = 'multi-brand'`.**
+
+Multi-brand requires a ThemeProvider that manages two dimensions: brand identity (which color palette) and mode (light/dark). Generate the following:
+
+```tsx
+// components/brand-provider.tsx
+"use client"
+
+import { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
+
+type Brand = 'default' | string // extend with actual brand names from config
+type Mode = 'light' | 'dark'
+
+interface BrandThemeContextValue {
+  brand: Brand
+  setBrand: (brand: Brand) => void
+  mode: Mode
+  setMode: (mode: Mode) => void
+  toggleMode: () => void
+}
+
+const BrandThemeContext = createContext<BrandThemeContextValue | undefined>(undefined)
+
+export function BrandThemeProvider({
+  children,
+  defaultBrand = 'default',
+}: {
+  children: ReactNode
+  defaultBrand?: Brand
+}) {
+  // Initialize from localStorage, fallback to OS preference, fallback to 'light'
+  const [mode, setMode] = useState<Mode>(() => {
+    if (typeof window === 'undefined') return 'light'
+    const stored = localStorage.getItem('theme-mode') as Mode | null
+    if (stored) return stored
+    return matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+  })
+
+  const [brand, setBrand] = useState<Brand>(() => {
+    if (typeof window === 'undefined') return defaultBrand
+    return (localStorage.getItem('theme-brand') as Brand) || defaultBrand
+  })
+
+  useEffect(() => {
+    // data-theme format: "brand-mode" (e.g., "acme-dark", "default-light")
+    document.documentElement.setAttribute('data-theme', `${brand}-${mode}`)
+    localStorage.setItem('theme-mode', mode)
+    localStorage.setItem('theme-brand', brand)
+  }, [brand, mode])
+
+  // Listen for OS preference changes
+  useEffect(() => {
+    const mq = matchMedia('(prefers-color-scheme: dark)')
+    const handler = (e: MediaQueryListEvent) => setMode(e.matches ? 'dark' : 'light')
+    mq.addEventListener('change', handler)
+    return () => mq.removeEventListener('change', handler)
+  }, [])
+
+  const toggleMode = () => setMode(m => (m === 'light' ? 'dark' : 'light'))
+
+  return (
+    <BrandThemeContext.Provider value={{ brand, setBrand, mode, setMode, toggleMode }}>
+      {children}
+    </BrandThemeContext.Provider>
+  )
+}
+
+export function useBrandTheme() {
+  const ctx = useContext(BrandThemeContext)
+  if (!ctx) throw new Error('useBrandTheme must be used within BrandThemeProvider')
+  return ctx
+}
+```
+
+CSS structure for multi-brand — generate a separate `[data-theme]` block per brand:
+
+```css
+/* brand-acme-light.css */
+[data-theme="acme-light"] {
+  --interactive-primary: oklch(0.55 0.22 25);    /* brand red */
+  --interactive-primary-hover: oklch(0.45 0.20 25);
+  /* ... all semantic tokens for this brand's light mode */
+}
+
+/* brand-acme-dark.css */
+[data-theme="acme-dark"] {
+  --interactive-primary: oklch(0.65 0.22 25);
+  --interactive-primary-hover: oklch(0.72 0.20 25);
+  /* ... all semantic tokens for this brand's dark mode */
+}
+
+/* brand-neutral-light.css */
+[data-theme="neutral-light"] {
+  --interactive-primary: oklch(0.55 0.05 250);   /* neutral blue */
+  /* ... */
+}
+```
+
+**SSR safety:** Inject a blocking script in `<head>` before hydration (same pattern as custom ThemeProvider in 4b.2):
+
+```html
+<script>
+  (function() {
+    var b = localStorage.getItem('theme-brand') || 'default';
+    var m = localStorage.getItem('theme-mode');
+    if (!m) m = matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', b + '-' + m);
+  })()
+</script>
+```
+
+## 4b.2b Custom Theme Provider Contract
+
+**Only applies when `themeStrategy = 'custom'`.**
+
+When the user selects custom theming, they have specific requirements beyond light/dark. Provide an integration contract that any custom provider must satisfy:
+
+```typescript
+// Integration contract — custom ThemeProvider must expose this interface
+interface CustomThemeContract {
+  /** Current theme identifier (string — e.g., "dark", "high-contrast", "brand-x") */
+  theme: string
+  /** Set the active theme */
+  setTheme: (theme: string) => void
+  /** All available theme identifiers */
+  availableThemes: string[]
+  /** Whether the provider has hydrated (for SSR-safe rendering) */
+  mounted: boolean
+}
+```
+
+The custom provider MUST:
+1. Set `data-theme` attribute on `document.documentElement` (not on `<body>` or other elements)
+2. Persist the chosen theme to `localStorage` under key `theme`
+3. Initialize from localStorage → OS preference → fallback (`'light'`)
+4. Provide a `mounted` flag that is `false` during SSR and `true` after first client render
+5. Listen for `prefers-color-scheme` changes and expose them via `systemTheme`
+
+Generate CSS theme blocks using the naming convention `[data-theme="{themeId}"]` for each custom theme. All semantic tokens must be defined in every theme block — no falling back to `:root` defaults.
 
 ## 4b.3 Scoped Theming
 

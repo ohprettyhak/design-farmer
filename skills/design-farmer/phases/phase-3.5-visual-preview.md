@@ -2,6 +2,16 @@
 
 **Purpose:** Generate a visual preview of the proposed design system before writing implementation code. This lets the user validate color palette, typography, spacing, and overall visual direction before hundreds of files are generated.
 
+## Phase Start: Config Validation
+
+Before reading config, verify that `{systemPath}/.design-farmer/config.json` exists and is valid JSON with the required fields (`designMaturity`, `componentScope`, `themeStrategy`). If missing, unparseable, or missing required fields, emit:
+
+**Status: BLOCKED** — Config validation failed: {reason}. Recovery: re-run Phase 1 Discovery Interview to regenerate config, or restore from `{systemPath}/.design-farmer/config.backup.json` if available.
+
+Do NOT proceed to 3.5.0 until config is valid.
+
+---
+
 ## 3.5.0 Preview Opt-In Gate
 
 Read `designMaturity` from `{systemPath}/.design-farmer/config.json`.

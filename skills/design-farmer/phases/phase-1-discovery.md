@@ -6,6 +6,30 @@ If the user expresses impatience after 3+ questions, offer to use sensible defau
 
 ---
 
+### Re-entry Detection
+
+Before asking Q0, check if `{systemPath}/.design-farmer/config.json` exists and `completedPhases` includes `"3.5"`. If so, this is a restart from Phase 3.5 Option E — the user chose to start over.
+
+Load the following preserved fields from config.json and present them as pre-filled defaults alongside each question:
+
+| Question | Preserved Field | Default Display |
+|----------|----------------|-----------------|
+| Q0 | `painPoint` | "Previous answer: {painPoint}" |
+| Q1 | `vision` | "Previous answer: {vision}" |
+| Q3 | `componentScope` | "Previous answer: {componentScope}" |
+| Q3-1 | `headlessLibrary` | "Previous answer: {headlessLibrary}" (skip if componentScope = foundation) |
+| Q5 | `themeStrategy` | "Previous answer: {themeStrategy}" |
+| Q5-1 | `themeLibrary` | "Previous answer: {themeLibrary}" (skip if themeStrategy = light-only) |
+| Q6 | `accessibilityLevel` | "Previous answer: {accessibilityLevel}" |
+| Q7 | `targetPlatforms` | "Previous answer: {targetPlatforms}" |
+
+Q2 (Brand & Color Direction) is NOT pre-filled — `brandColor` and `colorDirection` were cleared during the Phase 3.5 reset.
+Q4 (Design System Location) uses `designSystemDir` which is preserved — present as default.
+
+For each question, prepend the preserved value above the question text. The user can accept the default (choose the matching option or confirm) or provide a new answer.
+
+---
+
 ### Question 0: Motivation & Pain Points
 
 Via AskUserQuestion, ask:
