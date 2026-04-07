@@ -38,6 +38,12 @@ If `themeStrategy = 'light-only'`, skip dark mode evaluation in all reviewers (8
 compares only that light CSS exists, 8.4 category 7 Dark Mode Quality is scored N/A, 8.5 dark mode
 infrastructure checks are skipped).
 
+If `storybookSkipped` is set in config.json (Phase 7 option C), skip Storybook-related review criteria:
+- 8.2 Code Quality: skip story file existence checks
+- 8.3 Scientist: skip Storybook-specific component metrics
+- 8.4 Visual Design: skip Storybook rendering checks
+- 8.5 Engineer: skip Storybook DX evaluation
+
 ---
 
 ## 8.1 Design System Critic
@@ -415,6 +421,27 @@ Each area scored 1-10. Overall = weighted average.
 Per-area score with evidence (file:line references).
 If not APPROVED: numbered list of required changes, ordered by impact.
 ```
+
+---
+
+## 8.5b Reviewer Failure Fallback
+
+If all 5 reviewer delegation passes fail (timeout, tool unavailable, or all return errors):
+
+1. Log: "Phase 8: All reviewer passes failed. Falling back to basic verification."
+2. Run basic verification checks only:
+   - Grep for hardcoded colors in component files (should be zero)
+   - Verify token files exist: primitive, semantic, and component token files are present
+   - Verify CSS custom properties are defined in light and dark theme files
+   - Check that component directories contain test files
+3. If basic checks pass: emit **DONE_WITH_CONCERNS** with results. Proceed to Phase 8.5.
+4. If basic checks fail: emit **BLOCKED** — "Reviewers failed AND basic checks failed. Manual intervention required." Ask via AskUserQuestion:
+   > All automated reviewers failed, and basic verification checks also found issues.
+   > Options:
+   > - A) Show me the basic check results — I'll investigate manually
+   > - B) Proceed anyway — skip to Phase 8.5 (visual QA)
+   > - C) Re-run reviewers — try again with fresh context
+5. Proceed to Phase 8.5 in either case (independent verification method).
 
 ---
 

@@ -35,9 +35,27 @@ For EMERGING/MATURE, ask via AskUserQuestion:
 
 Set `generatePreview` in config.json (`true` if GREENFIELD or chose A; `false` if chose B).
 If `false`: skip 3.5.1. Instead, present a **text summary** of the extracted design direction
-(color palette OKLCH values, typography choices, spacing scale) and ask the user to approve
-the direction via AskUserQuestion before proceeding to Phase 4. This is an intentional skip,
-not a failure — do NOT use the error-state Fallback Path (3.5.3).
+(color palette OKLCH values, typography choices, spacing scale) via AskUserQuestion:
+
+> Based on your codebase analysis, here's the design direction I extracted:
+>
+> **Color Palette:** {list primary hue OKLCH values and generated 11-step palette}
+> **Semantic Roles:** {surface, text, border token values for light/dark}
+> **Typography:** {font families, size scale, weight usage}
+> **Spacing:** {base unit, scale values}
+>
+> **Does this direction match your design intent?**
+>
+> Options:
+> - A) Yes, proceed to architecture
+> - B) Adjust — I'll tell you what to change
+> - C) Start over with different direction
+
+**→ STOP — wait for user response.**
+
+If user chose B: ask follow-up questions, adjust values, re-present summary.
+If user chose C: follow Option E reset logic below (return to Phase 1).
+This is an intentional skip, not a failure — do NOT use the error-state Fallback Path (3.5.3).
 
 ## 3.5.1 Preview Generation
 
@@ -132,13 +150,14 @@ If user chose E:
 **Before returning to Phase 1, reset pipeline state:**
 1. Delete `{systemPath}/DESIGN.md` if it exists (partial draft from Phase 3)
 2. Read `{systemPath}/.design-farmer/config.json` if it exists
-3. Reset completedPhases to `["0"]` (Phase 0 pre-flight is still valid)
-4. Clear design-specific fields: `brandColor`, `colorDirection`, `customComponents`, `designMaturity`, `maturityScore`, `generatePreview`
-5. Preserve project-specific fields: `packageManager`, `framework`, `isMonorepo`, `systemPath`, `designSystemPackage`, `componentScope`, `headlessLibrary`, `themeStrategy`, `themeLibrary`, `accessibilityLevel`, `targetPlatforms`, `vision`, `painPoint`, `productName`, `designSystemDir`
-6. Persist the reset config back to `{systemPath}/.design-farmer/config.json` (and config.backup.json)
-7. Log: "Phase 3.5: User chose to start over. Resetting design extraction state. Project structure settings preserved."
+3. Set `resetFromPhase: "3.5"` in config (signals Phase 1 re-entry detection)
+4. Reset completedPhases to `["0"]` (Phase 0 pre-flight is still valid)
+5. Clear design-specific fields: `brandColor`, `colorDirection`, `customComponents`, `designMaturity`, `maturityScore`, `generatePreview`
+6. Preserve project-specific fields: `packageManager`, `framework`, `isMonorepo`, `systemPath`, `designSystemPackage`, `componentScope`, `headlessLibrary`, `themeStrategy`, `themeLibrary`, `accessibilityLevel`, `targetPlatforms`, `vision`, `painPoint`, `productName`, `designSystemDir`
+7. Persist the reset config back to `{systemPath}/.design-farmer/config.json` (and config.backup.json)
+8. Log: "Phase 3.5: User chose to start over. Resetting design extraction state. Project structure settings preserved."
 
-Note: Phase 1 will re-run from Q0. Preserved values (vision, painPoint from Q0-Q1; componentScope, headlessLibrary, themeStrategy, themeLibrary, accessibilityLevel, targetPlatforms from Q3-Q7) serve as defaults — the agent should present them as pre-filled answers, allowing the user to accept or change each one.
+Note: Phase 1 will re-run from Q0. Preserved values serve as defaults — the agent should present them as pre-filled answers.
 
 ## 3.5.3 Fallback Path
 

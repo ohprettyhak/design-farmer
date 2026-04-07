@@ -17,6 +17,16 @@ Via AskUserQuestion, ask:
 
 **→ STOP — wait for user response before continuing.**
 
+If user chose C (skip Storybook):
+1. Set `storybookSkipped: true` in `{systemPath}/.design-farmer/config.json` (signals Phase 8 to skip Storybook-related review criteria).
+2. Emit:
+
+**Status: DONE** — User chose to skip Storybook. Proceeding to Phase 8: Multi-Reviewer Verification with code-based tests only.
+
+Then stop — do NOT execute steps 0–4.
+
+---
+
 If user chose A or B:
 
 **Step 0 — (Monorepo only) Determine Storybook location:**

@@ -60,6 +60,10 @@ If user chose **A**:
    - `componentScope`, `headlessLibrary`, `themeStrategy`, `themeLibrary`, `accessibilityLevel`
    - `targetPlatforms`, `designMaturity`, `maturityScore`
 
+   **Conditional fields** (may be absent depending on user choices):
+   - `brandColor`: read from Config if present; if missing and `colorDirection` is `'keep'` or `'neutral'`, set to `null`
+   - `themeLibrary`: read from Config if present; if missing and `themeStrategy` is `'light-only'`, set to `'none'`
+
 2. **Fill gaps from preflight scan** (steps 1–5 above already ran):
    - `packageManager`: infer from lock file (bun.lock → bun, pnpm-lock.yaml → pnpm, etc.)
    - `framework`: infer from `package.json` dependencies

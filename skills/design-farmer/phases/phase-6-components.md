@@ -31,7 +31,9 @@ If framework is in [astro, sveltekit, nuxt] AND componentScope ≠ 'foundation':
   
   **→ STOP — wait for user response before continuing.**
 
-  If A: validate headless library compatibility (see below), then proceed to 6.0.1. If B: emit DONE_WITH_CONCERNS and jump to Phase 8 (no components to document in Storybook). If C: emit DONE_WITH_CONCERNS and jump to Phase 8.
+  If A: validate headless library compatibility (see below), then proceed to 6.0.1. After Phase 6 completion, proceed to Phase 7.
+  If B: emit DONE_WITH_CONCERNS and jump to Phase 8. Phase 7 skipped.
+  If C: emit DONE_WITH_CONCERNS and jump to Phase 8. Phase 7 skipped.
 
   **If user chose A (generate React components for a non-React framework):**
   The headless library selected in Phase 1 Q3-1 may be framework-specific (e.g., Melt UI for Svelte,

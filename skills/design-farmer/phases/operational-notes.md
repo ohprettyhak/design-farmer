@@ -104,6 +104,7 @@ for attempt in 1..MAX_ATTEMPTS:
 
   3. If ALL checks pass (exit code 0):
      → BREAK — emit "Fix Loop: PASSED on attempt {attempt}/{MAX_ATTEMPTS}"
+     → If attempt > 2, append: " (multiple fix iterations required)"
      → Continue to next phase step
 
   4. If ANY check fails:

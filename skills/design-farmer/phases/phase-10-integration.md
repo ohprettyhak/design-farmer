@@ -23,7 +23,7 @@ If user chose C (skip integration), emit:
 
 Set `integrationStatus: "skipped"` in `{systemPath}/.design-farmer/config.json`. Update `config.backup.json`.
 
-Then stop — do NOT execute steps 10.1 through 10.7.
+Then stop — do NOT execute steps 10.1 through 10.7. No code changes were made, so the Fix Loop (step 10.7) is not required. The user is responsible for verifying the design system builds in their application context.
 
 ---
 

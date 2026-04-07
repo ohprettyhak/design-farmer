@@ -8,7 +8,7 @@ If the user expresses impatience after 3+ questions, offer to use sensible defau
 
 ### Re-entry Detection
 
-Before asking Q0, check if `{systemPath}/.design-farmer/config.json` exists and `completedPhases` includes `"3.5"`. If so, this is a restart from Phase 3.5 Option E — the user chose to start over.
+Before asking Q0, check if `{systemPath}/.design-farmer/config.json` exists and either `completedPhases` includes `"3.5"` or `resetFromPhase` equals `"3.5"`. If either condition is true, this is a restart from Phase 3.5 Option E. After loading preserved values as defaults, clear the `resetFromPhase` field from config to prevent false positives on subsequent runs.
 
 Load the following preserved fields from config.json and present them as pre-filled defaults alongside each question:
 
