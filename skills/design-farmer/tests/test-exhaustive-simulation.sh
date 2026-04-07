@@ -1581,8 +1581,8 @@ else
   fail "Phase 11: keyboard nav is unconditional"
 fi
 
-# Components count must be conditional on componentScope + framework (compound gate)
-if grep -q "componentScope.*foundation.*framework is React\|componentScope.*framework" "$PHASES_DIR/phase-11-readiness-handoff.md"; then
+# Components count must be conditional on componentScope
+if grep -q "componentScope.*foundation" "$PHASES_DIR/phase-11-readiness-handoff.md"; then
   pass "Phase 11: component count is conditional"
 else
   fail "Phase 11: component count is unconditional"
@@ -1641,15 +1641,15 @@ for entry in "${TOKEN_MAP[@]}"; do
     fail "Token inventory: --${css_name} missing or not in both themes (found ${token_count})"
   fi
 
-  # Verify token is documented in Phase 4.5 template (by semantic label or CSS name)
-  if grep -qi "${label}\|${css_name}" "$PHASES_DIR/phase-4.5-design-source-of-truth.md"; then
+  # Verify token is documented in Phase 4.5 template (by bold label or CSS name with --)
+  if grep -q "\*\*${label}\*\*\|\-\-${css_name}" "$PHASES_DIR/phase-4.5-design-source-of-truth.md"; then
     pass "Token inventory: --${css_name} documented in Phase 4.5"
   else
     fail "Token inventory: --${css_name} missing from Phase 4.5 template"
   fi
 
-  # Verify token is referenced in examples/DESIGN.md (by semantic label or CSS name)
-  if grep -qi "${label}\|${css_name}" "$EXAMPLES_DIR/DESIGN.md"; then
+  # Verify token is referenced in examples/DESIGN.md (by bold label or CSS name with --)
+  if grep -q "\*\*${label}\*\*\|\-\-${css_name}" "$EXAMPLES_DIR/DESIGN.md"; then
     pass "Token inventory: --${css_name} referenced in examples/DESIGN.md"
   else
     fail "Token inventory: --${css_name} missing from examples/DESIGN.md"

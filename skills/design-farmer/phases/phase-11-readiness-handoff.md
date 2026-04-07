@@ -53,7 +53,7 @@ When handing off a ready-to-ship result, include a summary in this structure:
 ## Summary
 Design Farmer generated a production-ready design system.
 
-{If componentScope ≠ 'foundation' and framework is React:}
+{If componentScope ≠ 'foundation':}
 ### Components: {count} implemented
 {/If}
 ### Tokens: {count} (primitive + semantic + component)
