@@ -48,6 +48,7 @@ Reference exact token values inline with backticks.}
 ### Background Surfaces
 - **Surface Default** (`{value}`): Main page/card background
 - **Surface Subtle** (`{value}`): Secondary backgrounds, sidebars, inputs
+- **Surface Muted** (`{value}`): Hover states on non-interactive containers, skeleton loaders
 - **Surface Inverse** (`{value}`): Dark surfaces for high-contrast elements
 
 ### Text & Content
