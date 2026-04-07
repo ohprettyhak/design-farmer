@@ -410,8 +410,8 @@ If no styling framework detected:
   -> Consider recommending Tailwind v4 for utility-first workflow
 ```
 
-{If themeStrategy = 'light-only':}
+If themeStrategy = 'light-only':
 **Status: DONE** — Light-only theme system and styling approach defined. ThemeProvider, dark mode, and scoped theming skipped per configuration. Proceed to Phase 4.5: Design Source of Truth (DESIGN.md).
 
-{If themeStrategy ≠ 'light-only':}
+If themeStrategy ≠ 'light-only':
 **Status: DONE** — Theme system, provider implementation, dark mode checklist, and styling approach defined. Proceed to Phase 4.5: Design Source of Truth (DESIGN.md).

@@ -407,6 +407,7 @@ even if earlier context has been compressed:
 ```bash
 mkdir -p {systemPath}/.design-farmer
 # Write DesignFarmerConfig as JSON to {systemPath}/.design-farmer/config.json
+# Also copy to config.backup.json in the same directory
 # Set createdAt to the current ISO 8601 timestamp
 ```
 

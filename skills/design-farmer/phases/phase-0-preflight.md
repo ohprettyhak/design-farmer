@@ -73,7 +73,7 @@ If user chose **A**:
    - `designSystemPackage`: read from `{systemPath}/package.json` `"name"` field (e.g., `@acme/design-system`)
    - `productName`: strip `@scope/` prefix from `designSystemPackage`, then title-case (e.g., `Design System`)
 
-5. **Persist** the reconstructed `DesignFarmerConfig` (including derived fields) to `{systemPath}/.design-farmer/config.json`.
+5. **Persist** the reconstructed `DesignFarmerConfig` (including derived fields) to `{systemPath}/.design-farmer/config.json`. Also copy to `config.backup.json` in the same directory.
 
 6. **Validate critical fields** — after persisting config, verify that `designMaturity` is present. If missing, ask via AskUserQuestion:
 
@@ -91,7 +91,7 @@ If user chose **A**:
 8. **Jump directly to Phase 5.** Do not run Phases 1–4.
 
 If user chose **B**:
-- **If DRAFT**: Load the draft's `## Config` YAML to reconstruct `DesignFarmerConfig`, persist to config.json, then **resume from Phase 3.5** (extraction is already done in the draft).
+- **If DRAFT**: Load the draft's `## Config` YAML to reconstruct `DesignFarmerConfig`, persist to config.json (and config.backup.json), then **resume from Phase 3.5** (extraction is already done in the draft).
 - **If finalized**: continue to Phase 1 (Discovery Interview) as normal — run fresh Phases 1–4.
 
 If user chose **C**: continue to Phase 1 (Discovery Interview) as normal.
