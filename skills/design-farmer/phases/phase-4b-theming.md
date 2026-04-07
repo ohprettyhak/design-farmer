@@ -16,6 +16,7 @@ Do NOT proceed until `themeStrategy` is valid.
 ```
 If themeStrategy = 'light-only':
   → Generate ONLY the light theme CSS in 4b.1 (skip [data-theme="dark"] block entirely)
+  → Use `:root` selectors directly instead of `[data-theme="light"]` since no theme switching is needed
   → Skip 4b.2 ThemeProvider (no theme switching needed — apply light tokens at :root)
   → Skip 4b.3 Scoped Theming
   → Skip 4b.4 Dark Mode Checklist

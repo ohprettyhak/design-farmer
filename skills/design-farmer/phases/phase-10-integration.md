@@ -1,5 +1,7 @@
 # Phase 10: App Integration
 
+Read `DESIGN.md` to verify integration aligns with the approved design architecture and token system. All CSS import paths, ThemeProvider configuration, and token references must match the DESIGN.md source of truth.
+
 Via AskUserQuestion, ask:
 
 > Your design system is built, tested, and documented. The final step is wiring it
@@ -259,5 +261,7 @@ Common integration errors and their root causes:
 Do NOT emit DONE until the Fix Loop passes on all three checks.
 
 After the Fix Loop passes, set `integrationStatus: "completed"` in `{systemPath}/.design-farmer/config.json`. Update `config.backup.json`.
+
+Before emitting status, append `'phase-10'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
 
 **Status: DONE** (Fix Loop: passed on attempt {N}/5) — Design system integrated into application. Theme toggle working, tokens visible in rendered output. Proceed to Phase 11: Release Readiness & Handoff.

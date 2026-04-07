@@ -1,5 +1,7 @@
 # Phase 9: Documentation & Completion
 
+Read `DESIGN.md` from Phase 4.5 to calibrate documentation content against the approved design decisions. All token names, component APIs, and theme values in the generated documentation must match the DESIGN.md source of truth.
+
 ## 9.1 Generate Documentation
 
 Create documentation at `{systemPath}/docs/` or inline in source:
@@ -73,5 +75,7 @@ All must pass with zero errors before declaring completion.
 ### Next Steps
 See Phase 10 (App Integration) to wire the design system into your application.
 ```
+
+Before emitting status, append `'phase-9'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
 
 **Status: DONE** — Documentation generated and final verification passed. Design system is production-ready. Proceed to Phase 10: App Integration (optional).

@@ -34,6 +34,14 @@ import { formatHex } from 'oklch';
 
 ---
 
+### Maturity-Dependent Token Strategy
+
+Read `designMaturity` from `{systemPath}/.design-farmer/config.json` before implementing tokens:
+
+- **GREENFIELD**: Generate all tokens from scratch using DESIGN.md values. No backward compatibility concerns.
+- **EMERGING**: Generate new tokens; preserve any existing token names found in the repo for backward compatibility. Map old names to new semantic tokens where possible.
+- **MATURE**: Map existing token names/values to the new semantic layer. **NEVER rename existing tokens that are consumed by components** — create aliases if the naming convention differs.
+
 Implement tokens in this order. Use the following implementation brief by default when specialized delegation is available; otherwise execute the same work directly:
 
 ## 5.1 OKLCH Utility Functions
@@ -68,7 +76,7 @@ never primitive tokens directly. This enables theming without component API chan
 
 ## 5.5 Token Snapshot Tests
 
-Tests use vitest globals (`describe`, `it`, `expect`) available via `tsconfig.json` types — see section 5.6 for setup.
+Tests use vitest globals (`describe`, `it`, `expect`) available via `tsconfig.json` types — see section 5.6 for setup. If the project uses a different test framework (jest, ava), adapt test syntax accordingly. Check `package.json` for the configured `test` script.
 
 ```typescript
 // __tests__/tokens.test.ts
@@ -196,10 +204,12 @@ Read extracted patterns from Phase 3 output — or from DESIGN.md if Phase 3 was
 After all token files, utilities, and tests are written, run the **Fix Loop Protocol** (see `operational-notes.md`):
 
 ```
-Checks: typecheck, test
+Checks: typecheck, lint, test
 Max attempts: 5
 ```
 
-Do NOT proceed to Phase 6 until typecheck and tests pass. If the loop exhausts all attempts, emit BLOCKED and ask the user.
+Do NOT proceed to Phase 6 until typecheck, lint, and tests pass. If the loop exhausts all attempts, emit BLOCKED and ask the user.
+
+Before emitting status, append `'phase-5'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
 
 **Status: DONE** (Fix Loop: passed on attempt {N}/5) — Token system implemented with primitive, semantic, and component tokens. Tests passing. Proceed to Phase 6: Component Implementation.

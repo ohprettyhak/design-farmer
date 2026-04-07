@@ -510,4 +510,6 @@ Hard cap: 30 fixes maximum.
 
 After review completes, write `lastReviewScore` (0–10) and `lastReviewDate` (ISO 8601) to config.json. Also update config.backup.json.
 
+Before emitting status, append `'phase-8'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
+
 **Status: DONE** — Multi-reviewer verification complete. All CRITICAL findings resolved. Proceed to Phase 8.5: Design Review (Live Visual QA).

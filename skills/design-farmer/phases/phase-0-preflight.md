@@ -31,7 +31,11 @@ config_path="{directory_containing_DESIGN.md}/.design-farmer/config.json"
 # Read completedPhases, createdAt from config.json if it exists
 ```
 
-**Draft guard**: Read the first 5 lines of DESIGN.md. If the file contains `**DRAFT**` in its header, it is an incomplete Phase 3 draft — do NOT offer Option A. Only offer B (continue from where you left off) and C (start from scratch).
+**Draft guard**: Read the first 5 lines of DESIGN.md (if the file has fewer than 5 lines, treat it as finalized — a DRAFT marker cannot exist in fewer lines). If the file contains `**DRAFT**` in its header, it is an incomplete Phase 3 draft — do NOT offer Option A. Only offer B (continue from where you left off) and C (start from scratch).
+
+If DESIGN.md exists but `config.json` does NOT exist at `{directory_containing_DESIGN.md}/.design-farmer/config.json`, treat as a partial re-entry — the design document exists but pipeline state was lost. Offer:
+- A) Reconstruct config from DESIGN.md and jump to Phase 5
+- B) Start fresh from Phase 1 (Discovery Interview)
 
 Then ask via AskUserQuestion **before anything else**:
 
@@ -55,7 +59,7 @@ Then ask via AskUserQuestion **before anything else**:
 
 If user chose **A**:
 
-1. **Read the `## Config` YAML block** from DESIGN.md (if present). Parse it to reconstruct `DesignFarmerConfig`:
+1. **Read the `## Config` YAML block** from DESIGN.md (if present). If the `## Config` section is missing or malformed, fall back to preflight scan (steps 1–5) plus user prompts for critical fields — do not block. Parse it to reconstruct `DesignFarmerConfig`:
    - `packageManager`, `framework`, `isMonorepo`, `systemPath`, `designSystemPackage`
    - `componentScope`, `headlessLibrary`, `themeStrategy`, `themeLibrary`, `accessibilityLevel`
    - `targetPlatforms`, `designMaturity`, `maturityScore`
@@ -70,7 +74,7 @@ If user chose **A**:
    - `isMonorepo`: infer from workspace files
    - `systemPath`: use the directory containing DESIGN.md
 
-3. **If critical fields are still missing** (packageManager, framework, systemPath), ask ONE AskUserQuestion with all missing fields at once — do not ask one-at-a-time for this recovery step.
+3. **If critical fields are still missing** (packageManager, framework, systemPath, isMonorepo, designSystemPackage, componentScope, themeStrategy), ask ONE AskUserQuestion with all missing fields at once — do not ask one-at-a-time for this recovery step.
 
 4. **Derive computed identifiers** from the parsed fields:
    - `designSystemDir`: `basename(systemPath)` (e.g., `design-system`)

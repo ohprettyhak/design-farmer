@@ -30,7 +30,10 @@ sleep 5
 **Option A — Project-declared browser tooling (preferred if already configured):**
 - Use the repository's existing browser tooling against the running dev server or Storybook
 - Capture screenshots per component per theme
-- Responsive viewport testing via viewport configuration
+- Responsive viewport testing via viewport configuration at three breakpoints:
+  - Mobile: 375×812 (iPhone viewport)
+  - Tablet: 768×1024 (iPad viewport)
+  - Desktop: 1440×900 (standard desktop)
 
 **Option B — Manual verification fallback:**
 - If no project browser tool is available, scope Phase 8.5 as manual verification
@@ -230,3 +233,5 @@ After fixing, re-score the affected categories. Include before/after grades in
 the completion report.
 
 **Status: DONE** — Live visual QA complete. All HIGH findings resolved. Proceed to Phase 9: Documentation & Completion.
+
+Before emitting status, append `'phase-8.5'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.

@@ -460,4 +460,12 @@ Composed (depends on all above):
 
 Only implement components within the user's chosen scope from Phase 1 Question 3.
 
+**Scope-to-component mapping:**
+- **foundation**: Foundation layer only (tokens, styles, utilities — no UI components)
+- **core**: Foundation + Core UI (items 4–10: Button, Input, TextArea, Checkbox, Radio, Select, Switch/Toggle)
+- **full**: All 20 components in priority order
+- **custom**: User-specified list from Phase 1 discovery
+
+Before emitting status, append `'phase-6'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
+
 **Status: DONE** — All components in scope implemented, tested, and accessible. Proceed to Phase 7: Storybook Integration.

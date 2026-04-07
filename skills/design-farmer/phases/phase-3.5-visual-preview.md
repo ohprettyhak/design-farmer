@@ -31,9 +31,12 @@ For EMERGING/MATURE, ask via AskUserQuestion:
 > - A) Yes — generate HTML preview
 > - B) No — text summary instead
 
-**→ STOP — wait for response (skip for GREENFIELD).**
+**→ STOP — wait for response.**
+
+For GREENFIELD: skip this AskUserQuestion gate, set `generatePreview: true` and `previewOutcome: 'generated'` in config.json, and proceed directly to section 3.5.1.
 
 Set `generatePreview` in config.json (`true` if GREENFIELD or chose A; `false` if chose B).
+Set `previewOutcome` in config.json (`'generated'` if GREENFIELD or chose A; `'skipped'` if chose B).
 If `false`: skip 3.5.1. Instead, present a **text summary** of the extracted design direction
 (color palette OKLCH values, typography choices, spacing scale) via AskUserQuestion:
 
@@ -56,6 +59,7 @@ If `false`: skip 3.5.1. Instead, present a **text summary** of the extracted des
 If user chose B: ask follow-up questions, adjust values, re-present summary.
 If user chose C: follow Option E reset logic below (return to Phase 1).
 This is an intentional skip, not a failure — do NOT use the error-state Fallback Path (3.5.3).
+Set `previewOutcome: 'skipped'` in config.json to distinguish from generation failures.
 
 ## 3.5.1 Preview Generation
 
@@ -112,7 +116,7 @@ The preview file lives inside .design-farmer/ to avoid polluting the project roo
 
 ## 3.5.2 Preview Review Gate
 
-**Skip this section if `generatePreview = false` — the opt-in gate (3.5.0) already handled text-only approval.**
+**This gate (3.5.2) only applies when `generatePreview = true`.** When `generatePreview = false`, text-only approval already occurred at gate 3.5.0 — do NOT re-prompt.
 
 **CRITICAL: This is a hard gate. Do NOT proceed to Phase 4 until the user approves.**
 
@@ -128,6 +132,8 @@ Via AskUserQuestion, ask:
 > {If designMaturity = GREENFIELD: prepend with —
 > "These are **proposed defaults** generated from your brand color — nothing was extracted from your
 > codebase. This is a clean starting point you can adjust freely before any code is written."}
+> {If designMaturity = EMERGING: prepend with —
+> "These values are **partially extracted from your codebase**, with generated defaults filling gaps. Adjust any values that don't match your intended direction."}
 >
 > Options:
 > - A) Looks great — proceed to architecture and implementation
@@ -161,10 +167,13 @@ Note: Phase 1 will re-run from Q0. Preserved values serve as defaults — the ag
 
 ## 3.5.3 Fallback Path
 
+**This fallback is ONLY for generation failures.** If `previewOutcome = 'skipped'` (user chose B at gate 3.5.0), do NOT enter this section — the user already approved via text summary.
+
 If preview generation fails (e.g., no color palette extracted, tooling error):
-1. Log: "Preview generation failed: {reason}"
-2. Present the raw extracted data as a text summary instead
-3. Ask user to confirm the text-based direction before proceeding
-4. Continue to Phase 4 with user's textual approval
+1. Set `previewOutcome: 'failed'` in config.json
+2. Log: "Preview generation failed: {reason}"
+3. Present the raw extracted data as a text summary instead
+4. Ask user to confirm the text-based direction before proceeding
+5. Continue to Phase 4 with user's textual approval
 
 **Status: DONE** — Visual preview reviewed and approved. Proceed to Phase 4: Architecture Design.

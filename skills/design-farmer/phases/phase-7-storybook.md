@@ -1,5 +1,7 @@
 # Phase 7: Storybook Integration
 
+**Theme strategy check:** Read `themeStrategy` from `{systemPath}/.design-farmer/config.json`. If `themeStrategy = 'light-only'`, skip dark mode decorator setup (Step 4 below), skip theme toggle addon, and skip Dimension 4 (Theme Axis) story generation — dark mode stories and controls are unnecessary for light-only projects.
+
 Via AskUserQuestion, ask:
 
 > Your components are implemented and tested. Storybook provides interactive documentation,
@@ -98,6 +100,11 @@ Use that version throughout — do NOT assume any specific major version number.
      TS17004/TS6142 errors that appear when stories are excluded from the main tsconfig.
    - After init, verify the installed version: `npx storybook --version` (or the equivalent for your package manager)
    - Confirm the installed major version matches the addon versions fetched in Step 1
+   - If `storybook init` fails (timeout, version conflict, missing dependency):
+     1. Log: "[DEGRADATION] Phase 7: storybook init failed ({reason}). Using manual config."
+     2. Create `.storybook/main.ts` manually with framework-appropriate config (see Step 2.5 templates)
+     3. Create `.storybook/preview.ts` with design system token imports
+     4. Continue with DONE_WITH_CONCERNS
 2. Configure addons (ensure versions match the installed Storybook major version):
    - @storybook/addon-a11y (accessibility checking)
    - @storybook/addon-themes (dark mode toggle)
@@ -509,3 +516,5 @@ Common Storybook errors:
 | `Addon version mismatch` | Storybook core and addon major versions differ | Align all @storybook/* packages to same major |
 
 **Status: DONE** (Fix Loop: passed on attempt {N}/5) — Storybook configured with stories for all components, accessibility addon, and dark mode support. Proceed to Phase 8: Multi-Reviewer Verification.
+
+Before emitting status, append `'phase-7'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.

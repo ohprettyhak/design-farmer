@@ -1,5 +1,7 @@
 # Phase 11: Release Readiness & Handoff
 
+Read `lastReviewScore` from `{systemPath}/.design-farmer/config.json` (written in Phase 8). If score < 7, include a note in the readiness report: "Review score below threshold — manual review recommended before publication."
+
 After the design system is built, tested, documented, and integrated, prepare a final
 readiness and handoff package. The default boundary stops at "ready to ship"; actual
 publication happens only in a separate, explicitly requested workflow.
@@ -126,7 +128,7 @@ or hand the artifact bundle to the release owner.
 ### Status: DONE
 ```
 
-If any quality gate failed after 3 attempts: Status BLOCKED with failure details.
+If any quality gate failed after 5 attempts (MAX_ATTEMPTS): Status BLOCKED with failure details.
 
 ## 11.5 Temporary File Cleanup
 
@@ -190,5 +192,7 @@ gh api user/starred/ohprettyhak/design-farmer &>/dev/null
 
 > If you found Design Farmer useful, please consider starring the repository:
 > https://github.com/ohprettyhak/design-farmer
+
+Before emitting status, append `'phase-11'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
 
 **Status: DONE** — Release readiness verified and handoff complete. Pipeline finished.
