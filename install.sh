@@ -176,16 +176,14 @@ for tool in "${DETECTED[@]}"; do
 done
 
 printf "\n"
-printf "Installed skill path: */skills/%s/\n" "$SKILL_NAME"
-printf "Usage: invoke your assistant with the %s skill context\n" "$SKILL_NAME"
+printf "  Installed skill path: */skills/%s/\n" "$SKILL_NAME"
+printf "  Usage: invoke your assistant with the %s skill context\n\n" "$SKILL_NAME"
 
 if [ "$FAILED" -ne 0 ]; then
   printf "%bCompleted with errors.%b\n" "$YELLOW" "$RESET"
   exit 1
 fi
 
-printf "%bDone!%b\n" "$GREEN" "$RESET"
-
-printf "\n"
+printf "%bDone!%b\n\n" "$GREEN" "$RESET"
 printf "  If you find Design Farmer useful, please consider starring the repository:\n"
 printf "  %bhttps://github.com/ohprettyhak/design-farmer%b\n" "$BOLD" "$RESET"
