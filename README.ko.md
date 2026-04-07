@@ -39,9 +39,9 @@ Design Farmer는 프로젝트 상태에 맞춰 단계별로 작동합니다:
 - **DESIGN.md** — 디자인 결정을 집약한 단일 참조 문서
 - **검증 근거** — "괜찮아 보인다"식 승인 대신, 명시적 통과/실패 기준에 따른 다각도 리뷰
 
-<p align="center">
-  <img src="assets/storybook-components.png" alt="Design Farmer가 생성한 컴포넌트 갤러리" width="720" />
-</p>
+<img src="assets/storybook-components.png" alt="Design Farmer가 생성한 컴포넌트 갤러리" width="100%" />
+
+> 위 스크린샷은 **아무것도 없는 상태(greenfield)**에서 생성한 결과물입니다. `DESIGN.md`(예: Google Stitch 제안서)가 이미 있거나 일부 디자인 컴포넌트가 구현된 레포지토리에서는 훨씬 더 정교한 결과를 만들어냅니다.
 
 ## 설치
 

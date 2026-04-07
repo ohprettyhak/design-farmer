@@ -39,9 +39,9 @@ The full pipeline (12 phases) covers: preflight detection, discovery interview, 
 - **DESIGN.md** — machine-readable design decisions as a persistent source of truth
 - **Verification evidence** — multi-angle review with explicit pass/fail criteria, not "looks good" approvals
 
-<p align="center">
-  <img src="assets/storybook-components.png" alt="Component gallery built by Design Farmer" width="720" />
-</p>
+<img src="assets/storybook-components.png" alt="Component gallery built by Design Farmer" width="100%" />
+
+> The screenshot above was generated from a **greenfield project** (zero to one). Design Farmer works even better when your repository already has a `DESIGN.md` (e.g. from a Google Stitch proposal) or partial component implementations to build on.
 
 ## Installation
 
