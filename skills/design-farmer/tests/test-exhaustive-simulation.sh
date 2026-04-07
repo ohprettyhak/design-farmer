@@ -662,7 +662,7 @@ else
 fi
 
 # Path 4: User skips Phase 10 (Integration) → Phase 11
-if grep -q "Phase 11" "$PHASES_DIR/phase-10-integration.md"; then
+if grep -A2 -i "skip" "$PHASES_DIR/phase-10-integration.md" | grep -q "Phase 11"; then
   pass "Skip path: Phase 10 → Phase 11 handoff exists"
 else
   fail "Skip path: Phase 10 → Phase 11 handoff missing"

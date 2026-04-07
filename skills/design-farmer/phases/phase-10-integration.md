@@ -17,6 +17,14 @@ Via AskUserQuestion, ask:
 
 **STOP. Do NOT proceed until user responds.**
 
+If user chose C (skip integration), emit:
+
+**Status: DONE** — User chose to integrate manually. Skipping integration steps. Proceed to Phase 11: Release Readiness & Handoff.
+
+Then stop — do NOT execute steps 10.1 through 10.7.
+
+---
+
 If user chose A or B, execute the following steps.
 
 **Mode behavior:**
