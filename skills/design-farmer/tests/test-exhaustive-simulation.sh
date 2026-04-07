@@ -1474,6 +1474,42 @@ fi
 echo ""
 
 # ===========================================================================
+# DIMENSION AD: Cross-File Token Existence — --surface-muted
+# ===========================================================================
+echo "=== DIMENSION AD: Cross-File Token Existence (--surface-muted) ==="
+
+# Phase 4b must define --surface-muted in light theme
+if grep -q "\-\-surface-muted" "$PHASES_DIR/phase-4b-theming.md"; then
+  pass "Phase 4b: defines --surface-muted token"
+else
+  fail "Phase 4b: missing --surface-muted token definition"
+fi
+
+# Phase 4b must define --surface-muted in dark theme (appears twice = light + dark)
+muted_count=$(grep -c "\-\-surface-muted" "$PHASES_DIR/phase-4b-theming.md" || true)
+if [ "$muted_count" -ge 2 ]; then
+  pass "Phase 4b: --surface-muted defined in both light and dark themes"
+else
+  fail "Phase 4b: --surface-muted not in both themes (found $muted_count)"
+fi
+
+# Phase 4.5 template must mention Surface Muted
+if grep -q "Surface Muted" "$PHASES_DIR/phase-4.5-design-source-of-truth.md"; then
+  pass "Phase 4.5: template includes Surface Muted"
+else
+  fail "Phase 4.5: template missing Surface Muted"
+fi
+
+# examples/DESIGN.md must define Surface Muted
+if grep -q "Surface Muted" "$EXAMPLES_DIR/DESIGN.md"; then
+  pass "examples/DESIGN.md: defines Surface Muted"
+else
+  fail "examples/DESIGN.md: missing Surface Muted"
+fi
+
+echo ""
+
+# ===========================================================================
 # SUMMARY
 # ===========================================================================
 echo "==========================================="
@@ -1511,6 +1547,7 @@ echo "  Z: Risk Regulation Consistency"
 echo " AA: Pipeline State Tracking"
 echo " AB: Preview Opt-In Gate"
 echo " AC: Early DESIGN.md Draft"
+echo " AD: Cross-File Token Existence (--surface-muted)"
 echo "==========================================="
 
 if [ $FAIL -gt 0 ]; then

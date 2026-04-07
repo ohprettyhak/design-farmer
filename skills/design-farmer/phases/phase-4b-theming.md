@@ -28,6 +28,7 @@ If themeStrategy = 'light-dark', 'multi-brand', or 'custom':
     /* Surface */
     --surface-default: oklch(1 0 0);
     --surface-subtle: oklch(0.97 0.005 250);
+    --surface-muted: oklch(0.93 0.008 250);
     --surface-inverse: oklch(0.15 0.01 250);
 
     /* Text */
@@ -73,6 +74,7 @@ If themeStrategy = 'light-dark', 'multi-brand', or 'custom':
   [data-theme="dark"] {
     --surface-default: oklch(0.15 0.01 250);
     --surface-subtle: oklch(0.20 0.015 250);
+    --surface-muted: oklch(0.25 0.018 250);
     --surface-inverse: oklch(0.97 0.005 250);
 
     --text-primary: oklch(0.95 0.005 250);
