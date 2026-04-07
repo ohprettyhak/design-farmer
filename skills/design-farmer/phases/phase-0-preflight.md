@@ -75,9 +75,20 @@ If user chose **A**:
 
 5. **Persist** the reconstructed `DesignFarmerConfig` (including derived fields) to `{systemPath}/.design-farmer/config.json`.
 
-6. **Run a quick architecture scan** — read the existing `{systemPath}/` directory structure to determine the styling strategy (Tailwind/CSS Modules/vanilla CSS) and token directory layout. This substitutes for Phase 4 when jumping directly to Phase 5.
+6. **Validate critical fields** — after persisting config, verify that `designMaturity` is present. If missing, ask via AskUserQuestion:
 
-7. **Jump directly to Phase 5.** Do not run Phases 1–4.
+   > Your DESIGN.md doesn't specify design maturity. This determines the implementation approach.
+   >
+   > Options:
+   > - A) Greenfield — no existing design system, build from scratch
+   > - B) Emerging — some patterns exist, extract and normalize them
+   > - C) Mature — comprehensive design system exists, extract and document
+
+   Set `designMaturity` and `maturityScore` (0 for greenfield, 5 for emerging, 8 for mature) from user's choice, then persist.
+
+7. **Run a quick architecture scan** — read the existing `{systemPath}/` directory structure to determine the styling strategy (Tailwind/CSS Modules/vanilla CSS) and token directory layout. This substitutes for Phase 4 when jumping directly to Phase 5.
+
+8. **Jump directly to Phase 5.** Do not run Phases 1–4.
 
 If user chose **B**:
 - **If DRAFT**: Load the draft's `## Config` YAML to reconstruct `DesignFarmerConfig`, persist to config.json, then **resume from Phase 3.5** (extraction is already done in the draft).

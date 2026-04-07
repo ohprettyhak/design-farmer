@@ -119,6 +119,15 @@ If user chose E:
 - Return to Phase 1 Question 2 (Brand & Color Direction)
 - Restart the extraction process with new direction
 
+**Before returning to Phase 1, reset pipeline state:**
+1. Delete `{systemPath}/DESIGN.md` if it exists (partial draft from Phase 3)
+2. Read `{systemPath}/.design-farmer/config.json` if it exists
+3. Reset completedPhases to `["0"]` (Phase 0 pre-flight is still valid)
+4. Clear design-specific fields: `brandColor`, `colorDirection`, `designMaturity`, `maturityScore`, `generatePreview`
+5. Preserve project-specific fields: `packageManager`, `framework`, `isMonorepo`, `systemPath`, `designSystemPackage`, `componentScope`, `headlessLibrary`, `themeStrategy`, `themeLibrary`, `accessibilityLevel`, `targetPlatforms`, `vision`, `painPoint`, `productName`, `designSystemDir`
+6. Persist the reset config back to `{systemPath}/.design-farmer/config.json`
+7. Log: "Phase 3.5: User chose to start over. Resetting design extraction state. Project structure settings preserved."
+
 ## 3.5.3 Fallback Path
 
 If preview generation fails (e.g., no color palette extracted, tooling error):
