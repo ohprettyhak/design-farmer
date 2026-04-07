@@ -237,7 +237,7 @@ Phase 11: Release Readiness & Handoff
 - **Design Maturity** (from Phase 2) is written to `DesignFarmerConfig.designMaturity` and determines the implementation path in Phases 3, 3.5, 4, 5, and 6.
 - **Existing DESIGN.md** detected in Phase 0 triggers a re-entry prompt — user can skip Phases 1–4 and jump directly to Phase 5.
 - **Early DESIGN.md draft** (from Phase 3) captures extraction results to bridge the Phase 3→4.5 context gap. Phase 4.5 merges this draft into the final version.
-- **Phase 3.5 is a hard gate** before Phase 4. Preview HTML (`{systemPath}/.design-farmer/design-preview.html`) is mandatory for GREENFIELD, opt-in for EMERGING/MATURE. When skipped, a text-only approval gate is used (fallback 3.5.3). The `generatePreview` field records the choice.
+- **Phase 3.5 is a hard gate** before Phase 4. Preview HTML (`{systemPath}/.design-farmer/design-preview.html`) is mandatory for GREENFIELD, opt-in for EMERGING/MATURE. When skipped, the opt-in gate (3.5.0) handles text-only approval directly — the error-state Fallback Path (3.5.3) is reserved for generation failures only. The `generatePreview` field records the choice.
 - **Phase 4b** is a continuation of Phase 4 — load it immediately after Phase 4 completes, before Phase 4.5.
 - **DESIGN.md** (from Phase 4.5) is the persistent design source of truth for Phases 5–11.
 - **Fix Loop Protocol** (from `operational-notes.md`) is mandatory at implementation checkpoints in Phases 5, 6, 7, 9, 10, and 11. Each phase must pass typecheck/lint/build/test before proceeding. The loop retries up to 5 times, then escalates to BLOCKED.

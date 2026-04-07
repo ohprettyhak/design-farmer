@@ -84,6 +84,8 @@ The preview file lives inside .design-farmer/ to avoid polluting the project roo
 
 ## 3.5.2 Preview Review Gate
 
+**Skip this section if `generatePreview = false` — the opt-in gate (3.5.0) already handled text-only approval.**
+
 **CRITICAL: This is a hard gate. Do NOT proceed to Phase 4 until the user approves.**
 
 Via AskUserQuestion, ask:
