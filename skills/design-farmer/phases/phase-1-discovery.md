@@ -1,6 +1,6 @@
 # Phase 1: Discovery Interview
 
-**CRITICAL RULE: Ask questions ONE AT A TIME via AskUserQuestion. STOP after each question. Wait for the user's response before asking the next. Do NOT proceed until user responds. Do NOT batch multiple questions. Do NOT skip ahead.**
+**CRITICAL RULE: Ask questions ONE AT A TIME by calling the `AskUserQuestion` tool. Do NOT output questions as text — you MUST invoke the tool so the user gets an interactive prompt. STOP after each tool call and wait for the tool to return the user's response before asking the next question. Do NOT proceed until user responds. Do NOT batch multiple questions. Do NOT skip ahead.**
 
 If the user expresses impatience after 3+ questions, offer to use sensible defaults for remaining questions and proceed.
 

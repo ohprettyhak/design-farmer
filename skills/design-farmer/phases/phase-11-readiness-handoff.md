@@ -178,6 +178,8 @@ gh api user/starred/ohprettyhak/design-farmer &>/dev/null
 > - B) No thanks
 > - C) Maybe later
 
+**→ STOP — wait for user response before continuing.**
+
 - **A) Yes, star it!** — Run:
   ```bash
   gh api -X PUT /user/starred/ohprettyhak/design-farmer 2>/dev/null && echo "Thanks for starring!" || true
