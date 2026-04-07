@@ -48,7 +48,7 @@ Then ask via AskUserQuestion **before anything else**:
 > {If DRAFT: show only B and C. If finalized: show A, B, and C.}
 > Options:
 > - A) **Use it as-is** — load DESIGN.md as the design source of truth and jump directly to Phase 5 (Token Implementation) {omit if DRAFT}
-> - B) **Update it** — run fresh analysis (Phases 1–4), then update DESIGN.md with any changes
+> - B) **Update it** — {If DRAFT: "resume from Phase 3.5 (extraction is done, continue with preview and architecture)"} {If finalized: "run fresh analysis (Phases 1–4), then update DESIGN.md with any changes"}
 > - C) **Ignore it** — start from scratch (DESIGN.md will be overwritten in Phase 4.5)
 
 **→ STOP — wait for user response before continuing.**

@@ -24,7 +24,7 @@ This index provides a compact map of the Design Farmer router + phase bundle for
    - Generate self-contained HTML preview at `.design-farmer/design-preview.html`.
    - Color palette swatches, typography specimens, spacing scale, sample components.
    - Theme toggle for light/dark comparison.
-   - If preview skipped, text-only approval gate (fallback path 3.5.3).
+   - If preview skipped, text-only approval gate via opt-in gate (3.5.0) — not the error-state fallback (3.5.3).
    - User approval gate before Phase 4 begins (always, regardless of preview mode).
 
 6. **Phase 4: Architecture Design**
