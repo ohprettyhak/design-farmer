@@ -87,7 +87,7 @@ Before implementing any component, install required dependencies and verify vers
 ```bash
 # Headless library → npm package mapping:
 #
-#   Base UI:     @base-ui-components/react          (single package)
+#   Base UI:     @base-ui/react                     (single package)
 #   Ark UI:      @ark-ui/react                      (single package)
 #   Headless UI: @headlessui/react                  (single package)
 #   Melt UI:     @melt-ui/svelte                    (single package)
@@ -117,7 +117,7 @@ if [ "{headlessLibrary}" != "none" ] && [ "{headlessLibrary}" != "" ]; then
   #     @radix-ui/react-checkbox @radix-ui/react-radio-group @radix-ui/react-select
   #
   # Resolve package name from headlessLibrary choice:
-  # base-ui    → @base-ui-components/react
+  # base-ui    → @base-ui/react
   # ark        → @ark-ui/react
   # headless-ui → @headlessui/react
   # melt       → @melt-ui/svelte
@@ -125,7 +125,7 @@ if [ "{headlessLibrary}" != "none" ] && [ "{headlessLibrary}" != "" ]; then
   # radix      → per-component packages (see mapping above)
   #
   # For single-package libraries:
-  HEADLESS_PKG=$(node -e "const m={'base-ui':'@base-ui-components/react','ark':'@ark-ui/react','headless-ui':'@headlessui/react','bits':'bits-ui'};console.log(m['{headlessLibrary}']||'')" 2>/dev/null)
+  HEADLESS_PKG=$(node -e "const m={'base-ui':'@base-ui/react','ark':'@ark-ui/react','headless-ui':'@headlessui/react','bits':'bits-ui'};console.log(m['{headlessLibrary}']||'')" 2>/dev/null)
   [ -n "$HEADLESS_PKG" ] && npm view "$HEADLESS_PKG" version 2>/dev/null && {packageManager} add "$HEADLESS_PKG"
   # For Radix UI: install per-component packages matching componentScope (already handled above)
   # Verify: list installed packages
@@ -300,7 +300,7 @@ Button.displayName = 'Button'
 
 ```typescript
 // primitives/dialog/dialog.tsx
-// import * as Dialog from '@base-ui-components/react/dialog'
+// import * as Dialog from '@base-ui/react/dialog'
 //
 // Compose headless parts into a styled dialog:
 // <Dialog.Root>
