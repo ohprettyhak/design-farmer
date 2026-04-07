@@ -79,7 +79,11 @@ If user chose **A**:
 
 7. **Jump directly to Phase 5.** Do not run Phases 1–4.
 
-If user chose **B** or **C**: continue to Phase 1 (Discovery Interview) as normal.
+If user chose **B**:
+- **If DRAFT**: Load the draft's `## Config` YAML to reconstruct `DesignFarmerConfig`, persist to config.json, then **resume from Phase 3.5** (extraction is already done in the draft).
+- **If finalized**: continue to Phase 1 (Discovery Interview) as normal — run fresh Phases 1–4.
+
+If user chose **C**: continue to Phase 1 (Discovery Interview) as normal.
 
 ---
 
