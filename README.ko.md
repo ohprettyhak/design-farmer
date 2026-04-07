@@ -39,6 +39,10 @@ Design Farmer는 프로젝트 상태에 맞춰 단계별로 작동합니다:
 - **DESIGN.md** — 디자인 결정을 집약한 단일 참조 문서
 - **검증 근거** — "괜찮아 보인다"식 승인 대신, 명시적 통과/실패 기준에 따른 다각도 리뷰
 
+<p align="center">
+  <img src="assets/storybook-components.png" alt="Design Farmer가 생성한 컴포넌트 갤러리" width="720" />
+</p>
+
 ## 설치
 
 ```bash

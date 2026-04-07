@@ -39,6 +39,10 @@ Design Farmer 按阶段工作，适配项目的当前状态：
 - **DESIGN.md** — 记录设计决策的机器可读参考文档，充当项目唯一事实来源
 - **验证证据** — 用明确的通过/失败标准取代"看着还行"式的审批
 
+<p align="center">
+  <img src="assets/storybook-components.png" alt="Design Farmer 生成的组件库展示" width="720" />
+</p>
+
 ## 安装
 
 ```bash

@@ -39,6 +39,10 @@ The full pipeline (12 phases) covers: preflight detection, discovery interview, 
 - **DESIGN.md** — machine-readable design decisions as a persistent source of truth
 - **Verification evidence** — multi-angle review with explicit pass/fail criteria, not "looks good" approvals
 
+<p align="center">
+  <img src="assets/storybook-components.png" alt="Component gallery built by Design Farmer" width="720" />
+</p>
+
 ## Installation
 
 ```bash
