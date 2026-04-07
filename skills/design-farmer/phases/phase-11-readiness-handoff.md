@@ -83,7 +83,7 @@ Design Farmer generated a production-ready design system.
 {If Storybook was installed (Phase 7 was not skipped):}
 - [ ] Storybook renders correctly
 {/If}
-{If themeStrategy ≠ 'light-only':}
+{If themeStrategy ≠ 'light-only' and integrationStatus ≠ 'skipped':}
 - [ ] Theme toggle works
 {/If}
 {If componentScope ≠ 'foundation':}

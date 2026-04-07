@@ -191,6 +191,46 @@ Fix Loop: attempt 3/5
 Fix Loop: PASSED on attempt 3/5
 ```
 
+## Config Validation Protocol
+
+Every phase that reads `config.json` MUST validate critical fields before use.
+This prevents silent failures from corrupted, incomplete, or stale config files.
+
+### Required Fields & Valid Values
+
+| Field | Type | Valid Values | Default |
+|-------|------|-------------|---------|
+| `systemPath` | non-empty string | any absolute path | (required) |
+| `packageManager` | enum | `bun`, `pnpm`, `npm`, `yarn` | (required) |
+| `framework` | non-empty string | any detected framework | (required) |
+| `componentScope` | enum | `foundation`, `core`, `full`, `custom` | (required) |
+| `themeStrategy` | enum | `light-dark`, `light-only`, `multi-brand`, `custom` | (required) |
+| `designSystemPackage` | non-empty string | any npm package name | (required) |
+
+### When to Validate
+
+- **Phase 0 re-entry**: after reconstructing config from DESIGN.md (before jumping to Phase 5)
+- **Phase 3.5 re-entry**: after loading config for preview regeneration
+- **Every phase start**: before reading any config values — if config.json is missing or unparseable, treat as BLOCKED
+
+### Validation Failure Response
+
+```
+Status: BLOCKED
+Reason: Config validation failed — {specific missing/invalid fields}
+AskUserQuestion: "The design system config is missing or invalid: {fields}.
+Options:
+- A) Fix manually — I'll wait while you edit {systemPath}/.design-farmer/config.json
+- B) Start from Phase 0 — re-run pre-flight and discovery from scratch
+- C) Restore from backup — use the last known-good config.backup.json"
+```
+
+### Backup Mechanism
+
+- After ANY phase that writes `config.json`, also write `config.backup.json` in the same directory.
+- On validation failure, if `config.backup.json` exists and is valid, offer restore as option C above.
+- Backup is overwritten on each write — only the most recent known-good state is retained.
+
 ## Forbidden Patterns
 
 - Hardcoded color values in component files (use semantic tokens).

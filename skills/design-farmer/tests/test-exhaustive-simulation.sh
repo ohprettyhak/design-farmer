@@ -85,6 +85,13 @@ else
   fail "Re-entry path A: no Phase 4 substitute scan"
 fi
 
+# Path B (DRAFT): must validate designMaturity before resuming to Phase 3.5
+if grep -A5 "If DRAFT" "$PHASES_DIR/phase-0-preflight.md" | grep -q "designMaturity"; then
+  pass "Re-entry path B (DRAFT): validates designMaturity before Phase 3.5"
+else
+  fail "Re-entry path B (DRAFT): missing designMaturity validation"
+fi
+
 # Path B: Update DESIGN.md → run Phases 1-4 normally
 if grep -q 'chose.*B.*or.*C.*continue to Phase 1' "$PHASES_DIR/phase-0-preflight.md" ||
    grep -q 'continue to Phase 1.*Discovery Interview.*as normal' "$PHASES_DIR/phase-0-preflight.md"; then
@@ -154,6 +161,37 @@ if grep -q "Q0.*pain point.*through.*Q7.*platforms" "$PHASES_DIR/phase-1-discove
   pass "Discovery: final confirmation covers Q0 through Q7"
 else
   fail "Discovery: final confirmation doesn't reference Q0 through Q7"
+fi
+
+echo ""
+
+# ===========================================================================
+# DIMENSION B2: Phase 1 — Re-Entry Detection
+# ===========================================================================
+echo "=== DIMENSION B2: Phase 1 — Re-Entry Detection ==="
+
+# Phase 1 must check for completedPhases containing "3.5" before Q0
+if grep -q "completedPhases.*3\.5\|3\.5.*completedPhases" "$PHASES_DIR/phase-1-discovery.md" &&
+   grep -q "re-entry\|Re-entry\|restart from Phase 3.5" "$PHASES_DIR/phase-1-discovery.md"; then
+  pass "Phase 1: has re-entry detection for Phase 3.5 restart"
+else
+  fail "Phase 1: missing re-entry detection for Phase 3.5 restart"
+fi
+
+# Re-entry must present preserved values for Q0, Q1, Q3, Q3-1, Q5, Q5-1, Q6, Q7
+for field in "painPoint" "vision" "componentScope" "headlessLibrary" "themeStrategy" "themeLibrary" "accessibilityLevel" "targetPlatforms"; do
+  if grep -q "Previous answer.*{$field}\|Previous answer:.*{$field}" "$PHASES_DIR/phase-1-discovery.md"; then
+    pass "Phase 1 re-entry: preserves $field as default"
+  else
+    fail "Phase 1 re-entry: missing preserved default for $field"
+  fi
+done
+
+# Re-entry must NOT pre-fill Q2 (brand color was cleared during reset)
+if grep -q "Q2.*NOT pre-filled\|brandColor.*cleared\|Q2 is NOT" "$PHASES_DIR/phase-1-discovery.md"; then
+  pass "Phase 1 re-entry: correctly skips Q2 pre-fill"
+else
+  fail "Phase 1 re-entry: Q2 should NOT be pre-filled (brandColor was cleared)"
 fi
 
 echo ""
@@ -258,6 +296,28 @@ for strategy in "light-dark" "multi-brand" "custom"; do
     fail "Phase 4b: missing themeStrategy=$strategy"
   fi
 done
+
+# Phase 4b must validate themeStrategy enum values
+if grep -q "Invalid themeStrategy\|not one of" "$PHASES_DIR/phase-4b-theming.md" &&
+   grep -q "BLOCKED" "$PHASES_DIR/phase-4b-theming.md"; then
+  pass "Phase 4b: validates themeStrategy with BLOCKED on invalid value"
+else
+  fail "Phase 4b: missing themeStrategy validation"
+fi
+
+# Phase 4b must cover multi-brand ThemeProvider
+if grep -q "multi-brand\|Multi-Brand\|BrandThemeProvider" "$PHASES_DIR/phase-4b-theming.md"; then
+  pass "Phase 4b: has multi-brand ThemeProvider guidance"
+else
+  fail "Phase 4b: missing multi-brand ThemeProvider guidance"
+fi
+
+# Phase 4b must cover custom theme provider contract
+if grep -q "Custom Theme Provider Contract\|CustomThemeContract\|custom.*provider.*contract" "$PHASES_DIR/phase-4b-theming.md"; then
+  pass "Phase 4b: has custom theme provider contract"
+else
+  fail "Phase 4b: missing custom theme provider contract"
+fi
 
 echo ""
 
@@ -662,18 +722,18 @@ else
 fi
 
 # Path 4: User skips Phase 10 (Integration) → Phase 11
-if grep -q "Phase 11" "$PHASES_DIR/phase-10-integration.md"; then
+if grep -A2 -i "skip" "$PHASES_DIR/phase-10-integration.md" | grep -q "Phase 11"; then
   pass "Skip path: Phase 10 → Phase 11 handoff exists"
 else
   fail "Skip path: Phase 10 → Phase 11 handoff missing"
 fi
 
-# Path 5: Phase 3.5 rejection → returns to Phase 1 Q2
-if grep -q "Return to Phase 1 Question 2" "$PHASES_DIR/phase-3.5-visual-preview.md" ||
-   grep -q "return to Phase 1" "$PHASES_DIR/phase-3.5-visual-preview.md"; then
-  pass "Feedback loop: Phase 3.5 rejection → Phase 1 Q2"
+# Path 5: Phase 3.5 rejection → returns to Phase 1 Q0
+if grep -q "Return to Phase 1 Question 0" "$PHASES_DIR/phase-3.5-visual-preview.md" ||
+   grep -qi "return to Phase 1" "$PHASES_DIR/phase-3.5-visual-preview.md"; then
+  pass "Feedback loop: Phase 3.5 rejection → Phase 1 Q0"
 else
-  fail "Feedback loop: missing Phase 3.5 → Phase 1 Q2 loop"
+  fail "Feedback loop: missing Phase 3.5 → Phase 1 Q0 loop"
 fi
 
 # Phase 8.5 → must be optional when no browser tooling available
@@ -1419,6 +1479,14 @@ if grep -q ".design-farmer/design-preview.html" "$PHASES_DIR/phase-3.5-visual-pr
   pass "Phase 3.5: preview generated inside .design-farmer/"
 else
   fail "Phase 3.5: preview not in .design-farmer/ directory"
+fi
+
+# Phase 3.5 must validate config before proceeding
+if grep -q "config.json.*exists.*valid\|Config Validation\|config validation" "$PHASES_DIR/phase-3.5-visual-preview.md" &&
+   grep -q "BLOCKED" "$PHASES_DIR/phase-3.5-visual-preview.md"; then
+  pass "Phase 3.5: validates config.json at phase start"
+else
+  fail "Phase 3.5: missing config validation at phase start"
 fi
 
 # SKILL.md must document generatePreview contract

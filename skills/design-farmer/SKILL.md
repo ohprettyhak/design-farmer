@@ -257,7 +257,7 @@ Phase 11: Release Readiness & Handoff
 - **Semantic-token-only rule**: Components must NEVER consume primitive tokens directly.
 - **Completion statuses are mandatory**: Every phase must end with DONE, DONE_WITH_CONCERNS, BLOCKED, or NEEDS_CONTEXT.
 - **User-question gating**: Discovery interview questions are one-at-a-time. Other AskUserQuestion calls require user response before proceeding.
-- **Final completion requires explicit verification evidence** from Phase 9.2 and, if Phase 11 runs, a readiness handoff report.
+- **Final completion requires explicit verification evidence** from Phase 9.2 and a readiness handoff report from Phase 11.
 
 ### Maintenance Note
 

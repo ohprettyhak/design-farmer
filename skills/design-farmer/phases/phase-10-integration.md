@@ -17,6 +17,16 @@ Via AskUserQuestion, ask:
 
 **STOP. Do NOT proceed until user responds.**
 
+If user chose C (skip integration), emit:
+
+**Status: DONE** — User chose to integrate manually. Skipping integration steps. Proceed to Phase 11: Release Readiness & Handoff.
+
+Set `integrationStatus: "skipped"` in `{systemPath}/.design-farmer/config.json`. Update `config.backup.json`.
+
+Then stop — do NOT execute steps 10.1 through 10.7.
+
+---
+
 If user chose A or B, execute the following steps.
 
 **Mode behavior:**
@@ -247,5 +257,7 @@ Common integration errors and their root causes:
 | `Duplicate identifier 'React'` | Conflicting React type versions | Align `@types/react` version across workspace |
 
 Do NOT emit DONE until the Fix Loop passes on all three checks.
+
+After the Fix Loop passes, set `integrationStatus: "completed"` in `{systemPath}/.design-farmer/config.json`. Update `config.backup.json`.
 
 **Status: DONE** (Fix Loop: passed on attempt {N}/5) — Design system integrated into application. Theme toggle working, tokens visible in rendered output. Proceed to Phase 11: Release Readiness & Handoff.

@@ -2,6 +2,16 @@
 
 **Purpose:** Generate a visual preview of the proposed design system before writing implementation code. This lets the user validate color palette, typography, spacing, and overall visual direction before hundreds of files are generated.
 
+## Phase Start: Config Validation
+
+Before reading config, verify that `{systemPath}/.design-farmer/config.json` exists and is valid JSON with the required fields (`designMaturity`, `componentScope`, `themeStrategy`). If missing, unparseable, or missing required fields, emit:
+
+**Status: BLOCKED** — Config validation failed: {reason}. Recovery: re-run Phase 1 Discovery Interview to regenerate config, or restore from `{systemPath}/.design-farmer/config.backup.json` if available.
+
+Do NOT proceed to 3.5.0 until config is valid.
+
+---
+
 ## 3.5.0 Preview Opt-In Gate
 
 Read `designMaturity` from `{systemPath}/.design-farmer/config.json`.
@@ -116,8 +126,19 @@ If user chose B, C, or D:
 - Loop back to the review gate
 
 If user chose E:
-- Return to Phase 1 Question 2 (Brand & Color Direction)
+- Return to Phase 1 Question 0 (Brand & Color Direction)
 - Restart the extraction process with new direction
+
+**Before returning to Phase 1, reset pipeline state:**
+1. Delete `{systemPath}/DESIGN.md` if it exists (partial draft from Phase 3)
+2. Read `{systemPath}/.design-farmer/config.json` if it exists
+3. Reset completedPhases to `["0"]` (Phase 0 pre-flight is still valid)
+4. Clear design-specific fields: `brandColor`, `colorDirection`, `customComponents`, `designMaturity`, `maturityScore`, `generatePreview`
+5. Preserve project-specific fields: `packageManager`, `framework`, `isMonorepo`, `systemPath`, `designSystemPackage`, `componentScope`, `headlessLibrary`, `themeStrategy`, `themeLibrary`, `accessibilityLevel`, `targetPlatforms`, `vision`, `painPoint`, `productName`, `designSystemDir`
+6. Persist the reset config back to `{systemPath}/.design-farmer/config.json` (and config.backup.json)
+7. Log: "Phase 3.5: User chose to start over. Resetting design extraction state. Project structure settings preserved."
+
+Note: Phase 1 will re-run from Q0. Preserved values (vision, painPoint from Q0-Q1; componentScope, headlessLibrary, themeStrategy, themeLibrary, accessibilityLevel, targetPlatforms from Q3-Q7) serve as defaults — the agent should present them as pre-filled answers, allowing the user to accept or change each one.
 
 ## 3.5.3 Fallback Path
 
