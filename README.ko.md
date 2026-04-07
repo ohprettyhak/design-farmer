@@ -41,7 +41,12 @@ Design Farmer는 프로젝트 상태에 맞춰 단계별로 작동합니다:
 
 <img src="assets/storybook-components.png" alt="Design Farmer가 생성한 컴포넌트 갤러리" width="100%" />
 
-> 위 스크린샷은 **아무것도 없는 상태(greenfield)**에서 생성한 결과물입니다. `DESIGN.md`(예: [Stitch](https://stitch.withgoogle.com)로 생성한 파일)가 이미 있거나 일부 디자인 컴포넌트가 구현된 레포지토리에서는 훨씬 더 정교한 결과를 만들어냅니다.
+> [!TIP]
+> **더 좋은 결과를 원한다면?** 프로젝트 루트에 `DESIGN.md`를 먼저 넣어두세요.
+> - [Stitch](https://stitch.withgoogle.com)로 직접 생성하거나,
+> - [awesome-design-md](https://github.com/VoltAgent/awesome-design-md)에서 미리 만들어진 파일을 가져오세요 — Vercel, Linear, Stripe 등 실제 사이트에서 추출한 58개 이상의 디자인 시스템이 있습니다.
+>
+> 위 스크린샷은 **아무것도 없는 상태(greenfield)**에서 생성한 결과물입니다. `DESIGN.md`가 있으면 훨씬 더 정교한 결과를 만들어냅니다.
 
 ## 설치
 
