@@ -150,4 +150,43 @@ Inform the user:
 > Cleaned up temporary working files (`.design-farmer/design-preview.html`, `visual-qa-checklist.md` if present).
 > `DESIGN.md` and all implementation files are preserved.
 
+## 11.6 Star the Repository
+
+After the handoff is complete, ask the user if they would like to star the repository.
+
+**Step 1 — Check `gh` availability:**
+
+```bash
+gh auth status &>/dev/null
+```
+
+**If `gh` is authenticated**, check whether the user has already starred the repository:
+
+```bash
+gh api user/starred/ohprettyhak/design-farmer &>/dev/null
+```
+
+- If the exit code is `0` (already starred): **skip this section entirely** — do not prompt.
+- If the exit code is non-zero (not starred): proceed to Step 2.
+
+**Step 2 — Ask via `AskUserQuestion`:**
+
+> If you found Design Farmer useful, would you like to support the project by starring it on GitHub?
+>
+> Options:
+> - A) Yes, star it!
+> - B) No thanks
+> - C) Maybe later
+
+- **A) Yes, star it!** — Run:
+  ```bash
+  gh api -X PUT /user/starred/ohprettyhak/design-farmer 2>/dev/null && echo "Thanks for starring!" || true
+  ```
+- **B) No thanks** / **C) Maybe later** — Continue without further prompts.
+
+**If `gh` is NOT available or not authenticated** (fallback): print a plain message instead:
+
+> If you found Design Farmer useful, please consider starring the repository:
+> https://github.com/ohprettyhak/design-farmer
+
 **Status: DONE** — Release readiness verified and handoff complete. Pipeline finished.

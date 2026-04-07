@@ -185,3 +185,7 @@ if [ "$FAILED" -ne 0 ]; then
 fi
 
 printf "%bDone!%b\n" "$GREEN" "$RESET"
+
+printf "\n"
+printf "  If you find Design Farmer useful, please consider starring the repository:\n"
+printf "  %bhttps://github.com/ohprettyhak/design-farmer%b\n" "$BOLD" "$RESET"
