@@ -28,7 +28,7 @@ Design Farmer works in phases, adapting to your project's current state:
 | **Light-only theme** | Generates dark theme via OKLCH lightness/chroma adjustments | Dual-theme system from a single semantic contract |
 | **"Production-ready" claim** | Runs multi-reviewer verification, finds drift and token misuse | Evidence-backed completion status with remediation notes |
 
-The full pipeline (12 phases) covers: preflight detection, discovery interview, repository analysis, pattern extraction with OKLCH conversion, visual preview, architecture design, theme system, DESIGN.md generation, token implementation, component library, Storybook integration, multi-reviewer verification, live visual QA, documentation, app integration, and release readiness.
+The full pipeline covers: preflight detection, discovery interview, repository analysis, pattern extraction with OKLCH conversion, visual preview, architecture design, theme system, DESIGN.md generation, token implementation, component library, Storybook integration, multi-reviewer verification, live visual QA, documentation, app integration, and release readiness.
 
 ## What you get
 
