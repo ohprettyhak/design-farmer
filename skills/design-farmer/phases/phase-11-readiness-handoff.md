@@ -53,11 +53,19 @@ When handing off a ready-to-ship result, include a summary in this structure:
 ## Summary
 Design Farmer generated a production-ready design system.
 
+{If componentScope ≠ 'foundation' and framework is React:}
 ### Components: {count} implemented
+{/If}
 ### Tokens: {count} (primitive + semantic + component)
+{If themeStrategy ≠ 'light-only':}
 ### Themes: light + dark with system preference detection
+{Else:}
+### Themes: light theme
+{/If}
 ### Tests: {count} (unit + a11y + snapshot)
+{If Storybook was installed (Phase 7 was not skipped):}
 ### Storybook: {count} stories across {count} components
+{/If}
 
 ### Reviewer Verdicts
 | Reviewer | Score | Verdict |
@@ -72,9 +80,15 @@ Design Farmer generated a production-ready design system.
 - [ ] All tests pass (npm test)
 - [ ] Type check clean (npm run typecheck)
 - [ ] Lint clean (npm run lint)
+{If Storybook was installed (Phase 7 was not skipped):}
 - [ ] Storybook renders correctly
+{/If}
+{If themeStrategy ≠ 'light-only':}
 - [ ] Theme toggle works
+{/If}
+{If componentScope ≠ 'foundation':}
 - [ ] Keyboard navigation on all interactive components
+{/If}
 
 Generated with Design Farmer
 ```

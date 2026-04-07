@@ -1556,6 +1556,41 @@ fi
 echo ""
 
 # ===========================================================================
+# DIMENSION AF: Phase 11 — Handoff Template Adaptation
+# ===========================================================================
+echo "=== DIMENSION AF: Phase 11 — Handoff Template Adaptation ==="
+
+# Storybook line must be conditional
+if grep -q "If Storybook was installed\|If.*Phase 7 was not skipped" "$PHASES_DIR/phase-11-readiness-handoff.md"; then
+  pass "Phase 11: Storybook section is conditional"
+else
+  fail "Phase 11: Storybook section is unconditional"
+fi
+
+# Theme toggle must be conditional on themeStrategy
+if grep -q "themeStrategy.*light-only\|If themeStrategy" "$PHASES_DIR/phase-11-readiness-handoff.md"; then
+  pass "Phase 11: theme toggle conditional on themeStrategy"
+else
+  fail "Phase 11: theme toggle is unconditional"
+fi
+
+# Keyboard navigation must be conditional on componentScope
+if grep -q "componentScope.*foundation\|If componentScope" "$PHASES_DIR/phase-11-readiness-handoff.md"; then
+  pass "Phase 11: keyboard nav conditional on componentScope"
+else
+  fail "Phase 11: keyboard nav is unconditional"
+fi
+
+# Components count must be conditional
+if grep -q "If componentScope\|If.*framework is React" "$PHASES_DIR/phase-11-readiness-handoff.md"; then
+  pass "Phase 11: component count is conditional"
+else
+  fail "Phase 11: component count is unconditional"
+fi
+
+echo ""
+
+# ===========================================================================
 # SUMMARY
 # ===========================================================================
 echo "==========================================="
@@ -1595,6 +1630,7 @@ echo " AB: Preview Opt-In Gate"
 echo " AC: Early DESIGN.md Draft"
 echo " AD: Cross-File Token Existence (--surface-muted)"
 echo " AE: Badge Status Background Token Consistency"
+echo " AF: Phase 11 Handoff Template Adaptation"
 echo "==========================================="
 
 if [ $FAIL -gt 0 ]; then
