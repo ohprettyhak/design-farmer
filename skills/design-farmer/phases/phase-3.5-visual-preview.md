@@ -2,12 +2,36 @@
 
 **Purpose:** Generate a visual preview of the proposed design system before writing implementation code. This lets the user validate color palette, typography, spacing, and overall visual direction before hundreds of files are generated.
 
+## 3.5.0 Preview Opt-In Gate
+
+Read `designMaturity` from `{systemPath}/.design-farmer/config.json`.
+
+| Maturity | Behavior | Recommendation |
+|----------|----------|----------------|
+| GREENFIELD (0–2) | Mandatory — proceed to 3.5.1 | Always generate |
+| EMERGING (3–5) | Ask user | Recommend A (generate) |
+| MATURE (6+) | Ask user | Recommend B (skip) |
+
+For EMERGING/MATURE, ask via AskUserQuestion:
+
+> {If EMERGING: "Your codebase has existing patterns."}
+> {If MATURE: "Your design system is mature."}
+>
+> **Generate a visual HTML preview?**
+> - A) Yes — generate HTML preview
+> - B) No — text summary instead
+
+**→ STOP — wait for response (skip for GREENFIELD).**
+
+Set `generatePreview` in config.json (`true` if GREENFIELD or chose A; `false` if chose B).
+If `false`: skip 3.5.1, jump to **Fallback Path (3.5.3)** for text-only approval.
+
 ## 3.5.1 Preview Generation
 
-Generate a self-contained HTML file at `{systemPath}/design-preview.html`:
+Generate a self-contained HTML file at `{systemPath}/.design-farmer/design-preview.html`:
 
 ```
-Generate a self-contained HTML file at {systemPath}/design-preview.html that visualizes the proposed design system. This file must:
+Generate a self-contained HTML file at {systemPath}/.design-farmer/design-preview.html that visualizes the proposed design system. This file must:
 
 1. **Color Palette Display** — Show all generated OKLCH palettes as color swatches with:
    - 11-step swatches (50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950) for each hue
@@ -51,6 +75,8 @@ not extracted from existing code. Label the preview header clearly:
 `"Proposed Design Direction — Greenfield Defaults (nothing was extracted from your codebase)"`.
 Reference `examples/DESIGN.md` for the full Nova UI example to calibrate
 whether your generated defaults are complete and reasonable before rendering the preview.
+
+The preview file lives inside .design-farmer/ to avoid polluting the project root.
 ```
 
 ## 3.5.2 Preview Review Gate
@@ -61,7 +87,7 @@ Via AskUserQuestion, ask:
 
 > I've generated a visual preview of your proposed design system.
 >
-> **Preview location:** `{systemPath}/design-preview.html`
+> **Preview location:** `{systemPath}/.design-farmer/design-preview.html`
 > Open it in your browser to review the visual direction.
 >
 > **What do you think of the visual direction?**

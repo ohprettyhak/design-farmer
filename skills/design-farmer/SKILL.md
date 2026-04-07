@@ -233,12 +233,14 @@ Phase 11: Release Readiness & Handoff
 ### Cross-Phase Contracts
 
 - **DesignFarmerConfig** (from Phase 1) is passed to all subsequent phases. Persisted to `{systemPath}/.design-farmer/config.json` for context-window resilience.
+- **Pipeline state tracking**: Every phase appends its ID to `completedPhases` in config.json upon completion. `createdAt` is set once in Phase 1. Phase 8 writes `lastReviewScore` (0–10) and `lastReviewDate`. Phase 0 displays this state during re-entry.
 - **Design Maturity** (from Phase 2) is written to `DesignFarmerConfig.designMaturity` and determines the implementation path in Phases 3, 3.5, 4, 5, and 6.
 - **Existing DESIGN.md** detected in Phase 0 triggers a re-entry prompt — user can skip Phases 1–4 and jump directly to Phase 5.
-- **Phase 3.5 is a hard gate** before Phase 4 unless preview generation falls back to a text-only approval path.
+- **Early DESIGN.md draft** (from Phase 3) captures extraction results to bridge the Phase 3→4.5 context gap. Phase 4.5 merges this draft into the final version.
+- **Phase 3.5 is a hard gate** before Phase 4. Preview HTML (`{systemPath}/.design-farmer/design-preview.html`) is mandatory for GREENFIELD, opt-in for EMERGING/MATURE. When skipped, a text-only approval gate is used (fallback 3.5.3). The `generatePreview` field records the choice.
 - **Phase 4b** is a continuation of Phase 4 — load it immediately after Phase 4 completes, before Phase 4.5.
 - **DESIGN.md** (from Phase 4.5) is the persistent design source of truth for Phases 5–11.
-- **Fix Loop Protocol** (from `operational-notes.md`) is mandatory at implementation checkpoints in Phases 5, 6, 7, 9, 10, and 11. Each phase must pass typecheck/lint/build/test before proceeding. The loop retries up to 5 times, then escalates to BLOCKED. This works without external plugins.
+- **Fix Loop Protocol** (from `operational-notes.md`) is mandatory at implementation checkpoints in Phases 5, 6, 7, 9, 10, and 11. Each phase must pass typecheck/lint/build/test before proceeding. The loop retries up to 5 times, then escalates to BLOCKED.
 - **Semantic-token-only rule**: Components must NEVER consume primitive tokens directly.
 - **Completion statuses are mandatory**: Every phase must end with DONE, DONE_WITH_CONCERNS, BLOCKED, or NEEDS_CONTEXT.
 - **User-question gating**: Discovery interview questions are one-at-a-time. Other AskUserQuestion calls require user response before proceeding.

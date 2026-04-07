@@ -164,4 +164,15 @@ Extract and normalize:
   16(64px), 20(80px), 24(96px)
 ```
 
+### Early DESIGN.md Draft
+
+If `DESIGN.md` does not already exist, generate a minimal draft at `{systemPath}/DESIGN.md` with:
+- Header: `> **DRAFT** — Auto-generated after Phase 3. Will be completed in Phase 4.5.`
+- `## Config` YAML block (same format as Phase 4.5 — required for Phase 0 re-entry)
+- `## 2. Color Palette & Roles` with extracted/generated OKLCH values
+- `## 3. Typography Rules` with extracted/default values
+- `## 5. Layout Principles` with extracted/default spacing scale
+
+Do NOT overwrite an existing DESIGN.md. Phase 4.5 merges this draft into the final version.
+
 **Status: DONE** — Pattern extraction complete. Proceed to Phase 3.5: Visual Preview.

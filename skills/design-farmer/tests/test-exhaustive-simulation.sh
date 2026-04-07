@@ -517,11 +517,11 @@ echo ""
 # ===========================================================================
 echo "=== DIMENSION J: Phase 11 — Cleanup Correctness ==="
 
-# Must clean up design-preview.html
-if grep -q "design-preview.html" "$PHASES_DIR/phase-11-readiness-handoff.md"; then
-  pass "Phase 11: cleans up design-preview.html"
+# Must clean up design-preview.html (inside .design-farmer/)
+if grep -q ".design-farmer/design-preview.html" "$PHASES_DIR/phase-11-readiness-handoff.md"; then
+  pass "Phase 11: cleans up .design-farmer/design-preview.html"
 else
-  fail "Phase 11: missing design-preview.html cleanup"
+  fail "Phase 11: missing .design-farmer/design-preview.html cleanup"
 fi
 
 # Must clean up visual-qa-checklist.md
@@ -1308,6 +1308,148 @@ fi
 echo ""
 
 # ===========================================================================
+# DIMENSION AA: Pipeline State Tracking (completedPhases, createdAt)
+# ===========================================================================
+echo "=== DIMENSION AA: Pipeline State Tracking ==="
+
+# Phase 1 must set createdAt and initial completedPhases
+if grep -q "createdAt" "$PHASES_DIR/phase-1-discovery.md" &&
+   grep -q "completedPhases" "$PHASES_DIR/phase-1-discovery.md"; then
+  pass "Phase 1: sets createdAt and completedPhases on initial config write"
+else
+  fail "Phase 1: missing createdAt or completedPhases initialization"
+fi
+
+# DesignFarmerConfig interface must include pipeline state fields
+config_interface=$(awk '/interface DesignFarmerConfig/,/^}/' "$PHASES_DIR/phase-1-discovery.md")
+for field in "completedPhases" "createdAt" "lastReviewScore" "lastReviewDate" "generatePreview"; do
+  if echo "$config_interface" | grep -qF "$field"; then
+    pass "DesignFarmerConfig: includes $field"
+  else
+    fail "DesignFarmerConfig: missing $field"
+  fi
+done
+
+# completedPhases tracking must be centralized in SKILL.md (not per-phase)
+if grep -q "Every phase appends its ID to.*completedPhases\|every phase appends its ID to.*completedPhases" "$SKILL_FILE"; then
+  pass "SKILL.md: centralized completedPhases tracking rule"
+else
+  fail "SKILL.md: missing centralized completedPhases tracking rule"
+fi
+
+# Phase 8 must set lastReviewScore and lastReviewDate
+if grep -q "lastReviewScore" "$PHASES_DIR/phase-8-review.md" &&
+   grep -q "lastReviewDate" "$PHASES_DIR/phase-8-review.md"; then
+  pass "Phase 8: sets lastReviewScore and lastReviewDate"
+else
+  fail "Phase 8: missing lastReviewScore or lastReviewDate"
+fi
+
+# Phase 0 must display completedPhases and createdAt on re-entry
+if grep -q "completedPhases" "$PHASES_DIR/phase-0-preflight.md" &&
+   grep -q "createdAt" "$PHASES_DIR/phase-0-preflight.md"; then
+  pass "Phase 0: displays completedPhases and createdAt on re-entry"
+else
+  fail "Phase 0: missing completedPhases/createdAt display on re-entry"
+fi
+
+# SKILL.md must document completedPhases contract
+if grep -q "completedPhases" "$SKILL_FILE"; then
+  pass "SKILL.md: documents completedPhases contract"
+else
+  fail "SKILL.md: missing completedPhases contract"
+fi
+
+echo ""
+
+# ===========================================================================
+# DIMENSION AB: Preview Opt-In Gate (Phase 3.5)
+# ===========================================================================
+echo "=== DIMENSION AB: Preview Opt-In Gate ==="
+
+# Phase 3.5 must have opt-in gate based on designMaturity
+if grep -qi "GREENFIELD.*mandatory" "$PHASES_DIR/phase-3.5-visual-preview.md" &&
+   grep -q "EMERGING" "$PHASES_DIR/phase-3.5-visual-preview.md" &&
+   grep -q "MATURE" "$PHASES_DIR/phase-3.5-visual-preview.md"; then
+  pass "Phase 3.5: has maturity-conditional preview opt-in"
+else
+  fail "Phase 3.5: missing maturity-conditional preview opt-in"
+fi
+
+# generatePreview must be stored in config
+if grep -q "generatePreview" "$PHASES_DIR/phase-3.5-visual-preview.md"; then
+  pass "Phase 3.5: stores generatePreview in config"
+else
+  fail "Phase 3.5: missing generatePreview config storage"
+fi
+
+# Skip path must use fallback 3.5.3
+if grep -q "Fallback Path.*3.5.3\|fallback path 3.5.3\|jump.*3.5.3\|Fallback Path (3.5.3)" "$PHASES_DIR/phase-3.5-visual-preview.md"; then
+  pass "Phase 3.5: skip path uses fallback 3.5.3"
+else
+  fail "Phase 3.5: skip path doesn't reference fallback 3.5.3"
+fi
+
+# Preview must be generated inside .design-farmer/
+if grep -q ".design-farmer/design-preview.html" "$PHASES_DIR/phase-3.5-visual-preview.md"; then
+  pass "Phase 3.5: preview generated inside .design-farmer/"
+else
+  fail "Phase 3.5: preview not in .design-farmer/ directory"
+fi
+
+# SKILL.md must document generatePreview contract
+if grep -q "generatePreview" "$SKILL_FILE"; then
+  pass "SKILL.md: documents generatePreview contract"
+else
+  fail "SKILL.md: missing generatePreview contract"
+fi
+
+echo ""
+
+# ===========================================================================
+# DIMENSION AC: Early DESIGN.md Draft (Phase 3)
+# ===========================================================================
+echo "=== DIMENSION AC: Early DESIGN.md Draft ==="
+
+# Phase 3 must generate early DESIGN.md draft
+if grep -q "Early DESIGN.md Draft" "$PHASES_DIR/phase-3-pattern-extraction.md" &&
+   grep -q "DRAFT" "$PHASES_DIR/phase-3-pattern-extraction.md"; then
+  pass "Phase 3: generates early DESIGN.md draft"
+else
+  fail "Phase 3: missing early DESIGN.md draft generation"
+fi
+
+# Phase 3 draft must include Config YAML block
+if grep -q "Config.*YAML block\|Config YAML" "$PHASES_DIR/phase-3-pattern-extraction.md"; then
+  pass "Phase 3: draft includes Config YAML block for re-entry"
+else
+  fail "Phase 3: draft missing Config YAML block"
+fi
+
+# Phase 3 must not overwrite existing DESIGN.md
+if grep -qi "NOT overwrite\|preserve the existing" "$PHASES_DIR/phase-3-pattern-extraction.md"; then
+  pass "Phase 3: preserves existing DESIGN.md"
+else
+  fail "Phase 3: may overwrite existing DESIGN.md"
+fi
+
+# Phase 4.5 must handle existing draft
+if grep -q "draft DESIGN.md already exists\|draft.*Phase 3" "$PHASES_DIR/phase-4.5-design-source-of-truth.md"; then
+  pass "Phase 4.5: handles existing Phase 3 draft"
+else
+  fail "Phase 4.5: missing Phase 3 draft handling"
+fi
+
+# SKILL.md must document early DESIGN.md contract
+if grep -q "Early DESIGN.md draft\|early DESIGN.md\|Phase 3.*4.5 context gap" "$SKILL_FILE"; then
+  pass "SKILL.md: documents early DESIGN.md draft contract"
+else
+  fail "SKILL.md: missing early DESIGN.md draft contract"
+fi
+
+echo ""
+
+# ===========================================================================
 # SUMMARY
 # ===========================================================================
 echo "==========================================="
@@ -1342,6 +1484,9 @@ echo "  W: Version Check & Bundle Integrity"
 echo "  X: Component Priority Order"
 echo "  Y: DESIGN.md Subsequent Run"
 echo "  Z: Risk Regulation Consistency"
+echo " AA: Pipeline State Tracking"
+echo " AB: Preview Opt-In Gate"
+echo " AC: Early DESIGN.md Draft"
 echo "==========================================="
 
 if [ $FAIL -gt 0 ]; then

@@ -23,9 +23,21 @@ grep -r "oklch\|hsl\|rgb\|#[0-9a-fA-F]\{3,8\}" --include="*.css" --include="*.sc
 find . -maxdepth 4 -name "DESIGN.md" 2>/dev/null | grep -v node_modules | head -5
 ```
 
-If a `DESIGN.md` file is found, ask via AskUserQuestion **before anything else**:
+If a `DESIGN.md` file is found, check for existing pipeline state:
+
+```bash
+# Check for existing config.json with pipeline state
+config_path="{directory_containing_DESIGN.md}/.design-farmer/config.json"
+# Read completedPhases, createdAt from config.json if it exists
+```
+
+Then ask via AskUserQuestion **before anything else**:
 
 > A `DESIGN.md` was found at `{path}`. This file describes your design system's visual direction, tokens, and component decisions.
+>
+> {If config.json exists with completedPhases and createdAt, show:}
+> **Pipeline state:** Created `{createdAt}`. Completed phases: `{completedPhases}` (last completed: Phase {last}).
+> {If lastReviewScore exists:} Last review score: `{lastReviewScore}/10` on `{lastReviewDate}`.
 >
 > **How should I proceed?**
 >
