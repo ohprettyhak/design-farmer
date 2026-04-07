@@ -6,9 +6,9 @@
 
 [English](README.md) | **한국어** | [日本語](README.ja.md) | [中文](README.zh.md)
 
-> 씨앗에서 시스템까지 — 어떤 코드베이스든 프로덕션 수준의 디자인 시스템으로 키워냅니다.
+> 씨앗에서 시스템까지. 어떤 코드베이스든 프로덕션 수준의 디자인 시스템으로 키워냅니다.
 
-`design-farmer`는 코딩 에이전트용 스킬입니다. 레포지토리를 분석하고 기존 디자인 패턴을 추출한 뒤, 토큰·컴포넌트·테스트·문서를 갖춘 OKLCH 기반 디자인 시스템으로 키워냅니다.
+`design-farmer`는 코딩 에이전트용 스킬입니다. 레포지토리를 분석하고 기존 디자인 패턴을 추출한 뒤, 토큰, 컴포넌트, 테스트, 문서를 갖춘 OKLCH 기반 디자인 시스템으로 키워냅니다.
 
 ## 왜 필요한가요?
 
@@ -32,21 +32,21 @@ Design Farmer는 프로젝트 상태에 맞춰 단계별로 작동합니다:
 
 ## 결과물
 
-- **OKLCH 컬러 시스템** — 명암비 자동 검증이 포함된, 지각적으로 고른 컬러 스케일
-- **토큰 계층** — 프리미티브 → 시맨틱 → 컴포넌트 순으로 정리된 토큰 구조
-- **접근성 컴포넌트** — 키보드 탐색, 포커스 관리, ARIA 상태를 기본 지원
-- **듀얼 테마** — 같은 토큰 체계로 라이트·다크 모드 전환
-- **DESIGN.md** — 디자인 결정을 집약한 단일 참조 문서
-- **검증 근거** — "괜찮아 보인다"식 승인 대신, 명시적 통과/실패 기준에 따른 다각도 리뷰
+- **OKLCH 컬러 시스템**: 자동 명암비 검증이 포함된, 지각적으로 균등한 컬러 스케일
+- **토큰 계층**: 프리미티브 → 시맨틱 → 컴포넌트 순으로 정리된 토큰 구조
+- **접근성 컴포넌트**: 키보드 탐색, 포커스 관리, ARIA 속성을 기본 지원
+- **듀얼 테마**: 같은 토큰 체계로 라이트·다크 모드 전환
+- **DESIGN.md**: 디자인 결정을 집약한 단일 참조 문서
+- **검증 근거**: "괜찮아 보인다"식 승인 대신, 명시적 통과/실패 기준에 따른 다각도 리뷰
 
 <img src="assets/storybook-components.png" alt="Design Farmer가 생성한 컴포넌트 갤러리" width="100%" />
 
-위 스크린샷은 **아무것도 없는 상태(greenfield)**에서 생성한 결과물입니다 — 토큰도, 컴포넌트도, 디자인 의사결정도 없는 상태에서요. 일부 구현이 이미 있는 레포지토리(컴포넌트 몇 개, 컬러 변수, 스타일 가이드 등)에서는 그 위에서 이어 작업하기 때문에 훨씬 더 정교한 결과를 만들어냅니다.
+위 스크린샷은 아무것도 없는 상태(greenfield)에서 생성한 결과물입니다. 토큰도, 컴포넌트도, 디자인 의사결정도 없는 상태에서요. 일부 구현이 이미 있는 레포지토리(컴포넌트 몇 개, 컬러 변수, 스타일 가이드 등)에서는 그 위에서 이어 작업하기 때문에 훨씬 더 정교한 결과를 만들어냅니다.
 
 > [!TIP]
 > **더 좋은 결과를 원한다면?** 프로젝트 루트에 [`DESIGN.md`](https://github.com/VoltAgent/awesome-design-md)를 넣어두고 실행해 보세요.
 > - [Stitch](https://stitch.withgoogle.com)로 직접 생성하거나,
-> - [awesome-design-md](https://github.com/VoltAgent/awesome-design-md)에서 가져오세요 — Vercel, Linear, Stripe 등 실제 사이트에서 추출한 58개 이상의 디자인 시스템이 있습니다.
+> - [awesome-design-md](https://github.com/VoltAgent/awesome-design-md)에서 가져오세요. Vercel, Linear, Stripe 등 실제 사이트에서 추출한 58개 이상의 디자인 시스템이 있습니다.
 
 ## 설치
 
@@ -60,11 +60,11 @@ curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/inst
 
 ## 문서
 
-- [스킬 명세](skills/design-farmer/SKILL.md) — 실행 시 참조되는 명세 파일.
-- [단계 인덱스](skills/design-farmer/docs/PHASE-INDEX.md) — 관리자를 위한 실행 흐름 요약.
-- [품질 게이트](skills/design-farmer/docs/QUALITY-GATES.md) — 검증 기준과 릴리스 체크리스트.
-- [유지보수 가이드](skills/design-farmer/docs/MAINTENANCE.md) — 스타일 일관성 유지 및 업데이트 절차.
-- [예시 갤러리](skills/design-farmer/docs/EXAMPLES-GALLERY.md) — 시나리오별 전후 비교와 단계 매핑.
+- [스킬 명세](skills/design-farmer/SKILL.md): 실행 시 참조되는 명세 파일
+- [단계 인덱스](skills/design-farmer/docs/PHASE-INDEX.md): 관리자를 위한 실행 흐름 요약
+- [품질 게이트](skills/design-farmer/docs/QUALITY-GATES.md): 검증 기준과 릴리스 체크리스트
+- [유지보수 가이드](skills/design-farmer/docs/MAINTENANCE.md): 스타일 일관성 유지 및 업데이트 절차
+- [예시 갤러리](skills/design-farmer/docs/EXAMPLES-GALLERY.md): 시나리오별 전후 비교와 단계 매핑
 
 ## 기여
 
