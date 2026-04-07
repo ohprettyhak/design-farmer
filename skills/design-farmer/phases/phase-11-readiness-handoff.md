@@ -1,6 +1,6 @@
 # Phase 11: Release Readiness & Handoff
 
-Read `lastReviewScore` from `{systemPath}/.design-farmer/config.json` (written in Phase 8). If score < 7, include a note in the readiness report: "Review score below threshold — manual review recommended before publication."
+Read `lastReviewScore` from `{systemPath}/.design-farmer/config.json` (written in Phase 8). If `lastReviewScore` does not exist in config.json (e.g., Phase 8 was bypassed or skipped), treat the score as 0 and include a note in the readiness report: "No review score found — manual review is required before publication." If `lastReviewScore` exists and is < 7, include a note: "Review score below threshold — manual review recommended before publication."
 
 After the design system is built, tested, documented, and integrated, prepare a final
 readiness and handoff package. The default boundary stops at "ready to ship"; actual

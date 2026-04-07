@@ -1,5 +1,7 @@
 # Phase 9: Documentation & Completion
 
+Check if `DESIGN.md` exists at `{systemPath}/DESIGN.md` before reading. If missing, emit **Status: BLOCKED** — DESIGN.md not found at `{systemPath}/DESIGN.md`. Recovery: re-run Phase 4.5 to generate the design source of truth, or restore from a backup if available.
+
 Read `DESIGN.md` from Phase 4.5 to calibrate documentation content against the approved design decisions. All token names, component APIs, and theme values in the generated documentation must match the DESIGN.md source of truth.
 
 ## 9.1 Generate Documentation

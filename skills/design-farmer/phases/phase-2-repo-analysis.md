@@ -92,7 +92,7 @@ implementation path to follow in subsequent phases:
 
 ## 2.2 Existing Pattern Extraction
 
-Use the following analysis brief by default when your environment supports specialized delegation; otherwise perform the same scan directly using the Grep/Glob commands from sections 2.3 and the patterns below:
+Use the following analysis brief by default when your environment supports specialized delegation; otherwise perform the same scan directly using the bash commands from sections 2.3 and the patterns below:
 
 ```
 Scan the codebase for:

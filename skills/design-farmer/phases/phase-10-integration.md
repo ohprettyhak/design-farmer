@@ -24,6 +24,7 @@ If user chose C (skip integration), emit:
 **Status: DONE** — User chose to integrate manually. Skipping integration steps. Proceed to Phase 11: Release Readiness & Handoff.
 
 Set `integrationStatus: "skipped"` in `{systemPath}/.design-farmer/config.json`. Update `config.backup.json`.
+Append `'phase-10'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
 
 Then stop — do NOT execute steps 10.1 through 10.7. No code changes were made, so the Fix Loop (step 10.7) is not required. The user is responsible for verifying the design system builds in their application context.
 
@@ -54,6 +55,16 @@ Before asking "Approve this change?", include ALL of the following in the previe
 
 If any field is unknown, STOP and ask a clarification question first. Do NOT execute
 the step with inferred or omitted payload fields.
+
+**Clarification question template:**
+> Before executing Step {N}, I need to confirm the following:
+>
+> - `frameworkBranch`: {detected or "unknown"}
+> - `targetFiles`: {detected or "unknown"}
+> - `themeLibrary`: {from config or "unknown"}
+> - `cssEntryTarget`: {detected or "none"}
+>
+> Please provide the missing value(s) so I can show you the correct diff preview.
 
 ## 10.1 Dependency Installation
 

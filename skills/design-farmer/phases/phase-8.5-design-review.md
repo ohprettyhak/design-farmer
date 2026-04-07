@@ -15,7 +15,10 @@ access just to probe availability.
 
 ```bash
 # Prefer browser tooling already declared in the project, including nested workspace packages
-if find . -path '*/node_modules' -prune -o -name 'playwright.config.*' -print -quit | grep -q . || grep -R -l '"@playwright/test"\|"playwright"' . --include 'package.json' --exclude-dir node_modules >/dev/null 2>&1; then
+# Use portable file existence checks (avoid GNU find -prune for cross-platform compatibility)
+if ls playwright.config.* 2>/dev/null | grep -q .; then
+  echo "VISUAL_TOOL=playwright"
+elif grep -rl '"@playwright/test"\|"playwright"' --include='package.json' . 2>/dev/null | grep -q .; then
   echo "VISUAL_TOOL=playwright"
 else
   echo "VISUAL_TOOL=none"
@@ -201,7 +204,7 @@ Base: 0%
 
 Thresholds:
   > 20%: STOP. Ask user whether to continue via AskUserQuestion.
-  > 30%: Hard stop. Report remaining findings as TODO items.
+  > 30%: Hard stop. Emit **Status: DONE_WITH_CONCERNS** — risk threshold exceeded at {N}%. Report remaining findings as TODO items in the completion report.
   Maximum: 30 fixes per review session.
 ```
 

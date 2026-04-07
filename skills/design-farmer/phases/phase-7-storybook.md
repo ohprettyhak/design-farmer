@@ -262,6 +262,9 @@ export const FocusState: Story = {
 ```
 
 **Dimension 4 — Theme Axis:**
+
+**If `themeStrategy = 'light-only'`: skip this entire dimension — no theme switching exists for light-only projects.** Do not generate ThemeComparison stories.
+
 Theme decorator is configured globally in the preview setup described below. Add a dedicated side-by-side
 comparison story per component:
 

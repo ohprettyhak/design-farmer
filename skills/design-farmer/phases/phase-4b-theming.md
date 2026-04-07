@@ -22,6 +22,18 @@ If themeStrategy = 'light-only':
   → Skip 4b.4 Dark Mode Checklist
   → Proceed to 4b.5 Styling Approach Decision
 
+  **Light-only CSS example:**
+  ```css
+  /* light-only variant — use :root directly, no [data-theme] wrapper */
+  :root {
+    --surface-default: oklch(1 0 0);
+    --surface-subtle: oklch(0.97 0.005 250);
+    --text-primary: oklch(0.15 0.01 250);
+    --interactive-primary: oklch(0.55 0.20 250);
+    /* ... all light theme tokens */
+  }
+  ```
+
 If themeStrategy = 'light-dark', 'multi-brand', or 'custom':
   → Proceed to 4b.1 as written (generate both light and dark themes)
 ```

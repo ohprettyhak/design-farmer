@@ -31,7 +31,7 @@ config_path="{directory_containing_DESIGN.md}/.design-farmer/config.json"
 # Read completedPhases, createdAt from config.json if it exists
 ```
 
-**Draft guard**: Read the first 5 lines of DESIGN.md (if the file has fewer than 5 lines, treat it as finalized — a DRAFT marker cannot exist in fewer lines). If the file contains `**DRAFT**` in its header, it is an incomplete Phase 3 draft — do NOT offer Option A. Only offer B (continue from where you left off) and C (start from scratch).
+**Draft guard**: Read lines 1–5 (inclusive) of DESIGN.md (if the file has fewer than 5 lines, treat it as finalized — a DRAFT marker cannot exist in fewer lines). If the file contains `**DRAFT**` in its header, it is an incomplete Phase 3 draft — do NOT offer Option A. Only offer B (continue from where you left off) and C (start from scratch).
 
 If DESIGN.md exists but `config.json` does NOT exist at `{directory_containing_DESIGN.md}/.design-farmer/config.json`, treat as a partial re-entry — the design document exists but pipeline state was lost. Offer:
 - A) Reconstruct config from DESIGN.md and jump to Phase 5
@@ -65,7 +65,7 @@ If user chose **A**:
    - `targetPlatforms`, `designMaturity`, `maturityScore`
 
    **Conditional fields** (may be absent depending on user choices):
-   - `brandColor`: read from Config if present; if missing and `colorDirection` is `'keep'` or `'neutral'`, set to `null`
+   - `brandColor`: read from Config if present; if missing and `colorDirection` is `'keep'`, leave unset (Phase 3 will extract it from the codebase); if missing and `colorDirection` is `'neutral'`, set to `null`
    - `themeLibrary`: read from Config if present; if missing and `themeStrategy` is `'light-only'`, set to `'none'`
 
 2. **Fill gaps from preflight scan** (steps 1–5 above already ran):
@@ -77,6 +77,7 @@ If user chose **A**:
 3. **If critical fields are still missing** (packageManager, framework, systemPath, isMonorepo, designSystemPackage, componentScope, themeStrategy), ask ONE AskUserQuestion with all missing fields at once — do not ask one-at-a-time for this recovery step.
 
 4. **Derive computed identifiers** from the parsed fields:
+   - `createdAt`: ISO 8601 timestamp of when this config was reconstructed (e.g., `2026-04-08T12:34:56Z`)
    - `designSystemDir`: `basename(systemPath)` (e.g., `design-system`)
    - `designSystemPackage`: read from `{systemPath}/package.json` `"name"` field (e.g., `@acme/design-system`)
    - `productName`: strip `@scope/` prefix from `designSystemPackage`, then title-case (e.g., `Design System`)
@@ -109,6 +110,8 @@ If user chose **B**:
   > - C) Mature — comprehensive design system exists, extract and document
 
   Set `designMaturity` and `maturityScore` (0 for greenfield, 5 for emerging, 8 for mature) from user's choice.
+
+  Run **Config Validation Protocol** (see `operational-notes.md`) on the reconstructed config before jumping to Phase 3.5. Verify required fields (`designMaturity`, `componentScope`, `themeStrategy`, `systemPath`) are present and valid. If validation fails, emit **Status: BLOCKED** with recovery options: re-run Phase 1 or manually correct the config.
 
   Persist to config.json (and config.backup.json), then **resume from Phase 3.5** (extraction is already done in the draft).
 - **If finalized**: continue to Phase 1 (Discovery Interview) as normal — run fresh Phases 1–4.

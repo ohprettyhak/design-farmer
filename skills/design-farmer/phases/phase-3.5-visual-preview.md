@@ -56,6 +56,7 @@ If `false`: skip 3.5.1. Instead, present a **text summary** of the extracted des
 
 **→ STOP — wait for user response.**
 
+If user chose A: set `previewOutcome: 'skipped'` in config.json (already set above), then proceed to Phase 4 (Architecture Design). No further approval gate is needed.
 If user chose B: ask follow-up questions, adjust values, re-present summary.
 If user chose C: follow Option E reset logic below (return to Phase 1).
 This is an intentional skip, not a failure — do NOT use the error-state Fallback Path (3.5.3).
@@ -175,5 +176,7 @@ If preview generation fails (e.g., no color palette extracted, tooling error):
 3. Present the raw extracted data as a text summary instead
 4. Ask user to confirm the text-based direction before proceeding
 5. Continue to Phase 4 with user's textual approval
+
+Before emitting status, append `'phase-3.5'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
 
 **Status: DONE** — Visual preview reviewed and approved. Proceed to Phase 4: Architecture Design.
