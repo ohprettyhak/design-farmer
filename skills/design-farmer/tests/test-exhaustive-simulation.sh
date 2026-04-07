@@ -1312,12 +1312,20 @@ echo ""
 # ===========================================================================
 echo "=== DIMENSION AA: Pipeline State Tracking ==="
 
-# Phase 1 must set createdAt and initial completedPhases
-if grep -q "createdAt" "$PHASES_DIR/phase-1-discovery.md" &&
-   grep -q "completedPhases" "$PHASES_DIR/phase-1-discovery.md"; then
-  pass "Phase 1: sets createdAt and completedPhases on initial config write"
+# Phase 1 must set createdAt in config persistence block (not just interface definition)
+# Check that createdAt appears in the bash block that writes config.json, not only in the TypeScript interface
+config_write_section=$(awk '/mkdir -p.*\.design-farmer/,/^```$/' "$PHASES_DIR/phase-1-discovery.md")
+if echo "$config_write_section" | grep -q "createdAt"; then
+  pass "Phase 1: sets createdAt in config persistence block"
 else
-  fail "Phase 1: missing createdAt or completedPhases initialization"
+  fail "Phase 1: createdAt missing from config persistence block (only in interface?)"
+fi
+
+# completedPhases must exist in interface and be tracked by centralized SKILL.md rule
+if grep -q "completedPhases" "$PHASES_DIR/phase-1-discovery.md"; then
+  pass "Phase 1: completedPhases defined in DesignFarmerConfig"
+else
+  fail "Phase 1: missing completedPhases in DesignFarmerConfig"
 fi
 
 # DesignFarmerConfig interface must include pipeline state fields
@@ -1383,11 +1391,11 @@ else
   fail "Phase 3.5: missing generatePreview config storage"
 fi
 
-# Skip path must use fallback 3.5.3
-if grep -q "Fallback Path.*3.5.3\|fallback path 3.5.3\|jump.*3.5.3\|Fallback Path (3.5.3)" "$PHASES_DIR/phase-3.5-visual-preview.md"; then
-  pass "Phase 3.5: skip path uses fallback 3.5.3"
+# Skip path must NOT use failure fallback 3.5.3 (opt-out is intentional, not an error)
+if grep -q "intentional skip\|not a failure\|NOT use.*Fallback Path" "$PHASES_DIR/phase-3.5-visual-preview.md"; then
+  pass "Phase 3.5: opt-out skip path separated from failure fallback"
 else
-  fail "Phase 3.5: skip path doesn't reference fallback 3.5.3"
+  fail "Phase 3.5: opt-out path not clearly separated from failure fallback"
 fi
 
 # Preview must be generated inside .design-farmer/

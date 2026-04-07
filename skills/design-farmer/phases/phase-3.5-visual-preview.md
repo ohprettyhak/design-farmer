@@ -24,7 +24,10 @@ For EMERGING/MATURE, ask via AskUserQuestion:
 **→ STOP — wait for response (skip for GREENFIELD).**
 
 Set `generatePreview` in config.json (`true` if GREENFIELD or chose A; `false` if chose B).
-If `false`: skip 3.5.1, jump to **Fallback Path (3.5.3)** for text-only approval.
+If `false`: skip 3.5.1. Instead, present a **text summary** of the extracted design direction
+(color palette OKLCH values, typography choices, spacing scale) and ask the user to approve
+the direction via AskUserQuestion before proceeding to Phase 4. This is an intentional skip,
+not a failure — do NOT use the error-state Fallback Path (3.5.3).
 
 ## 3.5.1 Preview Generation
 
