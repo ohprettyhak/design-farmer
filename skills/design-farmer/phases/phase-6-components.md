@@ -4,7 +4,7 @@ Implement components ONE AT A TIME, in dependency order.
 
 ## 6.0 Framework Guardrail
 
-Read `framework` from `{systemPath}/.design-farmer/config.json`.
+Read `framework`, `designMaturity`, and `componentScope` from `{systemPath}/.design-farmer/config.json`.
 
 - React (full support): `next-app-router`, `next-pages-router`, `vite-react`, `remix`
 - Non-React (token output only): `astro`, `sveltekit`, `nuxt` — component patterns in this phase (forwardRef, JSX, headless libraries) are React-specific.

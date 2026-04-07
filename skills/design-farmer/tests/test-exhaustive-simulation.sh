@@ -571,10 +571,26 @@ fi
 # designMaturity must flow from Phase 2 → Phase 3, 3.5, 6
 if grep -q "designMaturity" "$PHASES_DIR/phase-3-pattern-extraction.md" &&
    grep -q "designMaturity" "$PHASES_DIR/phase-3.5-visual-preview.md" &&
-   grep -q "Design Maturity" "$PHASES_DIR/phase-6-components.md"; then
+   grep -q "designMaturity" "$PHASES_DIR/phase-6-components.md"; then
   pass "designMaturity: flows through Phases 3, 3.5, 6"
 else
   fail "designMaturity: broken flow chain"
+fi
+
+# Phase 6 must explicitly read designMaturity from config.json
+if grep -q "designMaturity" "$PHASES_DIR/phase-6-components.md" &&
+   grep -q "config.json" "$PHASES_DIR/phase-6-components.md" &&
+   grep -E "Read.*designMaturity.*config\.json|Read.*config\.json.*designMaturity" "$PHASES_DIR/phase-6-components.md" > /dev/null 2>&1; then
+  pass "Phase 6: explicitly reads designMaturity from config.json"
+else
+  fail "Phase 6: missing explicit designMaturity read from config.json"
+fi
+
+# Phase 6 must explicitly read componentScope from config.json
+if grep -E "Read.*componentScope.*config\.json|Read.*config\.json.*componentScope" "$PHASES_DIR/phase-6-components.md" > /dev/null 2>&1; then
+  pass "Phase 6: explicitly reads componentScope from config.json"
+else
+  fail "Phase 6: missing explicit componentScope read from config.json"
 fi
 
 # themeStrategy must flow to Phase 4b, 5
