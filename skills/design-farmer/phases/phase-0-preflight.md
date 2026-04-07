@@ -84,7 +84,7 @@ If user chose **A**:
    > - B) Emerging — some patterns exist, extract and normalize them
    > - C) Mature — comprehensive design system exists, extract and document
 
-   Set `designMaturity` and `maturityScore` (0 for greenfield, 5 for emerging, 8 for mature) from user's choice, then persist.
+   Set `designMaturity` and `maturityScore` (0 for greenfield, 5 for emerging, 8 for mature) from user's choice, then persist to both `config.json` and `config.backup.json`.
 
 7. **Run a quick architecture scan** — read the existing `{systemPath}/` directory structure to determine the styling strategy (Tailwind/CSS Modules/vanilla CSS) and token directory layout. This substitutes for Phase 4 when jumping directly to Phase 5.
 

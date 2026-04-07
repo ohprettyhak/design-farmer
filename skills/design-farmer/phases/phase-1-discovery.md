@@ -377,6 +377,7 @@ interface DesignFarmerConfig {
   lastReviewScore?: number; // Phase 8 aggregate review score (0–10)
   lastReviewDate?: string; // ISO 8601 timestamp of last Phase 8 review
   generatePreview?: boolean; // whether to generate HTML preview in Phase 3.5
+  integrationStatus?: string; // "completed" | "skipped" — set by Phase 10
 }
 
 // derivation rules:

@@ -21,6 +21,8 @@ If user chose C (skip integration), emit:
 
 **Status: DONE** — User chose to integrate manually. Skipping integration steps. Proceed to Phase 11: Release Readiness & Handoff.
 
+Set `integrationStatus: "skipped"` in `{systemPath}/.design-farmer/config.json`. Update `config.backup.json`.
+
 Then stop — do NOT execute steps 10.1 through 10.7.
 
 ---

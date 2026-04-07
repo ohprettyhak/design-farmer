@@ -128,7 +128,7 @@ If user chose E:
 6. Persist the reset config back to `{systemPath}/.design-farmer/config.json` (and config.backup.json)
 7. Log: "Phase 3.5: User chose to start over. Resetting design extraction state. Project structure settings preserved."
 
-Note: Phase 1 will re-run from Q0. Preserved Q3–Q7 values serve as defaults — the agent should present them as pre-filled answers, allowing the user to accept or change each one.
+Note: Phase 1 will re-run from Q0. Preserved values (vision, painPoint from Q0-Q1; componentScope, headlessLibrary, themeStrategy, themeLibrary, accessibilityLevel, targetPlatforms from Q3-Q7) serve as defaults — the agent should present them as pre-filled answers, allowing the user to accept or change each one.
 
 ## 3.5.3 Fallback Path
 
