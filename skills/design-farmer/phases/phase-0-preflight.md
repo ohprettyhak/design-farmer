@@ -87,9 +87,20 @@ If user chose **C**: continue to Phase 1 (Discovery Interview) as normal.
 
 ---
 
-If an existing design system is detected (but no DESIGN.md), report findings and ask:
-> "An existing design system was found at `{path}`. Should I extend it, migrate it to the Design Farmer standard, or start fresh alongside it?"
+If an existing design system is detected (but no DESIGN.md), report the pre-flight summary (monorepo/single-repo, framework detected, existing components/tokens found, package manager), then ask via AskUserQuestion:
 
-Report the pre-flight summary (monorepo/single-repo, framework detected, existing components/tokens found, package manager).
+> An existing design system was found at `{path}`.
+>
+> How should I proceed?
+>
+> - A) **Extend** — build the Design Farmer standard design system on top of your existing components (preserve existing code)
+> - B) **Migrate** — convert existing components to Design Farmer standards (OKLCH tokens, semantic layer)
+> - C) **Start fresh** — build a new design system alongside existing components
+
+**→ STOP — wait for user response before continuing.**
+
+If user chose **A**: continue to Phase 1 (Discovery Interview). Record `strategy: "extend"` in config.json.
+If user chose **B**: continue to Phase 1 (Discovery Interview). Record `strategy: "migrate"` in config.json.
+If user chose **C**: continue to Phase 1 (Discovery Interview). Record `strategy: "greenfield"` in config.json.
 
 **Status: DONE** — Pre-flight complete. Proceed to Phase 1: Discovery Interview.

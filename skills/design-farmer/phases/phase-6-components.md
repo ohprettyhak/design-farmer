@@ -29,7 +29,9 @@ If framework is in [astro, sveltekit, nuxt] AND componentScope ≠ 'foundation':
     - B) Downgrade to foundation-only — skip components, use tokens only
     - C) Stop here — I'll write {framework}-native components manually using the DESIGN.md as reference"
   
-  → Wait for user response. If A: validate headless library compatibility (see below), then proceed to 6.0.1. If B: emit DONE_WITH_CONCERNS and jump to Phase 8 (no components to document in Storybook). If C: emit DONE_WITH_CONCERNS and jump to Phase 8.
+  **→ STOP — wait for user response before continuing.**
+
+  If A: validate headless library compatibility (see below), then proceed to 6.0.1. If B: emit DONE_WITH_CONCERNS and jump to Phase 8 (no components to document in Storybook). If C: emit DONE_WITH_CONCERNS and jump to Phase 8.
 
   **If user chose A (generate React components for a non-React framework):**
   The headless library selected in Phase 1 Q3-1 may be framework-specific (e.g., Melt UI for Svelte,
@@ -48,6 +50,8 @@ If framework is in [astro, sveltekit, nuxt] AND componentScope ≠ 'foundation':
   > - C) Ark UI — Framework-agnostic
   > - D) No library — Build from scratch
   
+  **→ STOP — wait for user response before continuing.**
+
   Update `headlessLibrary` in config.json with the user's choice before proceeding to 6.0.1.
 ```
 
