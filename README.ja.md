@@ -4,7 +4,7 @@
 [![Last Commit](https://img.shields.io/github/last-commit/ohprettyhak/design-farmer/main)](https://github.com/ohprettyhak/design-farmer/commits/main/)
 [![Latest Release](https://img.shields.io/github/v/release/ohprettyhak/design-farmer?sort=semver)](https://github.com/ohprettyhak/design-farmer/releases)
 
-[English](README.md) | [한국어](README.ko.md) | **日本語** | [中文](README.zh.md)
+[English](README.md) | [한국어](README.ko.md) | **日本語** | [简体中文](README.zh.md) | [繁體中文](README.zh-TW.md)
 
 > 種からシステムへ。あらゆるコードベースからプロダクション品質のデザインシステムを育てます。
 

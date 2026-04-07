@@ -4,7 +4,7 @@
 [![Last Commit](https://img.shields.io/github/last-commit/ohprettyhak/design-farmer/main)](https://github.com/ohprettyhak/design-farmer/commits/main/)
 [![Latest Release](https://img.shields.io/github/v/release/ohprettyhak/design-farmer?sort=semver)](https://github.com/ohprettyhak/design-farmer/releases)
 
-[English](README.md) | **한국어** | [日本語](README.ja.md) | [中文](README.zh.md)
+[English](README.md) | **한국어** | [日本語](README.ja.md) | [简体中文](README.zh.md) | [繁體中文](README.zh-TW.md)
 
 > 씨앗에서 시스템까지. 어떤 코드베이스든 프로덕션 수준의 디자인 시스템으로 키워냅니다.
 

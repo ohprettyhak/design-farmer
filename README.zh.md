@@ -4,7 +4,7 @@
 [![Last Commit](https://img.shields.io/github/last-commit/ohprettyhak/design-farmer/main)](https://github.com/ohprettyhak/design-farmer/commits/main/)
 [![Latest Release](https://img.shields.io/github/v/release/ohprettyhak/design-farmer?sort=semver)](https://github.com/ohprettyhak/design-farmer/releases)
 
-[English](README.md) | [한국어](README.ko.md) | [日本語](README.ja.md) | **中文**
+[English](README.md) | [한국어](README.ko.md) | [日本語](README.ja.md) | **简体中文** | [繁體中文](README.zh-TW.md)
 
 > 从种子到系统——从任何代码库中培育出生产级设计系统。
 
