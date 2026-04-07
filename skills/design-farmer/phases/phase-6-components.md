@@ -15,6 +15,7 @@ If framework is in [next-app-router, next-pages-router, vite-react, remix]:
 
 If framework is in [astro, sveltekit, nuxt] AND componentScope = 'foundation':
   → SKIP component implementation (tokens only — already done in Phase 5)
+  → Append `'phase-6'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
   → Emit DONE: "Token-only implementation complete for {framework}. Phase 6 skipped: component
     patterns require React. Use the generated CSS tokens directly in your {framework} components."
   → Jump to Phase 8 (skip Phase 7 — Storybook is React-oriented and has no components to document)
@@ -32,8 +33,8 @@ If framework is in [astro, sveltekit, nuxt] AND componentScope ≠ 'foundation':
   **→ STOP — wait for user response before continuing.**
 
   If A: validate headless library compatibility (see below), then proceed to 6.0.1. After Phase 6 completion, proceed to Phase 7.
-  If B: emit DONE_WITH_CONCERNS and jump to Phase 8. Phase 7 skipped.
-  If C: emit DONE_WITH_CONCERNS and jump to Phase 8. Phase 7 skipped.
+  If B: append `'phase-6'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`. Emit DONE_WITH_CONCERNS and jump to Phase 8. Phase 7 skipped.
+  If C: append `'phase-6'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`. Emit DONE_WITH_CONCERNS and jump to Phase 8. Phase 7 skipped.
 
   **If user chose A (generate React components for a non-React framework):**
   The headless library selected in Phase 1 Q3-1 may be framework-specific (e.g., Melt UI for Svelte,
