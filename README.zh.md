@@ -41,12 +41,12 @@ Design Farmer 按阶段工作，适配项目的当前状态：
 
 <img src="assets/storybook-components.png" alt="Design Farmer 生成的组件库展示" width="100%" />
 
+以上截图来自一个**从零开始的全新项目**——没有令牌、组件或设计决策。如果你的仓库中已有部分实现（一些组件、颜色变量、样式指南等），Design Farmer 会在此基础上继续构建，产出精细得多的结果。
+
 > [!TIP]
-> **想要更好的效果？** 在运行之前，先在项目根目录放一个 `DESIGN.md`。
+> **想要更好的效果？** 运行前在项目根目录放一个 [`DESIGN.md`](https://github.com/VoltAgent/awesome-design-md)。
 > - 用 [Stitch](https://stitch.withgoogle.com) 生成，或者
 > - 从 [awesome-design-md](https://github.com/VoltAgent/awesome-design-md) 获取现成文件——收录了 Vercel、Linear、Stripe 等 58 个以上真实站点的设计系统。
->
-> 以上截图来自一个**从零开始的全新项目**。有了 `DESIGN.md` 作为起点，产出会精细得多。
 
 ## 安装
 

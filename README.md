@@ -41,12 +41,12 @@ The full pipeline (12 phases) covers: preflight detection, discovery interview, 
 
 <img src="assets/storybook-components.png" alt="Component gallery built by Design Farmer" width="100%" />
 
+The screenshot above was built from a **greenfield project** — no existing tokens, components, or design decisions. When your repository already has partial implementations (some components, color variables, a style guide, etc.), Design Farmer picks up where you left off and produces significantly more refined results.
+
 > [!TIP]
-> **Want better results?** Drop a `DESIGN.md` into your project root before running Design Farmer.
+> **Want even better results?** Drop a [`DESIGN.md`](https://github.com/VoltAgent/awesome-design-md) into your project root before running Design Farmer.
 > - Generate one with [Stitch](https://stitch.withgoogle.com), or
 > - Grab a pre-built one from [awesome-design-md](https://github.com/VoltAgent/awesome-design-md) — 58+ design systems extracted from real sites (Vercel, Linear, Stripe, etc.)
->
-> The screenshot above was built from a **greenfield project** with no prior design system. With a `DESIGN.md` as a starting point, results are significantly more refined.
 
 ## Installation
 
