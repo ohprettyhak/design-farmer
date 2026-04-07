@@ -191,10 +191,10 @@ Card sub-components: CardHeader (border-bottom, subtle bg), CardTitle (semibold,
 | Variant | Background | Text |
 |---------|-----------|------|
 | default | `{--surface-subtle}` | `{--text-secondary}` |
-| success | `{--state-success}/15%` | `{--state-success}` |
-| warning | `{--state-warning}/15%` | `{--state-warning-text}` |
-| error | `{--state-error}/15%` | `{--state-error}` |
-| info | `{--state-info}/15%` | `{--state-info}` |
+| success | `{--state-success-bg}` | `{--state-success}` |
+| warning | `{--state-warning-bg}` | `{--state-warning-text}` |
+| error | `{--state-error-bg}` | `{--state-error}` |
+| info | `{--state-info-bg}` | `{--state-info}` |
 
 Shape: `border-radius: 9999px` (pill)
 

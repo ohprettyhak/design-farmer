@@ -69,13 +69,13 @@ an airy, editorial quality that distinguishes Nova from generic dashboard toolin
 
 ### Status Colors
 - **Success** (`oklch(0.58 0.17 145)`): Positive feedback, confirmed states, upward trend indicators — medium green
-- **Success Surface** (`oklch(0.96 0.04 145)`): Success message backgrounds
+- **Success Bg** (`oklch(0.96 0.04 145)`): Success message backgrounds
 - **Warning** (`oklch(0.68 0.18 55)`): Caution states, pending actions, approaching limits — amber
-- **Warning Surface** (`oklch(0.97 0.04 70)`): Warning message backgrounds
+- **Warning Bg** (`oklch(0.97 0.04 70)`): Warning message backgrounds
 - **Error** (`oklch(0.58 0.22 25)`): Destructive actions, validation errors, downward trend — medium red
-- **Error Surface** (`oklch(0.97 0.04 25)`): Error message backgrounds
+- **Error Bg** (`oklch(0.97 0.04 25)`): Error message backgrounds
 - **Info** (`oklch(0.55 0.18 230)`): Informational feedback, neutral notifications — steel blue
-- **Info Surface** (`oklch(0.96 0.03 230)`): Info message backgrounds
+- **Info Bg** (`oklch(0.96 0.03 230)`): Info message backgrounds
 
 ### Borders & Dividers
 - **Border Subtle** (`oklch(0.92 0.006 240)`): Low-emphasis dividers, table row separators
@@ -207,10 +207,10 @@ CardContent (16px padding), CardFooter (`border-top: 1px solid var(--border-subt
 | Variant | Background | Text |
 |---------|-----------|------|
 | default | `var(--surface-muted)` | `var(--text-secondary)` |
-| success | `var(--state-success-surface)` | `var(--state-success)` |
-| warning | `var(--state-warning-surface)` | `var(--state-warning)` |
-| error | `var(--state-error-surface)` | `var(--state-error)` |
-| info | `var(--state-info-surface)` | `var(--state-info)` |
+| success | `var(--state-success-bg)` | `var(--state-success)` |
+| warning | `var(--state-warning-bg)` | `var(--state-warning)` |
+| error | `var(--state-error-bg)` | `var(--state-error)` |
+| info | `var(--state-info-bg)` | `var(--state-info)` |
 
 Shape: `border-radius: 9999px` (pill), height `20px`, padding `0 8px`, font-size `12px`
 

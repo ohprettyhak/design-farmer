@@ -1510,6 +1510,52 @@ fi
 echo ""
 
 # ===========================================================================
+# DIMENSION AE: Badge Status Background Token Name Consistency
+# ===========================================================================
+echo "=== DIMENSION AE: Badge Status Background Token Consistency ==="
+
+# Phase 4b must define all four badge background tokens
+for variant in success warning error info; do
+  if grep -q "\-\-state-${variant}-bg" "$PHASES_DIR/phase-4b-theming.md"; then
+    pass "Phase 4b: defines --state-${variant}-bg (canonical token)"
+  else
+    fail "Phase 4b: missing --state-${variant}-bg token definition"
+  fi
+done
+
+# Phase 4.5 must reference all four badge background tokens
+for variant in success warning error info; do
+  if grep -q "\-\-state-${variant}-bg" "$PHASES_DIR/phase-4.5-design-source-of-truth.md"; then
+    pass "Phase 4.5: references --state-${variant}-bg in Badges table"
+  else
+    fail "Phase 4.5: missing --state-${variant}-bg in Badges table"
+  fi
+done
+
+if grep -q "state-success}/15%\|state-success-surface" "$PHASES_DIR/phase-4.5-design-source-of-truth.md"; then
+  fail "Phase 4.5: Badges table still uses invalid /15% or -surface token"
+else
+  pass "Phase 4.5: Badges table does not use /15% or -surface tokens"
+fi
+
+# examples/DESIGN.md must reference all four badge background tokens
+for variant in success warning error info; do
+  if grep -q "\-\-state-${variant}-bg" "$EXAMPLES_DIR/DESIGN.md"; then
+    pass "examples/DESIGN.md: references --state-${variant}-bg in Badges table"
+  else
+    fail "examples/DESIGN.md: missing --state-${variant}-bg in Badges table"
+  fi
+done
+
+if grep -q "state-success-surface\|state-warning-surface\|state-error-surface\|state-info-surface" "$EXAMPLES_DIR/DESIGN.md"; then
+  fail "examples/DESIGN.md: Badges table still uses -surface token names"
+else
+  pass "examples/DESIGN.md: Badges table does not use -surface token names"
+fi
+
+echo ""
+
+# ===========================================================================
 # SUMMARY
 # ===========================================================================
 echo "==========================================="
@@ -1548,6 +1594,7 @@ echo " AA: Pipeline State Tracking"
 echo " AB: Preview Opt-In Gate"
 echo " AC: Early DESIGN.md Draft"
 echo " AD: Cross-File Token Existence (--surface-muted)"
+echo " AE: Badge Status Background Token Consistency"
 echo "==========================================="
 
 if [ $FAIL -gt 0 ]; then
