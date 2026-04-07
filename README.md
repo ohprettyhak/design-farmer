@@ -41,7 +41,7 @@ The full pipeline (12 phases) covers: preflight detection, discovery interview, 
 
 <img src="assets/storybook-components.png" alt="Component gallery built by Design Farmer" width="100%" />
 
-> The screenshot above was generated from a **greenfield project** (zero to one). Design Farmer works even better when your repository already has a `DESIGN.md` (e.g. from a Google Stitch proposal) or partial component implementations to build on.
+> The screenshot above was generated from a **greenfield project** (zero to one). Design Farmer works even better when your repository already has a `DESIGN.md` (e.g. generated via [Stitch](https://stitch.withgoogle.com)) or partial component implementations to build on.
 
 ## Installation
 

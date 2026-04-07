@@ -41,7 +41,7 @@ Design Farmer 按阶段工作，适配项目的当前状态：
 
 <img src="assets/storybook-components.png" alt="Design Farmer 生成的组件库展示" width="100%" />
 
-> 以上截图来自一个**从零开始的全新项目（greenfield）**。如果你的仓库中已有 `DESIGN.md`（例如 Google Stitch 提案）或部分设计组件实现，Design Farmer 能产出更精细的结果。
+> 以上截图来自一个**从零开始的全新项目（greenfield）**。如果你的仓库中已有 `DESIGN.md`（例如通过 [Stitch](https://stitch.withgoogle.com) 生成的文件）或部分设计组件实现，Design Farmer 能产出更精细的结果。
 
 ## 安装
 

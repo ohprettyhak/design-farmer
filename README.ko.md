@@ -41,7 +41,7 @@ Design Farmer는 프로젝트 상태에 맞춰 단계별로 작동합니다:
 
 <img src="assets/storybook-components.png" alt="Design Farmer가 생성한 컴포넌트 갤러리" width="100%" />
 
-> 위 스크린샷은 **아무것도 없는 상태(greenfield)**에서 생성한 결과물입니다. `DESIGN.md`(예: Google Stitch 제안서)가 이미 있거나 일부 디자인 컴포넌트가 구현된 레포지토리에서는 훨씬 더 정교한 결과를 만들어냅니다.
+> 위 스크린샷은 **아무것도 없는 상태(greenfield)**에서 생성한 결과물입니다. `DESIGN.md`(예: [Stitch](https://stitch.withgoogle.com)로 생성한 파일)가 이미 있거나 일부 디자인 컴포넌트가 구현된 레포지토리에서는 훨씬 더 정교한 결과를 만들어냅니다.
 
 ## 설치
 
