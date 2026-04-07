@@ -668,12 +668,12 @@ else
   fail "Skip path: Phase 10 → Phase 11 handoff missing"
 fi
 
-# Path 5: Phase 3.5 rejection → returns to Phase 1 Q2
-if grep -q "Return to Phase 1 Question 2" "$PHASES_DIR/phase-3.5-visual-preview.md" ||
-   grep -q "return to Phase 1" "$PHASES_DIR/phase-3.5-visual-preview.md"; then
-  pass "Feedback loop: Phase 3.5 rejection → Phase 1 Q2"
+# Path 5: Phase 3.5 rejection → returns to Phase 1 Q0
+if grep -q "Return to Phase 1 Question 0" "$PHASES_DIR/phase-3.5-visual-preview.md" ||
+   grep -qi "return to Phase 1" "$PHASES_DIR/phase-3.5-visual-preview.md"; then
+  pass "Feedback loop: Phase 3.5 rejection → Phase 1 Q0"
 else
-  fail "Feedback loop: missing Phase 3.5 → Phase 1 Q2 loop"
+  fail "Feedback loop: missing Phase 3.5 → Phase 1 Q0 loop"
 fi
 
 # Phase 8.5 → must be optional when no browser tooling available

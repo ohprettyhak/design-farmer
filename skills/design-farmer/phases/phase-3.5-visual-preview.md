@@ -116,7 +116,7 @@ If user chose B, C, or D:
 - Loop back to the review gate
 
 If user chose E:
-- Return to Phase 1 Question 2 (Brand & Color Direction)
+- Return to Phase 1 Question 0 (Brand & Color Direction)
 - Restart the extraction process with new direction
 
 **Before returning to Phase 1, reset pipeline state:**
