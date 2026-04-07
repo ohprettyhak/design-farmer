@@ -121,7 +121,7 @@ After the handoff report is complete, remove intermediate working files generate
 ```bash
 # design-preview.html — generated in Phase 3.5 for visual approval only.
 # Not needed once the design system is implemented.
-rm -f "{systemPath}/design-preview.html"
+rm -f "{systemPath}/.design-farmer/design-preview.html"
 
 # visual-qa-checklist.md — generated in Phase 8.5 as a manual QA fallback.
 # Not needed once review is complete.
@@ -133,7 +133,7 @@ rm -f "{systemPath}/docs/visual-qa-checklist.md"
 - All token, component, test, and story files — these are the deliverable
 
 Inform the user:
-> Cleaned up temporary working files (`design-preview.html`, `visual-qa-checklist.md` if present).
+> Cleaned up temporary working files (`.design-farmer/design-preview.html`, `visual-qa-checklist.md` if present).
 > `DESIGN.md` and all implementation files are preserved.
 
 **Status: DONE** — Release readiness verified and handoff complete. Pipeline finished.

@@ -18,11 +18,14 @@ This index provides a compact map of the Design Farmer router + phase bundle for
    - Assess design maturity, inventory components, identify style/token patterns.
 4. **Phase 3: Design Pattern Extraction & OKLCH Conversion**
    - Convert and normalize color systems, generate scales, validate contrast.
+   - Generate early DESIGN.md draft with extraction results for context resilience.
 5. **Phase 3.5: Visual Preview**
-   - Generate self-contained HTML preview of proposed design system.
+   - Maturity-conditional preview opt-in: mandatory for GREENFIELD, recommended for EMERGING, default skip for MATURE.
+   - Generate self-contained HTML preview at `.design-farmer/design-preview.html`.
    - Color palette swatches, typography specimens, spacing scale, sample components.
    - Theme toggle for light/dark comparison.
-   - User approval gate before Phase 4 begins.
+   - If preview skipped, text-only approval gate via opt-in gate (3.5.0) — not the error-state fallback (3.5.3).
+   - User approval gate before Phase 4 begins (always, regardless of preview mode).
 
 6. **Phase 4: Architecture Design**
    - Define token hierarchy, directory structure, build pipeline, and CSS layering.
@@ -57,6 +60,9 @@ This index provides a compact map of the Design Farmer router + phase bundle for
 - Completion statuses are mandatory: `DONE`, `DONE_WITH_CONCERNS`, `BLOCKED`, `NEEDS_CONTEXT`.
 - User-question gating in Discovery must remain one-at-a-time.
 - Final completion requires explicit verification evidence.
+- Pipeline state (`completedPhases`, `createdAt`, `lastReviewScore`, `lastReviewDate`, `generatePreview`) is tracked in `config.json` and displayed during Phase 0 re-entry.
+- Early DESIGN.md draft (Phase 3) bridges the extraction→source-of-truth context gap.
+- Preview file lives at `.design-farmer/design-preview.html` (not project root).
 
 ## Section vs Phase Numbering
 

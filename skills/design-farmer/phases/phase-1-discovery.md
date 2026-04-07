@@ -371,6 +371,12 @@ interface DesignFarmerConfig {
   // Set from Phase 2 output — propagate to all subsequent phases
   designMaturity?: 'greenfield' | 'emerging' | 'mature';
   maturityScore?: number; // 0–10 from Phase 2 scoring criteria
+  // Pipeline state — managed automatically, not user-facing
+  completedPhases?: string[]; // e.g., ["0","1","2"] — tracks which phases have finished
+  createdAt?: string; // ISO 8601 timestamp of initial config creation
+  lastReviewScore?: number; // Phase 8 aggregate review score (0–10)
+  lastReviewDate?: string; // ISO 8601 timestamp of last Phase 8 review
+  generatePreview?: boolean; // whether to generate HTML preview in Phase 3.5
 }
 
 // derivation rules:
@@ -401,6 +407,7 @@ even if earlier context has been compressed:
 ```bash
 mkdir -p {systemPath}/.design-farmer
 # Write DesignFarmerConfig as JSON to {systemPath}/.design-farmer/config.json
+# Set createdAt to the current ISO 8601 timestamp
 ```
 
 **Status: DONE** — Discovery interview complete. `DesignFarmerConfig` built and persisted. Proceed to Phase 2: Repository Analysis.
