@@ -36,6 +36,7 @@ If themeStrategy = 'light-dark', 'multi-brand', or 'custom':
     --text-secondary: oklch(0.45 0.02 250);
     --text-inverse: oklch(1 0 0);
     --text-disabled: oklch(0.70 0.01 250);
+    --text-tertiary: oklch(0.62 0.01 250);
     --text-brand: oklch(0.55 0.20 250);
 
     /* Interactive */
@@ -81,6 +82,7 @@ If themeStrategy = 'light-dark', 'multi-brand', or 'custom':
     --text-secondary: oklch(0.70 0.02 250);
     --text-inverse: oklch(0.15 0.01 250);
     --text-disabled: oklch(0.45 0.01 250);
+    --text-tertiary: oklch(0.55 0.01 250);
     --text-brand: oklch(0.70 0.20 250);
 
     --interactive-primary: oklch(0.65 0.20 250);

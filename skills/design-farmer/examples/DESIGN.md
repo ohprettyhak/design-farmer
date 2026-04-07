@@ -59,6 +59,8 @@ an airy, editorial quality that distinguishes Nova from generic dashboard toolin
 - **Secondary Text** (`oklch(0.42 0.012 250)`): Captions, metadata, helper text, table cell secondary info
 - **Tertiary Text** (`oklch(0.62 0.010 250)`): Placeholders, disabled labels, de-emphasized metadata
 - **Inverse Text** (`oklch(0.97 0.003 240)`): Text on dark or colored backgrounds — near-white
+- **Disabled Text** (`oklch(0.70 0.01 250)` / dark: `oklch(0.45 0.01 250)`): Disabled controls, inactive labels
+- **Brand Text** (`oklch(0.55 0.20 250)` / dark: `oklch(0.70 0.20 250)`): Branded accent text for links and emphasis
 
 ### Brand & Interactive
 - **Interactive Primary** (`oklch(0.55 0.22 264)`): CTAs, links, selected states, focus indicators — deep indigo
@@ -73,6 +75,7 @@ an airy, editorial quality that distinguishes Nova from generic dashboard toolin
 - **Warning** (`oklch(0.68 0.18 55)`): Caution states, pending actions, approaching limits — amber
 - **Warning Bg** (`oklch(0.97 0.04 70)`): Warning message backgrounds
 - **Error** (`oklch(0.58 0.22 25)`): Destructive actions, validation errors, downward trend — medium red
+- **Error Hover** (`oklch(0.45 0.20 25)` / dark: `oklch(0.72 0.20 25)`): Destructive button hover state
 - **Error Bg** (`oklch(0.97 0.04 25)`): Error message backgrounds
 - **Info** (`oklch(0.55 0.18 230)`): Informational feedback, neutral notifications — steel blue
 - **Info Bg** (`oklch(0.96 0.03 230)`): Info message backgrounds
@@ -208,7 +211,7 @@ CardContent (16px padding), CardFooter (`border-top: 1px solid var(--border-subt
 |---------|-----------|------|
 | default | `var(--surface-muted)` | `var(--text-secondary)` |
 | success | `var(--state-success-bg)` | `var(--state-success)` |
-| warning | `var(--state-warning-bg)` | `var(--state-warning)` |
+| warning | `var(--state-warning-bg)` | `var(--state-warning-text)` |
 | error | `var(--state-error-bg)` | `var(--state-error)` |
 | info | `var(--state-info-bg)` | `var(--state-info)` |
 

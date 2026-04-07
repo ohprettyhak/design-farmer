@@ -56,17 +56,20 @@ Reference exact token values inline with backticks.}
 - **Secondary Text** (`{value}`): Captions, metadata, helper text
 - **Tertiary Text** (`{value}`): Placeholders, disabled labels
 - **Inverse Text** (`{value}`): Text on dark/colored backgrounds
+- **Brand Text** (`{value}`): Branded accent text for links and emphasis
 
 ### Brand & Interactive
 - **Interactive Primary** (`{value}`): CTAs, links, selected states
 - **Interactive Primary Hover** (`{value}`): Hover state
 - **Interactive Primary Active** (`{value}`): Pressed state
+- **Interactive Bg** (`{value}`): Subtle tinted background for interactive containers
 - **Interactive Text** (`{value}`): Brand-colored text
 
 ### Status
 - **Success** (`{value}`): Positive feedback, confirmed states
 - **Warning** (`{value}`): Caution states
 - **Error** (`{value}`): Destructive actions, validation errors
+- **Error Hover** (`{value}`): Destructive button hover state
 - **Info** (`{value}`): Informational feedback
 
 ### Borders & Dividers
@@ -157,7 +160,7 @@ Reference exact token values inline with backticks.}
 - Focus: `box-shadow: 0 0 0 1px {--border-focus}, {--shadow-sm}`
 - Error: `box-shadow: 0 0 0 1px {--state-error}`
 - Disabled: `opacity: 40%, cursor: not-allowed`
-- Placeholder: `{--text-disabled}`
+- Placeholder: `{--text-tertiary}`
 
 > **Why box-shadow for borders?** Using `box-shadow: 0 0 0 1px` instead of CSS `border` prevents layout shift when switching between default/focus/error states (no width change).
 
