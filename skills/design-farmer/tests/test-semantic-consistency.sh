@@ -366,6 +366,156 @@ fi
 echo ""
 
 # ---------------------------------------------------------------------------
+# TEST 9: Phase 0 — Re-Entry Paths
+# High-risk: re-entry has broken in multiple PRs.
+# ---------------------------------------------------------------------------
+echo "=== TEST 9: Phase 0 — Re-Entry Paths ==="
+
+# Path A: Use DESIGN.md as-is → skip to Phase 5
+if grep -q "Jump directly to Phase 5" "$PHASES_DIR/phase-0-preflight.md" &&
+   grep -q "Do not run Phases 1–4" "$PHASES_DIR/phase-0-preflight.md"; then
+  pass "Re-entry path A: skip to Phase 5 with Phase 1-4 bypass"
+else
+  fail "Re-entry path A: missing skip-to-Phase-5 or Phase-1-4 bypass"
+fi
+
+# Path A must parse Config YAML from DESIGN.md
+if grep -q "packageManager" "$PHASES_DIR/phase-0-preflight.md" &&
+   grep -q "designMaturity" "$PHASES_DIR/phase-0-preflight.md"; then
+  pass "Re-entry path A: Config YAML field parsing present"
+else
+  fail "Re-entry path A: missing Config YAML field parsing"
+fi
+
+# Path B/C: continue to Phase 1 normally
+if grep -q 'chose.*B.*or.*C.*continue to Phase 1' "$PHASES_DIR/phase-0-preflight.md" ||
+   grep -q 'continue to Phase 1.*Discovery Interview.*as normal' "$PHASES_DIR/phase-0-preflight.md"; then
+  pass "Re-entry path B/C: continues to Phase 1 normally"
+else
+  fail "Re-entry path B/C: missing continuation to Phase 1"
+fi
+
+echo ""
+
+# ---------------------------------------------------------------------------
+# TEST 10: Phase 1 — Conditional Question Gates
+# High-risk: wrong gating causes skipped questions or broken config.
+# ---------------------------------------------------------------------------
+echo "=== TEST 10: Phase 1 — Conditional Question Gates ==="
+
+# Q3-1 (Headless Library): only if componentScope != foundation
+if grep -q "Skip if user chose A.*Foundation only" "$PHASES_DIR/phase-1-discovery.md"; then
+  pass "Q3-1: correctly gated on componentScope (skip for foundation)"
+else
+  fail "Q3-1: missing or incorrect conditional gate"
+fi
+
+# Q5-1 (Dark Mode Library): only if themeStrategy includes dark
+if grep -q "Skip if user chose B.*Light only" "$PHASES_DIR/phase-1-discovery.md"; then
+  pass "Q5-1: correctly gated on themeStrategy (skip for light-only)"
+else
+  fail "Q5-1: missing or incorrect conditional gate"
+fi
+
+echo ""
+
+# ---------------------------------------------------------------------------
+# TEST 11: Phase 4b — Light-Only Guard
+# High-risk: has broken in multiple PRs.
+# ---------------------------------------------------------------------------
+echo "=== TEST 11: Phase 4b — Light-Only Guard ==="
+
+if grep -q "Skip 4b.2 ThemeProvider" "$PHASES_DIR/phase-4b-theming.md" &&
+   grep -q "Skip 4b.3 Scoped Theming" "$PHASES_DIR/phase-4b-theming.md" &&
+   grep -q "Skip 4b.4 Dark Mode Checklist" "$PHASES_DIR/phase-4b-theming.md" &&
+   grep -q "Proceed to 4b.5 Styling Approach" "$PHASES_DIR/phase-4b-theming.md"; then
+  pass "Phase 4b light-only: skips 4b.2-4b.4, jumps to 4b.5"
+else
+  fail "Phase 4b light-only: missing skip/jump instructions"
+fi
+
+echo ""
+
+# ---------------------------------------------------------------------------
+# TEST 12: Phase 6 — Non-React Framework Guardrail
+# High-risk: wrong guardrail breaks entire component phase.
+# ---------------------------------------------------------------------------
+echo "=== TEST 12: Phase 6 — Non-React Framework Guardrail ==="
+
+# Non-React + foundation → skip to Phase 8
+if grep -q "SKIP component implementation.*tokens only" "$PHASES_DIR/phase-6-components.md" ||
+   grep -q "Jump to Phase 8" "$PHASES_DIR/phase-6-components.md"; then
+  pass "Phase 6: non-React + foundation skips to Phase 8"
+else
+  fail "Phase 6: missing non-React + foundation skip path"
+fi
+
+# Non-React + non-foundation → NEEDS_CONTEXT
+if grep -q "NEEDS_CONTEXT" "$PHASES_DIR/phase-6-components.md"; then
+  pass "Phase 6: non-React + non-foundation triggers NEEDS_CONTEXT"
+else
+  fail "Phase 6: missing non-React + non-foundation NEEDS_CONTEXT"
+fi
+
+echo ""
+
+# ---------------------------------------------------------------------------
+# TEST 13: Cross-Phase Data Dependencies
+# Verifies critical config fields flow through the correct phases.
+# ---------------------------------------------------------------------------
+echo "=== TEST 13: Cross-Phase Data Dependencies ==="
+
+# designMaturity: Phase 2 → 3, 3.5, 6
+if grep -q "designMaturity" "$PHASES_DIR/phase-3-pattern-extraction.md" &&
+   grep -q "designMaturity" "$PHASES_DIR/phase-3.5-visual-preview.md" &&
+   grep -q "designMaturity" "$PHASES_DIR/phase-6-components.md"; then
+  pass "designMaturity: flows through Phases 3, 3.5, 6"
+else
+  fail "designMaturity: broken flow chain"
+fi
+
+# DESIGN.md: referenced in Phases 5, 6, 8 as source of truth
+if grep -q "DESIGN.md" "$PHASES_DIR/phase-5-tokens.md" &&
+   grep -q "DESIGN.md" "$PHASES_DIR/phase-6-components.md" &&
+   grep -q "DESIGN.md" "$PHASES_DIR/phase-8-review.md"; then
+  pass "DESIGN.md: referenced in Phases 5, 6, 8"
+else
+  fail "DESIGN.md: not consistently referenced"
+fi
+
+echo ""
+
+# ---------------------------------------------------------------------------
+# TEST 14: Pipeline State Tracking
+# Verifies completedPhases/createdAt tracking across phases.
+# ---------------------------------------------------------------------------
+echo "=== TEST 14: Pipeline State Tracking ==="
+
+# completedPhases defined in Phase 1 interface
+if grep -q "completedPhases" "$PHASES_DIR/phase-1-discovery.md"; then
+  pass "Phase 1: completedPhases defined in DesignFarmerConfig"
+else
+  fail "Phase 1: missing completedPhases in DesignFarmerConfig"
+fi
+
+# Phase 0 displays completedPhases and createdAt on re-entry
+if grep -q "completedPhases" "$PHASES_DIR/phase-0-preflight.md" &&
+   grep -q "createdAt" "$PHASES_DIR/phase-0-preflight.md"; then
+  pass "Phase 0: displays completedPhases and createdAt on re-entry"
+else
+  fail "Phase 0: missing completedPhases/createdAt display"
+fi
+
+# SKILL.md centralizes completedPhases tracking
+if grep -q "completedPhases" "$SKILL_FILE"; then
+  pass "SKILL.md: documents completedPhases contract"
+else
+  fail "SKILL.md: missing completedPhases contract"
+fi
+
+echo ""
+
+# ---------------------------------------------------------------------------
 # SUMMARY
 # ---------------------------------------------------------------------------
 echo "==========================================="
