@@ -408,6 +408,8 @@ interface DesignFarmerConfig {
   maturityJustification?: string; // Created in Phase 2. Brief justification of maturity score (e.g., '4/10 — has dedicated component dir (✓), tokens (✗)')
   // Phase 4 output — styling approach determination
   stylingApproach?: string; // Determined in Phase 4. One of: 'tailwind-v4', 'tailwind-v3', 'css-modules', 'styled-components', 'vanilla-extract', 'panda-css', 'vanilla'
+  // Phase 0 strategy selection — consumed by Phase 4 and Phase 10
+  strategy?: 'extend' | 'migrate' | 'greenfield';
   // Pipeline state — managed automatically, not user-facing
   completedPhases?: string[]; // e.g., ["phase-0","phase-1","phase-2"] — tracks which phases have finished
   skippedPhases?: string[]; // e.g., ["phase-1","phase-2"] — phases intentionally skipped (Phase 0→5 shortcut)
@@ -453,7 +455,7 @@ mkdir -p {systemPath}/.design-farmer
 # Write DesignFarmerConfig as JSON to {systemPath}/.design-farmer/config.json
 # Also copy to config.backup.json in the same directory
 # Set createdAt to the current ISO 8601 timestamp
-# Initialize completedPhases as ["phase-0"]
+# Initialize completedPhases as ["phase-0"] if undefined; preserve existing array on re-entry
 
 # Read-after-write validation: Read back config.json to verify the write succeeded.
 # If the file is missing or invalid JSON, emit **Status: BLOCKED** with recovery

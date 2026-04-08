@@ -477,6 +477,7 @@ Hard cap: 30 fixes maximum.
    -> Fix CRITICAL issues (one at a time, atomic commits)
    -> Re-run ONLY the reviewer(s) that flagged the CRITICAL finding
    -> Loop until zero CRITICAL findings remain
+   -> Maximum 5 CRITICAL fix iterations; if exceeded, escalate to step 7 (BLOCKED)
 
 6. If HIGH findings exist but no CRITICAL:
    -> Present HIGH findings to user via AskUserQuestion

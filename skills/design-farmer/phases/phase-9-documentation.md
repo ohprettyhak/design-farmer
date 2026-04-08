@@ -84,6 +84,6 @@ Read `visualQAMode` from `{systemPath}/.design-farmer/config.json` to determine 
 See Phase 10 (App Integration) to wire the design system into your application.
 ```
 
-Before emitting status, append `'phase-9'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-9'`. Also update `config.backup.json`.
+Before emitting status, ensure `completedPhases` exists in config.json (initialize as `[]` if undefined). If `'phase-9'` is already present in the array, skip the append (idempotent). Otherwise, append `'phase-9'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
 
 **Status: DONE** — Documentation generated and final verification passed. Design system is production-ready. Proceed to Phase 10: App Integration (optional).

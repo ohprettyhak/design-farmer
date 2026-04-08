@@ -47,6 +47,7 @@ Before handing work off, confirm all of the following are true:
 - DESIGN.md, docs, and implementation guidance reflect the final approved design direction.
 - All required quality gates from Phase 11.1 are green.
 - Any degradations or manual fallbacks are captured in the final report.
+- If `integrationStatus` is `'skipped'` (Phase 10 was skipped by user choice), include a warning in the readiness report: "Integration was skipped in Phase 10. Manual integration and application-context verification are required before this design system is production-ready."
 - The recommended next step for publication is clear, but no publish action is taken by default.
 
 ## 11.3 Handoff Summary Template

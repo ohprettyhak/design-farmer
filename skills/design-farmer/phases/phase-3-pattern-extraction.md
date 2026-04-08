@@ -9,6 +9,7 @@ GREENFIELD (designMaturity = 'greenfield'): No significant patterns to extract. 
   → Generate defaults from the brand color (DesignFarmerConfig.brandColor).
   → Apply typography and spacing defaults defined below.
   → Output uses the same structure as extracted values — downstream phases treat them identically.
+  → After generating the early DESIGN.md draft, you MUST still append `'phase-3'` to `completedPhases` (see the append instruction at the end of this file).
 
 EMERGING (designMaturity = 'emerging'): Partial extraction. Run sections 3.1–3.7 but fill gaps with generated defaults.
   → Mark extracted values as `[EXTRACTED]` and generated defaults as `[GENERATED]` in the output.

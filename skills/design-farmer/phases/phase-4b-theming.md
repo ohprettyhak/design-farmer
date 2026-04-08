@@ -589,6 +589,10 @@ If no styling framework detected:
   -> Consider recommending Tailwind v4 for utility-first workflow
 ```
 
+After determining the styling approach, persist it to config.json:
+If `stylingApproach` already exists in `{systemPath}/.design-farmer/config.json`, preserve the existing value (don't overwrite on re-runs). Only set if undefined.
+Set `stylingApproach` to one of: `'tailwind-v4'`, `'tailwind-v3'`, `'css-modules'`, `'styled-components'`, `'vanilla-extract'`, `'panda-css'`, or `'vanilla'` (for CSS custom properties + vanilla CSS). This value is consumed by Phases 5 and 6 to tailor token output and component implementation. Also update `config.backup.json`.
+
 Before emitting status, ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-4b'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. If `'phase-4b'` is already present, skip the append (idempotent). Also update `config.backup.json`.
 
 If themeStrategy = 'light-only':

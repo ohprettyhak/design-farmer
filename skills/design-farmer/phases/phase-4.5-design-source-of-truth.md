@@ -2,7 +2,7 @@
 
 Generate a `DESIGN.md` file at `{systemPath}/DESIGN.md` so the design artifact always lives beside the generated design-system work it describes.
 
-**Pre-flight validation**: Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then verify that `completedPhases` includes both `'phase-4'` AND `'phase-4b'`. If `'phase-4b'` is missing, emit **BLOCKED** — "Phase 4b (Theme & Styling) must complete before Phase 4.5 can generate DESIGN.md. Please re-run Phase 4b first."
+**Pre-flight validation**: Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then verify that `completedPhases` includes `'phase-4'`. Also verify `'phase-4b'` is present unless `themeStrategy = 'light-only'` (light-only projects may have legacy configs where 4b was skipped before skip paths were fully documented). If `'phase-4b'` is missing and `themeStrategy ≠ 'light-only'`, emit **BLOCKED** — "Phase 4b (Theme & Styling) must complete before Phase 4.5 can generate DESIGN.md. Please re-run Phase 4b first."
 
 ## 4.5.1 DESIGN.md Structure
 
@@ -407,6 +407,6 @@ Calibrate your review against the documented design decisions.
 Flag any implementation that deviates from the documented direction as HIGH severity."
 ```
 
-Before emitting status, ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-4.5'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
+Before emitting status, ensure `completedPhases` exists in config.json (initialize as `[]` if undefined). If `'phase-4.5'` is already present in the array, skip the append (idempotent). Otherwise, append `'phase-4.5'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
 
 **Status: DONE** — DESIGN.md generated and saved as the persistent design source of truth. Proceed to Phase 5: Token Implementation.

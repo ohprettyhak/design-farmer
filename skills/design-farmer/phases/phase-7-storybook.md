@@ -512,7 +512,7 @@ Checks: typecheck, build (storybook build)
 Max attempts: 5
 ```
 
-If the Fix Loop exhausts all 5 attempts without passing, emit **Status: DONE_WITH_CONCERNS** — Fix Loop did not converge after 5 attempts. Proceed to Phase 8, but note that Storybook may have build warnings. Do NOT emit BLOCKED.
+If the Fix Loop exhausts all 5 attempts without passing, emit **Status: DONE_WITH_CONCERNS** — Fix Loop did not converge after 5 attempts. Proceed to Phase 8, but note that Storybook may have build warnings. Do NOT emit BLOCKED. Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined). If `'phase-7'` is already present in the array, skip the append (idempotent). Otherwise, append `'phase-7'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
 
 Common Storybook errors:
 

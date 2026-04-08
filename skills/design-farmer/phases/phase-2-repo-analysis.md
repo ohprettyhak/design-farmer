@@ -197,6 +197,6 @@ After completing the analysis report, update `DesignFarmerConfig` with the matur
 
 All downstream phases branch on `DesignFarmerConfig.designMaturity` — this update is required before proceeding.
 
-Before emitting status, append `'phase-2'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-2'`. Also update `config.backup.json`.
+Before emitting status, ensure `completedPhases` exists in config.json (initialize as `[]` if undefined). If `'phase-2'` is already present in the array, skip the append (idempotent). Otherwise, append `'phase-2'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
 
 **Status: DONE** — Repository analysis complete. Design maturity assessed and written to config. Proceed to Phase 3: Design Pattern Extraction.

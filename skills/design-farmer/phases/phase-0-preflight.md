@@ -86,7 +86,7 @@ If user chose **A**:
    - `designSystemDir`: `basename(systemPath)` (e.g., `design-system`)
    - `productName`: strip `@scope/` prefix from `designSystemPackage`, then title-case (e.g., `Design System`)
 
-5. **Persist** the reconstructed `DesignFarmerConfig` (including derived fields and `completedPhases: []`) to `{systemPath}/.design-farmer/config.json`. Also copy to `config.backup.json` in the same directory.
+5. **Persist** the reconstructed `DesignFarmerConfig` (including derived fields, `strategy` from the Config block if present, and `completedPhases: []`) to `{systemPath}/.design-farmer/config.json`. Also copy to `config.backup.json` in the same directory.
 
    **Read-after-write validation**: Read back config.json to verify the write succeeded. If the file is missing or invalid JSON, emit BLOCKED with recovery instructions.
 
@@ -135,9 +135,21 @@ If user chose **B**:
 
   Note: This is a preliminary user-estimated maturity. Phase 2 provides a formal maturity assessment that will override this value.
 
+  Derive `systemPath` from the draft's location (the directory containing the draft DESIGN.md). If the draft references a specific project directory, use that; otherwise, use the current working directory.
+
+  Derive additional fields from the preflight scan results (Steps 1–4 above) that the draft may not specify:
+  - `packageManager`: from Step 1 (lockfile detection)
+  - `framework`: from Step 3 (framework detection)
+  - `isMonorepo`: from Step 2 (monorepo detection)
+
+  Compute derived identifiers:
+  - `designSystemDir` = `path.basename(systemPath)` — the directory name
+  - `designSystemPackage` = the `name` field from `{systemPath}/package.json`, if it exists; otherwise fall back to `designSystemDir`
+  - `productName` = human-readable name derived from `designSystemPackage` (e.g., `@acme/design-system` → "Acme Design System")
+
   Run **Config Validation Protocol** (see `operational-notes.md`) on the reconstructed config before jumping to Phase 3.5. Verify required fields (`designMaturity`, `componentScope`, `themeStrategy`, `systemPath`) are present and valid. If validation fails, emit **Status: BLOCKED** with recovery options: re-run Phase 1 or manually correct the config.
 
-  Persist the reconstructed config (including `designMaturity`, `maturityScore`, `completedPhases: []`, and all parsed fields) to `{systemPath}/.design-farmer/config.json`. Also copy to `config.backup.json`.
+  Persist the reconstructed config (including `designMaturity`, `maturityScore`, all parsed fields, and `completedPhases` — preserve existing array if present, otherwise initialize as `[]`) to `{systemPath}/.design-farmer/config.json`. Also copy to `config.backup.json`.
 
   Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined). If `'phase-0'` is already present in the array, skip the append (idempotent). Otherwise, append `'phase-0'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`. Then **resume from Phase 3.5** (extraction is already done in the draft).
 - **If finalized**: continue to Phase 1 (Discovery Interview) as normal — run fresh Phases 1–4.
