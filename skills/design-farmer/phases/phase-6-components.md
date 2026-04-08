@@ -363,7 +363,8 @@ For each component:
    }
    ```
    Reference `DESIGN.md` for sizing values when building greenfield.
-   Size variants must map consistently across Button, Input, and Select.
+   For greenfield projects, align control sizes across Button, Input, and Select using the recommended defaults.
+   For mature/emerging projects, use extracted values from Phase 3.
 
 2. **Implementation** — Build the component:
    ```
@@ -382,7 +383,7 @@ For each component:
    - If no library: implement ARIA attributes, keyboard nav, focus management from scratch
    - Consume ONLY semantic tokens (never primitive tokens directly)
     - All sizes from the approved DESIGN.md reference (height, padding, font-size, radius)
-    - Enforce one shared control-size ladder across Button/Input/Select (`x-small`, `small`, `medium`, `large`)
+    - Align control sizes across Button/Input/Select (`x-small`, `small`, `medium`, `large`) for visual consistency
    - States: hover, focus-visible, active, disabled, loading
    - Support compound component pattern for complex components (Select, Dialog, etc.)
    ```

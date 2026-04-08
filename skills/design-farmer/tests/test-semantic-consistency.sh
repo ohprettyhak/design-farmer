@@ -531,10 +531,10 @@ else
   fail "Phase 4.5 Button size ladder is not 28/32/36/40"
 fi
 
-if grep -q "Shared control size mapping (Button/Input/Select MUST align)" "$PHASE45_FILE"; then
+if grep -q "Recommended control size mapping (align Button/Input/Select for visual consistency)" "$PHASE45_FILE"; then
   pass "Phase 4.5 defines shared Button/Input/Select mapping"
 else
-  fail "Phase 4.5 missing shared Button/Input/Select size mapping contract"
+  fail "Phase 4.5 missing shared Button/Input/Select size mapping guidance"
 fi
 
 if grep -q "| x-small | 28px" "$EXAMPLE_DESIGN_FILE" &&
@@ -546,10 +546,10 @@ else
   fail "Example DESIGN.md size ladder does not match 28/32/36/40"
 fi
 
-if grep -q "shared control-size ladder across Button/Input/Select" "$PHASE6_FILE"; then
-  pass "Phase 6 enforces shared Button/Input/Select size ladder"
+if grep -qi "align control sizes across Button/Input/Select" "$PHASE6_FILE"; then
+  pass "Phase 6 recommends aligned Button/Input/Select size ladder"
 else
-  fail "Phase 6 missing shared ladder enforcement"
+  fail "Phase 6 missing shared ladder guidance"
 fi
 
 if grep -q "\['x-small', 'small', 'medium', 'large'\]" "$PHASE7_FILE"; then

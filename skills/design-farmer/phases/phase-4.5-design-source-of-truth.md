@@ -167,7 +167,13 @@ Reference exact token values inline with backticks.}
 - Disabled: `opacity: 40%, cursor: not-allowed`
 - Placeholder: `{--text-tertiary}`
 
-**Shared control size mapping (Button/Input/Select MUST align):**
+**Recommended control size mapping (align Button/Input/Select for visual consistency):**
+
+> **Why these defaults?** The 4px height step (28→32→36→40) maintains visual rhythm while keeping
+> all sizes above the 44px touch target when accounting for padding. Font sizes scale proportionally
+> (12→13→14→15) to preserve relative weight at each tier. These values are recommended starting
+> points for greenfield projects. For mature/emerging projects, replace with values extracted from
+> existing components in Phase 3.
 
 | Size | Height | Padding X | Font Size |
 |------|--------|-----------|-----------|
@@ -364,7 +370,7 @@ Shape: `border-radius: 9999px` (pill)
 ### Iteration Guide
 1. Always reference semantic tokens, never raw color values
 2. When adding a new component, follow existing size variant naming: `x-small | small | medium | large`
-   and preserve shared control-size mapping across Button/Input/Select (same heights and font sizes)
+   and align control sizes across Button/Input/Select for visual consistency
 3. Match border approach: box-shadow for interactive outlines, CSS border for structural dividers
 4. Test hover/focus/active/disabled states in both light and dark themes
 5. Verify APCA Lc ≥ 60 for any new text/background pair
