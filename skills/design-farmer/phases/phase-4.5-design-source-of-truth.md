@@ -38,6 +38,7 @@ maturityScore: {0-10}
 Reference exact token values inline with backticks.}
 
 **Key Characteristics:**
+{If themeStrategy = 'light-only': omit all "(dark)" values below — only light theme exists}
 - Background base: `{--surface-default value}` (light) / `{--surface-default dark value}` (dark)
 - Primary font: {font family with any OpenType features}
 - Brand accent: `{--interactive-primary value}`

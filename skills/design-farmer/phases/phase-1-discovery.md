@@ -456,6 +456,7 @@ mkdir -p {systemPath}/.design-farmer
 # Also copy to config.backup.json in the same directory
 # Set createdAt to the current ISO 8601 timestamp
 # Initialize completedPhases as ["phase-0"] if undefined; preserve existing array on re-entry
+# Preserve skippedPhases if present (set by Phase 0→5 shortcut)
 
 # Read-after-write validation: Read back config.json to verify the write succeeded.
 # If the file is missing or invalid JSON, emit **Status: BLOCKED** with recovery

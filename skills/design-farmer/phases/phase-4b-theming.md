@@ -40,6 +40,8 @@ If themeStrategy = 'light-dark', 'multi-brand', or 'custom':
 
 ## 4b.1 Theme System
 
+**If `themeStrategy = 'light-only'`:** Use `:root` selectors directly (no `[data-theme]` wrapper). See the light-only variant example in section 4b.0 above. Skip the `[data-theme="dark"]` block entirely.
+
 ```css
 /* light.css */
 @layer tokens {
