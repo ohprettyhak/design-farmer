@@ -24,6 +24,7 @@ Load the following preserved fields from config.json and present them as pre-fil
 |----------|----------------|-----------------|
 | Q0 | `painPoint` | "Previous answer: {painPoint}" |
 | Q1 | `vision` | "Previous answer: {vision}" |
+| Q2-1 | `radiusTone` | "Previous answer: {radiusTone}" |
 | Q3 | `componentScope` | "Previous answer: {componentScope}" |
 | Q3-1 | `headlessLibrary` | "Previous answer: {headlessLibrary}" (skip if componentScope = foundation) |
 | Q5 | `themeStrategy` | "Previous answer: {themeStrategy}" |
@@ -109,6 +110,28 @@ Via AskUserQuestion, ask:
 > - D) Custom palette — provide specific colors you want to use
 >
 > I'll use OKLCH for perceptual uniformity and generate an 11-step scale (50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950) with proper contrast ratios.
+
+**→ STOP — wait for user response before continuing.**
+
+---
+
+### Question 2-1: Corner Radius Tone
+
+Via AskUserQuestion, ask:
+
+> Let's lock in your base corner language before component sizing.
+>
+> **What corner-radius tone should the system default to?**
+>
+> RECOMMENDATION: Choose B or C for most SaaS products. A is intentionally sharp/minimal.
+>
+> Options:
+> - A) Sharp — square-forward look (`0px` on medium buttons)
+> - B) Subtle — lightly rounded (`4px` on medium buttons)
+> - C) Rounded — balanced roundness (`8px` on medium buttons)
+> - D) Soft — prominently rounded (`12px` on medium buttons)
+>
+> This value sets the default radius curve used in `DESIGN.md` and downstream token generation.
 
 **→ STOP — wait for user response before continuing.**
 
@@ -376,16 +399,17 @@ Via AskUserQuestion, ask:
 
 ### After All Questions Answered
 
-Only after receiving ALL 8 responses (Q0 through Q7, plus any applicable conditional questions), store answers in a structured format for subsequent phases:
+Only after receiving ALL 9 responses (Q0 through Q7, plus Q2-1 and any applicable conditional questions), store answers in a structured format for subsequent phases:
 
 ```typescript
 interface DesignFarmerConfig {
-  // Q0–Q7 answers
+  // Q0–Q7 answers (+ Q2-1 radius tone)
   painPoint?: 'inconsistency' | 'accessibility' | 'dx' | 'handoff' | 'other';
   painPointDetail?: string; // if 'other'
   vision: 'internal' | 'multi-product' | 'open-source' | 'design-bridge';
   colorDirection: 'keep' | 'brand' | 'neutral' | 'custom';
   brandColor?: string; // OKLCH primary
+  radiusTone: 'sharp' | 'subtle' | 'rounded' | 'soft';
   componentScope: 'foundation' | 'core' | 'full' | 'custom';
   headlessLibrary?: 'radix' | 'base-ui' | 'ark' | 'headless-ui' | 'melt' | 'bits' | 'none';
   customComponents?: string[];
@@ -436,7 +460,7 @@ Summarize the user's choices back to them and ask for final confirmation:
 
 Via AskUserQuestion, ask:
 > Here's your design system configuration:
-> {formatted summary of all 8 choices (Q0 pain point through Q7 platforms),
+> {formatted summary of all 9 choices (Q0 pain point through Q7 platforms + Q2-1 radius tone),
 >  plus Q3-1 headless library choice (if asked) and Q5-1 theme library choice (if asked)}
 >
 > **Is this correct? Ready to proceed?**

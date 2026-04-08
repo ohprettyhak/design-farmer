@@ -25,6 +25,7 @@ headlessLibrary: {radix|base-ui|ark|headless-ui|melt|bits|none}
 themeStrategy: {light-dark|light-only|multi-brand|custom}
 themeLibrary: {next-themes|astro-color-scheme|remix-themes|mode-watcher|@nuxtjs/color-mode|custom|none}
 accessibilityLevel: {aa|aaa|apca}
+radiusTone: {sharp|subtle|rounded|soft}
 targetPlatforms: {web|web-native|web-hybrid|multi-platform}
 designMaturity: {greenfield|emerging|mature}
 maturityScore: {0-10}
@@ -150,10 +151,10 @@ Reference exact token values inline with backticks.}
 **Size Scale:**
 | Size | Height | Padding X | Font Size |
 |------|--------|-----------|-----------|
-| x-small | 24px | 8px | 12px |
-| small | 28px | 10px | 12px |
-| medium | 32px | 12px | 14px |
-| large | 36px | 16px | 14px |
+| x-small | 28px | 10px | 12px |
+| small | 32px | 12px | 13px |
+| medium | 36px | 14px | 14px |
+| large | 40px | 16px | 15px |
 
 ### Inputs & Forms
 
@@ -165,6 +166,26 @@ Reference exact token values inline with backticks.}
 - Error: `box-shadow: 0 0 0 1px {--state-error}`
 - Disabled: `opacity: 40%, cursor: not-allowed`
 - Placeholder: `{--text-tertiary}`
+
+**Shared control size mapping (Button/Input/Select MUST align):**
+
+| Size | Height | Padding X | Font Size |
+|------|--------|-----------|-----------|
+| x-small | 28px | 10px | 12px |
+| small | 32px | 12px | 13px |
+| medium | 36px | 14px | 14px |
+| large | 40px | 16px | 15px |
+
+### Select
+
+**Select Trigger** (normal state)
+- Height: use shared control size mapping above
+- Padding X: use shared control size mapping above
+- Font size: use shared control size mapping above
+- Border: `box-shadow: 0 0 0 1px {--border-default}, {--shadow-sm}`
+- Focus: `box-shadow: 0 0 0 1px {--border-focus}, {--shadow-sm}`
+- Border-radius: `{--input-radius}` or `{--button-radius}` (must map to same radius tier as Button/Input)
+- Chevron icon slot: trailing inline-end, centered vertically
 
 > **Why box-shadow for borders?** Using `box-shadow: 0 0 0 1px` instead of CSS `border` prevents layout shift when switching between default/focus/error states (no width change).
 
@@ -329,6 +350,7 @@ Shape: `border-radius: 9999px` (pill)
 ### Iteration Guide
 1. Always reference semantic tokens, never raw color values
 2. When adding a new component, follow existing size variant naming: `x-small | small | medium | large`
+   and preserve shared control-size mapping across Button/Input/Select (same heights and font sizes)
 3. Match border approach: box-shadow for interactive outlines, CSS border for structural dividers
 4. Test hover/focus/active/disabled states in both light and dark themes
 5. Verify APCA Lc ≥ 60 for any new text/background pair
@@ -359,7 +381,11 @@ use the following greenfield defaults:
 - Success: `oklch(0.65 0.20 145)`
 - Warning: `oklch(0.75 0.18 85)`
 - Error: `oklch(0.60 0.22 25)`
-- Radius sm: `4px`, md: `6px`, lg: `8px`, full: `9999px`
+- Radius from `radiusTone`:
+  - sharp → sm: `0px`, md: `2px`, lg: `4px`, full: `9999px`
+  - subtle → sm: `2px`, md: `4px`, lg: `6px`, full: `9999px`
+  - rounded → sm: `4px`, md: `8px`, lg: `12px`, full: `9999px`
+  - soft → sm: `6px`, md: `12px`, lg: `16px`, full: `9999px`
 - Spacing xs: `4px`, sm: `8px`, md: `16px`, lg: `24px`, xl: `32px`
 
 Replace them with the user's brand color and any choices made in Phases 1–4.

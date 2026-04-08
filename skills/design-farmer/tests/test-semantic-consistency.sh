@@ -515,6 +515,51 @@ fi
 
 echo ""
 
+echo "=== TEST 15: Control Size Ladder Consistency ==="
+
+PHASE45_FILE="$PHASES_DIR/phase-4.5-design-source-of-truth.md"
+EXAMPLE_DESIGN_FILE="$EXAMPLES_DIR/DESIGN.md"
+PHASE6_FILE="$PHASES_DIR/phase-6-components.md"
+PHASE7_FILE="$PHASES_DIR/phase-7-storybook.md"
+
+if grep -q "| x-small | 28px" "$PHASE45_FILE" &&
+   grep -q "| small | 32px" "$PHASE45_FILE" &&
+   grep -q "| medium | 36px" "$PHASE45_FILE" &&
+   grep -q "| large | 40px" "$PHASE45_FILE"; then
+  pass "Phase 4.5 Button size ladder is 28/32/36/40"
+else
+  fail "Phase 4.5 Button size ladder is not 28/32/36/40"
+fi
+
+if grep -q "Shared control size mapping (Button/Input/Select MUST align)" "$PHASE45_FILE"; then
+  pass "Phase 4.5 defines shared Button/Input/Select mapping"
+else
+  fail "Phase 4.5 missing shared Button/Input/Select size mapping contract"
+fi
+
+if grep -q "| x-small | 28px" "$EXAMPLE_DESIGN_FILE" &&
+   grep -q "| small | 32px" "$EXAMPLE_DESIGN_FILE" &&
+   grep -q "| medium | 36px" "$EXAMPLE_DESIGN_FILE" &&
+   grep -q "| large | 40px" "$EXAMPLE_DESIGN_FILE"; then
+  pass "Example DESIGN.md size ladder matches 28/32/36/40"
+else
+  fail "Example DESIGN.md size ladder does not match 28/32/36/40"
+fi
+
+if grep -q "shared control-size ladder across Button/Input/Select" "$PHASE6_FILE"; then
+  pass "Phase 6 enforces shared Button/Input/Select size ladder"
+else
+  fail "Phase 6 missing shared ladder enforcement"
+fi
+
+if grep -q "\['x-small', 'small', 'medium', 'large'\]" "$PHASE7_FILE"; then
+  pass "Phase 7 story size axis includes x-small/small/medium/large"
+else
+  fail "Phase 7 story size axis missing one or more canonical sizes"
+fi
+
+echo ""
+
 # ---------------------------------------------------------------------------
 # SUMMARY
 # ---------------------------------------------------------------------------

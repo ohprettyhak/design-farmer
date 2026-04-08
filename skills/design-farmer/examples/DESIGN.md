@@ -20,6 +20,7 @@ headlessLibrary: radix
 themeStrategy: light-dark
 themeLibrary: next-themes
 accessibilityLevel: apca
+radiusTone: rounded
 targetPlatforms: web
 designMaturity: greenfield
 maturityScore: 0
@@ -160,23 +161,36 @@ gets +0.01em to improve legibility at 12px.
 **Size Scale:**
 | Size | Height | Padding X | Font Size |
 |------|--------|-----------|-----------|
-| x-small | 24px | 8px | 12px |
-| small | 28px | 10px | 12px |
-| medium | 32px | 12px | 14px |
-| large | 36px | 16px | 14px |
+| x-small | 28px | 10px | 12px |
+| small | 32px | 12px | 13px |
+| medium | 36px | 14px | 14px |
+| large | 40px | 16px | 15px |
 
 ### Inputs & Forms
 
 **Text Input** (normal state)
 - Background: `var(--surface-default)`
 - Border: `box-shadow: 0 0 0 1px var(--border-default), var(--shadow-sm)` — box-shadow prevents layout shift
-- Height: `32px` (medium), `28px` (small)
-- Padding: `8px 12px` (medium), `6px 10px` (small)
+- Height: `28px` (x-small), `32px` (small), `36px` (medium), `40px` (large)
+- Padding X: `10px` (x-small), `12px` (small), `14px` (medium), `16px` (large)
+- Font size: `12px` (x-small), `13px` (small), `14px` (medium), `15px` (large)
 - Border-radius: `6px`
 - Focus: `box-shadow: 0 0 0 1px var(--border-focus), var(--shadow-sm)`
 - Error: `box-shadow: 0 0 0 1px var(--state-error)`
 - Disabled: `opacity: 40%, cursor: not-allowed, background: var(--surface-subtle)`
 - Placeholder: `var(--text-tertiary)` → `oklch(0.62 0.010 250)`
+
+### Select
+
+**Select Trigger** (normal state)
+- Height: `28px` (x-small), `32px` (small), `36px` (medium), `40px` (large)
+- Padding X: `10px` (x-small), `12px` (small), `14px` (medium), `16px` (large)
+- Font size: `12px` (x-small), `13px` (small), `14px` (medium), `15px` (large)
+- Border: `box-shadow: 0 0 0 1px var(--border-default), var(--shadow-sm)`
+- Border-radius: `6px`
+- Focus: `box-shadow: 0 0 0 1px var(--border-focus), var(--shadow-sm)`
+
+Shared control rule: Button, Input, and Select use the same four-size ladder (28/32/36/40).
 
 **CSS tokens defined in tokens.css:**
 ```css
@@ -338,8 +352,8 @@ pixel grid across all viewports.
 
 ### Example Component Prompts
 - "Create a card: `--surface-default` bg, `--border-default` outline, `8px` radius, CardHeader with `--surface-subtle` + `--border-subtle` bottom, CardContent with `16px` padding"
-- "Create a primary button: `--interactive-primary` bg, `--text-inverse` text, `6px` radius, hover `--interactive-primary-hover`, active `--interactive-primary-active`, `32px` height, `12px` padding-x"
-- "Create an input: `32px` height, `6px` radius, `box-shadow: --input-shadow`, focus `--input-shadow-focus`, error `--input-shadow-error`, placeholder `--text-tertiary`"
+- "Create a primary button: `--interactive-primary` bg, `--text-inverse` text, `6px` radius, hover `--interactive-primary-hover`, active `--interactive-primary-active`, medium size=`36px` height + `14px` padding-x"
+- "Create an input: medium size=`36px` height + `14px` padding-x, `6px` radius, `box-shadow: --input-shadow`, focus `--input-shadow-focus`, error `--input-shadow-error`, placeholder `--text-tertiary`"
 
 ### Iteration Guide
 1. Always reference semantic tokens, never raw color values

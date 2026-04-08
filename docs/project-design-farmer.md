@@ -148,7 +148,7 @@ Phase 0 (Preflight) ──→ detect topology, check DESIGN.md
 - [x] Exhaustive simulation (169 checks, 1152 paths) passes with zero failures.
 - [x] Installer deploys bundle atomically across 5 AI tools.
 - [x] CI pipeline runs on every PR and push to `main`.
-- [x] DESIGN.md Config fields survive Phase 4.5 → Phase 0 round-trip (13 fields).
+- [x] DESIGN.md Config fields survive Phase 4.5 → Phase 0 round-trip (14 fields).
 - [x] All conditional skip/jump paths (6 paths) are valid and tested.
 - [x] Fallback/degradation registry covers all implementation phases (14 entries).
 
