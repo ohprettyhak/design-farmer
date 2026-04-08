@@ -8,7 +8,11 @@ If the user expresses impatience after 3+ questions, offer to use sensible defau
 
 ### Re-entry Detection
 
-Before asking Q0, check if `{systemPath}/.design-farmer/config.json` exists and `completedPhases` includes `"phase-3.5"`. If true, this is a restart from Phase 3.5 Option E.
+Before asking Q0, check if `{systemPath}/.design-farmer/config.json` exists. Check two conditions for Phase 3.5 restart detection:
+- `resetFromPhase` equals `"3.5"` (set by Phase 3.5 Option E reset logic)
+- OR `completedPhases` includes `"phase-3.5"` (normal completion path)
+
+If either is true, this is a restart from Phase 3.5.
 
 Also check if `skippedPhases` exists in config.json — this indicates Phases 1–4 were intentionally bypassed via Phase 0→5 shortcut. If `skippedPhases` is present and includes `"phase-1"`, this is a re-entry from a shortcut path. Log the skipped phases and proceed with the interview (the user chose to re-run Phase 1 after the shortcut).
 

@@ -75,6 +75,7 @@ If user chose **A**:
    - `framework`: infer from `package.json` dependencies
    - `isMonorepo`: infer from workspace files
    - `systemPath`: use the directory containing DESIGN.md
+   - `designSystemPackage`: read from `{systemPath}/package.json` `"name"` field (e.g., `@acme/design-system`)
 
 3. **If critical fields are still missing** (packageManager, framework, systemPath, isMonorepo, designSystemPackage, componentScope, themeStrategy), ask ONE AskUserQuestion with all missing fields at once — do not ask one-at-a-time for this recovery step.
 
@@ -83,7 +84,6 @@ If user chose **A**:
 4. **Derive computed identifiers** from the parsed fields:
    - `createdAt`: ISO 8601 timestamp of when this config was reconstructed (e.g., `2026-04-08T12:34:56Z`)
    - `designSystemDir`: `basename(systemPath)` (e.g., `design-system`)
-   - `designSystemPackage`: read from `{systemPath}/package.json` `"name"` field (e.g., `@acme/design-system`)
    - `productName`: strip `@scope/` prefix from `designSystemPackage`, then title-case (e.g., `Design System`)
 
 5. **Persist** the reconstructed `DesignFarmerConfig` (including derived fields and `completedPhases: []`) to `{systemPath}/.design-farmer/config.json`. Also copy to `config.backup.json` in the same directory.

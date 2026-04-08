@@ -18,7 +18,7 @@ access just to probe availability.
 # Use portable file existence checks (avoid GNU find -prune for cross-platform compatibility)
 if ls playwright.config.* 2>/dev/null | grep -q .; then
   echo "VISUAL_TOOL=playwright"
-elif grep -rl '"@playwright/test"\|"playwright"' --include='package.json' . 2>/dev/null | grep -v node_modules | grep -q .; then
+elif grep -rl '"@playwright/test"\|"playwright"' --include='package.json' --exclude-dir=node_modules . 2>/dev/null | grep -q .; then
   echo "VISUAL_TOOL=playwright"
 else
   echo "VISUAL_TOOL=none"
