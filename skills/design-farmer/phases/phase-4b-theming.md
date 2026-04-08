@@ -307,7 +307,7 @@ module.exports = { darkMode: ['selector', '[data-theme="dark"]'] }
 
 If user chose A: collect brand palette data, then continue to multi-brand ThemeProvider generation below.
 If user chose B: update `themeStrategy` to `'light-dark'` in config.json and config.backup.json, then skip this section and continue from **## 4b.1 Theme System** (light-dark theming applies).
-If user chose C: update `themeStrategy` to `'light-only'` in config.json and config.backup.json, then skip this section and continue from **## 4b.5 Styling Approach Decision** (light-only theming applies).
+If user chose C: update `themeStrategy` to `'light-only'` in config.json and config.backup.json, then skip this section and continue from **## 4b.0 Theme Strategy Gate** (re-enter so the light-only CSS generation path in 4b.1 runs correctly with `:root` selectors instead of `[data-theme]` blocks).
 
 ---
 
