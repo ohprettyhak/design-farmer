@@ -151,7 +151,7 @@ Each category receives a letter grade:
 - Each MEDIUM finding drops half a letter grade
 - POLISH findings are noted but don't affect grade
 
-**Overall Design Score** = weighted average of all 10 category grades.
+**Overall Design Score** = weighted average of all 10 category grades. If any category is scored N/A (e.g., Category 7 in light-only mode), exclude it from the calculation and redistribute its weight proportionally across the remaining categories so weights always sum to 100%.
 
 ## 8.5.4 Finding Format
 

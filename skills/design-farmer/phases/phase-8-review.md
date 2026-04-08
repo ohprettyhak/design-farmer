@@ -459,7 +459,7 @@ Base: 0%
 + 1% per fix after the 15th fix
 ```
 
-If risk > 20%: STOP and ask user whether to continue.
+When risk exceeds 20% but is ≤30%: warn the user and ask whether to continue. When risk exceeds 30%: recommend stopping and ask the user whether to continue or stop. Use AskUserQuestion with options: A) Continue despite risk, B) Stop and review manually.
 Hard cap: 30 fixes maximum.
 
 **Aggregation logic:**
