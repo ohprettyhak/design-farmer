@@ -45,7 +45,8 @@ sleep 5
 
 If no dev server is available (e.g., library-only package without a preview app),
 use Storybook stories as the evaluation target. If neither exists, skip this phase
-and note it in the completion report.
+and note it in the completion report. Do NOT append `'phase-8.5'` to `completedPhases`
+— the phase did not run.
 
 **No project browser tooling fallback:**
 ```
@@ -55,7 +56,7 @@ Prompt user: "No browser tooling detected. Please provide screenshots of each co
 in both light and dark themes for visual QA review."
 ```
 
-**Status: DONE_WITH_CONCERNS** — Visual QA deferred to manual verification. Checklist saved to `{systemPath}/docs/visual-qa-checklist.md`. Proceed to Phase 9.
+**Status: DONE_WITH_CONCERNS** — Visual QA deferred to manual verification. Checklist saved to `{systemPath}/docs/visual-qa-checklist.md`. Append `'phase-8.5'` to `completedPhases` in `{systemPath}/.design-farmer/config.json` (the phase ran in degraded mode). Also update `config.backup.json`. Proceed to Phase 9.
 
 Note: Phase 9 completion report should reflect that automated visual QA was not performed.
 

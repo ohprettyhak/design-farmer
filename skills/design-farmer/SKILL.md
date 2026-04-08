@@ -258,6 +258,7 @@ Phase 11: Release Readiness & Handoff
 - **Completion statuses are mandatory**: Every phase must end with DONE, DONE_WITH_CONCERNS, BLOCKED, or NEEDS_CONTEXT.
 - **User-question gating**: Discovery interview questions are one-at-a-time. Other AskUserQuestion calls require user response before proceeding.
 - **Final completion requires explicit verification evidence** from Phase 9.2 and a readiness handoff report from Phase 11.
+- **Optional phase skip policy**: Phases 7 (Storybook) and 10 (App Integration) are user-optional. When skipped by user choice, they do NOT append to `completedPhases`. Skip status is tracked via dedicated flags: `storybookSkipped: true` (Phase 7), `integrationStatus: "skipped"` (Phase 10). Phase 8.5 follows the same policy: skipped entirely (no dev server or Storybook) does not append; manual verification mode (degraded execution) does append.
 
 ### Maintenance Note
 

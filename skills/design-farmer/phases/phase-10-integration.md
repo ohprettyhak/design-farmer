@@ -26,7 +26,7 @@ If user chose C (skip integration), emit:
 **Status: DONE** — User chose to integrate manually. Skipping integration steps. Proceed to Phase 11: Release Readiness & Handoff.
 
 Set `integrationStatus: "skipped"` in `{systemPath}/.design-farmer/config.json`. Update `config.backup.json`.
-Append `'phase-10'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
+Do NOT append `'phase-10'` to `completedPhases` — the phase was skipped by user choice, consistent with Phase 7 (Storybook) skip behavior.
 
 Then stop — do NOT execute steps 10.1 through 10.7. No code changes were made, so the Fix Loop (step 10.7) is not required. The user is responsible for verifying the design system builds in their application context.
 

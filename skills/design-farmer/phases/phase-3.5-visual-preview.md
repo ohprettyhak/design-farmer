@@ -56,11 +56,10 @@ If `false`: skip 3.5.1. Instead, present a **text summary** of the extracted des
 
 **→ STOP — wait for user response.**
 
-If user chose A: set `previewOutcome: 'skipped'` in config.json (already set above). Append `'phase-3.5'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`. Then proceed to Phase 4 (Architecture Design). No further approval gate is needed.
+If user approved the text summary (chose A above): `previewOutcome` is already set to `'skipped'` (line 39 above). Append `'phase-3.5'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`. Then proceed to Phase 4 (Architecture Design). No further approval gate is needed.
 If user chose B: ask follow-up questions, adjust values, re-present summary.
 If user chose C: follow Option E reset logic below (return to Phase 1).
 This is an intentional skip, not a failure — do NOT use the error-state Fallback Path (3.5.3).
-Set `previewOutcome: 'skipped'` in config.json to distinguish from generation failures.
 
 ## 3.5.1 Preview Generation
 
