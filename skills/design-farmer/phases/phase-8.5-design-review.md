@@ -56,11 +56,13 @@ Prompt user: "No browser tooling detected. Please provide screenshots of each co
 in both light and dark themes for visual QA review."
 ```
 
-**Status: DONE_WITH_CONCERNS** — Visual QA deferred to manual verification. Checklist saved to `{systemPath}/docs/visual-qa-checklist.md`. Append `'phase-8.5'` to `completedPhases` in `{systemPath}/.design-farmer/config.json` (the phase ran in degraded mode). Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-8.5'`. Set `visualQAMode: 'manual'` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`. Proceed to Phase 9.
+**Status: DONE_WITH_CONCERNS** — Visual QA deferred to manual verification. Checklist saved to `{systemPath}/docs/visual-qa-checklist.md`. Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-8.5'` to `completedPhases` in `{systemPath}/.design-farmer/config.json` (the phase ran in degraded mode). Set `visualQAMode: 'manual'` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`. Proceed to Phase 9.
 
 Note: Phase 9 completion report should reflect that automated visual QA was not performed.
 
 ## 8.5.2 Visual Design Audit (10 Categories)
+
+**If `themeStrategy = 'light-only'`: skip Category 7 (Dark Mode Quality) entirely — score it N/A. No dark mode infrastructure or visual checks apply to light-only projects.**
 
 Evaluate each rendered component against these 10 categories. For each finding,
 capture a screenshot as evidence.

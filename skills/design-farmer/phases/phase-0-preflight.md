@@ -109,7 +109,9 @@ If user chose **A**:
 
    This scan substitutes for Phase 4 output — downstream phases (5–11) use these fields the same way they would if Phase 4 had run normally.
 
-9. **Jump directly to Phase 5.** Do not run Phases 1–4. Phase 5 will run its own Config Validation Protocol at entry to verify all required fields are present.
+9. **Mark phase complete** — ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-0'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
+
+10. **Jump directly to Phase 5.** Do not run Phases 1–4. Phase 5 will run its own Config Validation Protocol at entry to verify all required fields are present.
 
 If user chose **B**:
 - **If DRAFT**: Load the draft's `## Config` YAML to reconstruct `DesignFarmerConfig`. If `designMaturity` is missing from the parsed config, ask via AskUserQuestion:
@@ -127,7 +129,7 @@ If user chose **B**:
 
   Run **Config Validation Protocol** (see `operational-notes.md`) on the reconstructed config before jumping to Phase 3.5. Verify required fields (`designMaturity`, `componentScope`, `themeStrategy`, `systemPath`) are present and valid. If validation fails, emit **Status: BLOCKED** with recovery options: re-run Phase 1 or manually correct the config.
 
-  Persist to config.json (and config.backup.json), then **resume from Phase 3.5** (extraction is already done in the draft).
+  Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-0'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`. Then **resume from Phase 3.5** (extraction is already done in the draft).
 - **If finalized**: continue to Phase 1 (Discovery Interview) as normal — run fresh Phases 1–4.
 
 If user chose **C**: continue to Phase 1 (Discovery Interview) as normal.

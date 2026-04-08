@@ -84,7 +84,7 @@ Tests use vitest globals (`describe`, `it`, `expect`) available via `tsconfig.js
 // __tests__/tokens.test.ts
 // - Verify generated CSS is deterministic (snapshot comparison)
 // - Verify all semantic tokens resolve to valid OKLCH values
-// - Verify light/dark theme CSS files contain identical property names
+// - Verify light/dark theme CSS files contain identical property names (skip if themeStrategy = 'light-only')
 // - Verify no primitive token is directly consumed by any component
 ```
 

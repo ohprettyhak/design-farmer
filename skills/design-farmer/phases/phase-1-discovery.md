@@ -409,6 +409,7 @@ interface DesignFarmerConfig {
   integrationStatus?: string; // "completed" | "skipped" — set by Phase 10
   visualQASkipped?: boolean; // Phase 8.5 skipped due to no dev server or Storybook
   visualQAMode?: 'auto' | 'manual' | 'skipped'; // Phase 8.5 execution mode
+  resetFromPhase?: string; // Phase that triggered a reset (e.g., "3.5" for Phase 3.5 restart → Phase 1 re-entry)
 }
 
 // derivation rules:
