@@ -430,11 +430,12 @@ If all 5 reviewer delegation passes fail (timeout, tool unavailable, or all retu
 
 1. Log: "Phase 8: All reviewer passes failed. Falling back to basic verification."
 2. Run basic verification checks only:
+   Basic verification consists of exactly these checks: (1) config.json exists and is valid JSON, (2) all required fields per Config Validation Protocol are present, (3) token CSS files exist at expected paths, (4) at least one component file exists (if componentScope ≠ foundation).
    - Grep for hardcoded colors in component files (should be zero)
    - Verify token files exist: primitive, semantic, and component token files are present
    - Verify CSS custom properties are defined in light theme files (and dark theme files if `themeStrategy` is not `'light-only'`)
    - Check that component directories contain test files
-3. If basic checks pass: emit **DONE_WITH_CONCERNS** with results. Also append `'phase-8'` to `completedPhases` in `{systemPath}/.design-farmer/config.json` (the phase ran, just in degraded mode). Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined). Also update `config.backup.json`. Proceed to Phase 8.5.
+3. If basic checks pass: emit **DONE_WITH_CONCERNS** with results. Also append `'phase-8'` to `completedPhases` in `{systemPath}/.design-farmer/config.json` (the phase ran, just in degraded mode). Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined). If `'phase-8'` is already present, skip the append (idempotent). Also update `config.backup.json`. Proceed to Phase 8.5.
 4. If basic checks fail: emit **BLOCKED** — "Reviewers failed AND basic checks failed. Manual intervention required." Ask via AskUserQuestion:
    > All automated reviewers failed, and basic verification checks also found issues.
    > Options:
@@ -442,7 +443,7 @@ If all 5 reviewer delegation passes fail (timeout, tool unavailable, or all retu
    > - B) Proceed anyway — skip to Phase 8.5 (visual QA)
    > - C) Re-run reviewers — try again with fresh context
    **→ STOP. Do NOT proceed until user responds.**
-5. If user chose A or B: ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-8'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`. Proceed to Phase 8.5 (independent verification method). If user chose C: re-run reviewer delegation from Step 1 (do NOT proceed to Phase 8.5 until reviewers complete or fail again).
+5. If user chose A or B: ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-8'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. If `'phase-8'` is already present, skip the append (idempotent). Also update `config.backup.json`. Proceed to Phase 8.5 (independent verification method). If user chose C: re-run reviewer delegation from Step 1 (do NOT proceed to Phase 8.5 until reviewers complete or fail again).
 
 ---
 
@@ -483,6 +484,7 @@ Hard cap: 30 fixes maximum.
    -> STOP. Do NOT proceed until user responds.
 
 7. If same issue persists after 3 fix attempts:
+   For this check, "same issue" is defined by matching file path + line number + finding category. Different reviewers flagging the same file:line for different categories do not count as the same issue.
    -> Status: BLOCKED
    -> Report to user with analysis of why the fix isn't working
    -> STOP. Do NOT proceed until user responds.
@@ -511,6 +513,6 @@ Hard cap: 30 fixes maximum.
 
 After review completes, write `lastReviewScore` (0–10) and `lastReviewDate` (ISO 8601 with Z timezone, e.g., `2026-04-08T12:34:56Z`) to config.json. Also update config.backup.json.
 
-Before emitting status, append `'phase-8'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-8'`. Also update `config.backup.json`.
+Before emitting status, append `'phase-8'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-8'`. If `'phase-8'` is already present, skip the append (idempotent). Also update `config.backup.json`.
 
 **Status: DONE** — Multi-reviewer verification complete. All CRITICAL findings resolved. Proceed to Phase 8.5: Design Review (Live Visual QA).

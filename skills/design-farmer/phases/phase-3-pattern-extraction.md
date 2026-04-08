@@ -14,6 +14,12 @@ EMERGING (designMaturity = 'emerging'): Partial extraction. Run sections 3.1–3
   → Mark extracted values as `[EXTRACTED]` and generated defaults as `[GENERATED]` in the output.
   → Marker format: append the tag as an inline suffix to each value, e.g., `oklch(0.55 0.20 250) [EXTRACTED]` or `Inter [GENERATED]`.
   → These markers appear in the Phase 3 output draft and are consumed by Phase 4 to decide which patterns to preserve vs. replace.
+  → For each token category (color, typography, spacing, border-radius, shadow), explicitly label each value as `[EXTRACTED]` or `[GENERATED]` in the DESIGN.md draft. If no values in a category are extracted, all values must be `[GENERATED]`.
+
+Gap-filling rules per category:
+- Colors: If any brand colors extracted, complete to 11-step palette with [GENERATED] steps for missing shades. If zero extracted, generate full palette [GENERATED].
+- Typography: If font families extracted, keep them [EXTRACTED] and generate missing sizes/weights [GENERATED]. If none extracted, generate full typography scale [GENERATED].
+- Spacing, border-radius, shadows: If any values extracted, keep them [EXTRACTED] and generate missing scale values [GENERATED]. If none extracted, generate full defaults [GENERATED].
 
 MATURE (designMaturity = 'mature'): Full extraction. Run sections 3.1–3.7 as written.
   → Extraction is authoritative; do not substitute defaults.
@@ -22,7 +28,15 @@ MATURE (designMaturity = 'mature'): Full extraction. Run sections 3.1–3.7 as w
 ### Greenfield Defaults (apply when designMaturity = 'greenfield')
 
 **Color**: Generate 11-step OKLCH palette from `DesignFarmerConfig.brandColor`.
-If no brand color was provided (user chose neutral-first in Q2), start from `oklch(0.55 0.22 264)` (indigo).
+
+If the user explicitly chose neutral-first in Q2 (colorDirection='neutral'):
+- Use the neutral-first default immediately: `oklch(0.55 0.22 264)` (indigo)
+- No extraction is needed in this case
+
+If the user chose 'keep' (colorDirection='keep'):
+- Attempt brand color extraction from the codebase first
+- If zero colors are found after scanning (no matches), then fall back to the neutral-first default: `oklch(0.55 0.22 264)` (indigo)
+- Note in the DESIGN.md draft that no brand colors were extracted when falling back
 
 See `examples/DESIGN.md` for a fully filled-in example of all token values
 and component design decisions. Use it as the concrete reference when building greenfield output.
@@ -59,6 +73,8 @@ For each extracted color:
    - L (Lightness): 0 to 1
    - C (Chroma): 0 to ~0.4
    - H (Hue): 0 to 360 degrees
+   - If conversion fails due to unrecognized format, log the failure and skip that color. Do not block the entire phase for a single conversion failure.
+   - Out-of-gamut colors are handled by the clamping algorithm in section 3.2.
 3. Group by hue similarity (within 15 degrees)
 4. Identify the most-used color per hue group as the "base" color
 ```
@@ -177,6 +193,6 @@ If `DESIGN.md` does not already exist, generate a minimal draft at `{systemPath}
 
 Do NOT overwrite an existing DESIGN.md. Phase 4.5 merges this draft into the final version.
 
-Before emitting status, append `'phase-3'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-3'`. Also update `config.backup.json`.
+Before emitting status, append `'phase-3'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-3'`. If `'phase-3'` is already present, skip the append (idempotent). Also update `config.backup.json`.
 
 **Status: DONE** — Pattern extraction complete. Proceed to Phase 3.5: Visual Preview.

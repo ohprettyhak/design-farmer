@@ -164,18 +164,24 @@ to discover the actual file locations:**
 find {systemPath} -name '*.css' -type f | sort
 ```
 
+**Light-only guard:** If `themeStrategy` is `'light-only'`, skip importing `dark.css` — only import the light theme CSS file and token definitions.
+
 Then import them in the correct order. Common output patterns:
 
 ```
 // Pattern A — tokens/css/ directory (Style Dictionary output):
 import '{systemPath}/tokens/css/tokens.css'
 import '{systemPath}/tokens/css/light.css'
+{if themeStrategy ≠ 'light-only':}
 import '{systemPath}/tokens/css/dark.css'
+{/if}
 
 // Pattern B — src/themes/ directory (custom build):
 import '{systemPath}/src/themes/tokens.css'
 import '{systemPath}/src/themes/light.css'
+{if themeStrategy ≠ 'light-only':}
 import '{systemPath}/src/themes/dark.css'
+{/if}
 
 // Pattern C — Tailwind v4 @theme (no separate CSS files):
 // Tokens are injected via @theme in the Tailwind config — no manual CSS import needed
@@ -187,7 +193,7 @@ import '{systemPath}/components/styles.css'  // or wherever component CSS was ge
 Verify the import ORDER is correct:
 1. Reset / base styles (if any)
 2. Token definitions (primitives -> semantics)
-3. Theme files (light.css, dark.css)
+3. Theme files (light.css, dark.css if not light-only)
 4. Component styles
 5. Application-specific overrides (existing app CSS)
 
@@ -279,6 +285,6 @@ Do NOT emit DONE until the Fix Loop passes on all three checks.
 
 After the Fix Loop passes, set `integrationStatus: "completed"` in `{systemPath}/.design-farmer/config.json`. Update `config.backup.json`.
 
-Before emitting status, append `'phase-10'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-10'`. Also update `config.backup.json`.
+Before emitting status, append `'phase-10'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-10'`. If `'phase-10'` is already present, skip the append (idempotent). Also update `config.backup.json`.
 
 **Status: DONE** (Fix Loop: passed on attempt {N}/5) — Design system integrated into application. Theme toggle working, tokens visible in rendered output. Proceed to Phase 11: Release Readiness & Handoff.

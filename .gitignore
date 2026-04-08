@@ -15,6 +15,7 @@ Thumbs.db
 # AI / Agent
 .omc/
 .claude/
+state/
 
 # Dependencies
 node_modules/

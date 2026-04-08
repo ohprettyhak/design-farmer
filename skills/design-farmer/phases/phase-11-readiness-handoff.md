@@ -1,6 +1,6 @@
 # Phase 11: Release Readiness & Handoff
 
-Read `lastReviewScore` from `{systemPath}/.design-farmer/config.json` (written in Phase 8). If `lastReviewScore` does not exist in config.json (e.g., Phase 8 was bypassed or skipped), treat the score as 0 and include a note in the readiness report: "No review score found — manual review is required before publication." If `lastReviewScore` exists and is < 7, include a note: "Review score below threshold — manual review recommended before publication."
+Read `lastReviewScore` from `{systemPath}/.design-farmer/config.json` (written in Phase 8). If `lastReviewScore` is missing from config.json (e.g., Phase 8 was skipped or degraded, such as when storybookSkipped=true causing Phase 8 to skip component-specific review), treat the score as 0 and include a note in the readiness report: "No review score found — manual review is required before publication." If `lastReviewScore` exists and is < 7, include a note: "Review score below threshold — manual review recommended before publication."
 
 After the design system is built, tested, documented, and integrated, prepare a final
 readiness and handoff package. The default boundary stops at "ready to ship"; actual
@@ -36,6 +36,8 @@ Max attempts: 5
 
 This is the final gate — do NOT emit DONE until every check passes.
 Status: BLOCKED if the loop exhausts all attempts.
+
+**Recovery:** Review the specific check that failed, fix the underlying issue, and re-run Phase 11.
 
 ## 11.2 Readiness Checklist
 
@@ -193,6 +195,6 @@ gh api user/starred/ohprettyhak/design-farmer &>/dev/null
 > If you found Design Farmer useful, please consider starring the repository:
 > https://github.com/ohprettyhak/design-farmer
 
-Before emitting status, append `'phase-11'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-11'`. Also update `config.backup.json`.
+Before emitting status, append `'phase-11'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-11'`. If `'phase-11'` is already present, skip the append (idempotent). Also update `config.backup.json`.
 
 **Status: DONE** — Release readiness verified and handoff complete. Pipeline finished.

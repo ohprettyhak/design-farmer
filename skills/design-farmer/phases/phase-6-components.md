@@ -18,7 +18,7 @@ If framework is in [next-app-router, next-pages-router, vite-react, remix]:
 If framework is in [astro, sveltekit, nuxt] AND componentScope = 'foundation':
   → SKIP component implementation (tokens only — already done in Phase 5)
   → Set `storybookSkipped: true` in `{systemPath}/.design-farmer/config.json` (Phase 7 is React-oriented and has no components to document)
-  → Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-6'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
+  → Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-6'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. If `'phase-6'` is already present in the array, skip the append (idempotent). Also update `config.backup.json`.
   → Emit DONE: "Token-only implementation complete for {framework}. Phase 6 skipped: component
     patterns require React. Use the generated CSS tokens directly in your {framework} components."
   → Jump to Phase 8 (skip Phase 7 — Storybook is React-oriented and has no components to document)
@@ -36,8 +36,8 @@ If framework is in [astro, sveltekit, nuxt] AND componentScope ≠ 'foundation':
   **→ STOP — wait for user response before continuing.**
 
   If A: validate headless library compatibility (see below), then proceed to 6.0.1. After Phase 6 completion, proceed to Phase 7.
-  If B: set `storybookSkipped: true` in config.json. Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-6'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`. Emit DONE_WITH_CONCERNS and jump to Phase 8. Phase 7 skipped.
-  If C: set `storybookSkipped: true` in config.json. Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-6'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`. Emit DONE_WITH_CONCERNS and jump to Phase 8. Phase 7 skipped.
+  If B: set `storybookSkipped: true` in config.json. Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-6'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. If `'phase-6'` is already present in the array, skip the append (idempotent). Also update `config.backup.json`. Emit DONE_WITH_CONCERNS and jump to Phase 8. Phase 7 skipped.
+  If C: set `storybookSkipped: true` in config.json. Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-6'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. If `'phase-6'` is already present in the array, skip the append (idempotent). Also update `config.backup.json`. Emit DONE_WITH_CONCERNS and jump to Phase 8. Phase 7 skipped.
 
   **If user chose A (generate React components for a non-React framework):**
   The headless library selected in Phase 1 Q3-1 may be framework-specific (e.g., Melt UI for Svelte,
@@ -470,6 +470,6 @@ Only implement components within the user's chosen scope from Phase 1 Question 3
 - **full**: All 20 components in priority order
 - **custom**: User-specified list from Phase 1 discovery
 
-Before emitting status, ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-6'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
+Before emitting status, ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-6'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. If `'phase-6'` is already present in the array, skip the append (idempotent). Also update `config.backup.json`.
 
 **Status: DONE** — All components in scope implemented, tested, and accessible. Proceed to Phase 7: Storybook Integration.

@@ -473,9 +473,13 @@ JavaScript needed. The nearest `[data-theme]` ancestor wins. Components consume
 
 ## 4b.4 Dark Mode Implementation Checklist & Common Failures
 
+> (Skip this entire checklist if `themeStrategy = 'light-only'` — see section 4b.0 for the light-only skip paths.)
+
 **MANDATORY verification after implementing dark mode. Check every item before proceeding.**
 
 ### Implementation Checklist
+
+All items in this checklist are mandatory. If any item cannot be satisfied, note it as a known limitation in DESIGN.md and emit DONE_WITH_CONCERNS rather than DONE.
 
 ```
 [ ] <html> has suppressHydrationWarning (Next.js App Router with next-themes)
@@ -585,7 +589,7 @@ If no styling framework detected:
   -> Consider recommending Tailwind v4 for utility-first workflow
 ```
 
-Before emitting status, ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-4b'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
+Before emitting status, ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-4b'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. If `'phase-4b'` is already present, skip the append (idempotent). Also update `config.backup.json`.
 
 If themeStrategy = 'light-only':
 **Status: DONE** — Light-only theme system and styling approach defined. ThemeProvider, dark mode, and scoped theming skipped per configuration. Proceed to Phase 4.5: Design Source of Truth (DESIGN.md).

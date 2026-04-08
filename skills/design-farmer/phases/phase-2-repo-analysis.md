@@ -84,6 +84,15 @@ implementation path to follow in subsequent phases:
 - **emerging path** (score 3–5): Extract and extend — standardize existing patterns, fill gaps
 - **mature path** (score 6+): Audit and migrate — preserve existing APIs, migrate to OKLCH, add missing layers
 
+**Borderline scores (exactly 2, 3, or 5):** ask the user via AskUserQuestion which level better reflects their project's maturity:
+> Your project scored {score}/10, which is on the boundary between {lower} and {upper} maturity levels.
+>
+> Options:
+> - A) {lower level} — my project needs more structure
+> - B) {upper level} — my project has enough patterns to build on
+
+Where {lower}/{upper} are the two adjacent maturity levels. Use the user's choice to set designMaturity.
+
 **Maturity impact on downstream phases:**
 - Phase 3: GREENFIELD skips extraction (generates defaults); EMERGING extracts with gap-filling; MATURE runs full authoritative extraction
 - Phase 3.5: GREENFIELD mandatory preview; EMERGING recommended opt-in; MATURE default skip

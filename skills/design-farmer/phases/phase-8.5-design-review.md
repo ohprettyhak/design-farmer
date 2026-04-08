@@ -56,7 +56,7 @@ Prompt user: "No browser tooling detected. Please provide screenshots of each co
 in both light and dark themes for visual QA review."
 ```
 
-**Status: DONE_WITH_CONCERNS** — Visual QA deferred to manual verification. Checklist saved to `{systemPath}/docs/visual-qa-checklist.md`. Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-8.5'` to `completedPhases` in `{systemPath}/.design-farmer/config.json` (the phase ran in degraded mode). Set `visualQAMode: 'manual'` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`. Proceed to Phase 9.
+**Status: DONE_WITH_CONCERNS** — Visual QA deferred to manual verification. Checklist saved to `{systemPath}/docs/visual-qa-checklist.md`. Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-8.5'` to `completedPhases` in `{systemPath}/.design-farmer/config.json` (the phase ran in degraded mode). If `'phase-8.5'` is already present, skip the append (idempotent). Set `visualQAMode: 'manual'` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`. Proceed to Phase 9.
 
 Note: Phase 9 completion report should reflect that automated visual QA was not performed.
 
@@ -208,8 +208,8 @@ Base: 0%
 + 20% per unrelated file touch
 
 Thresholds:
-  > 20%: STOP. Ask user whether to continue via AskUserQuestion.
-  > 30%: Hard stop. Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-8.5'` to `completedPhases` in `{systemPath}/.design-farmer/config.json` (the phase ran but hit risk threshold). Set `visualQAMode: 'auto'` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`. Emit **Status: DONE_WITH_CONCERNS** — risk threshold exceeded at {N}%. Report remaining findings as TODO items in the completion report.
+  > 20%: When risk exceeds 20% but is ≤30%: warn the user and ask whether to continue. When risk exceeds 30%: recommend stopping and ask the user whether to continue or stop. Use AskUserQuestion with options: A) Continue despite risk, B) Stop and review manually.
+  > 30%: Hard stop. Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-8.5'` to `completedPhases` in `{systemPath}/.design-farmer/config.json` (the phase ran but hit risk threshold). If `'phase-8.5'` is already present, skip the append (idempotent). Set `visualQAMode: 'auto'` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`. Emit **Status: DONE_WITH_CONCERNS** — risk threshold exceeded at {N}%. Report remaining findings as TODO items in the completion report.
   Maximum: 30 fixes per review session.
 ```
 
@@ -242,4 +242,4 @@ the completion report.
 
 **Status: DONE** — Live visual QA complete. All HIGH findings resolved. Set `visualQAMode: 'auto'` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`. Proceed to Phase 9: Documentation & Completion.
 
-Before emitting status, append `'phase-8.5'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-8.5'`. Also update `config.backup.json`.
+Before emitting status, append `'phase-8.5'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-8.5'`. If `'phase-8.5'` is already present, skip the append (idempotent). Also update `config.backup.json`.

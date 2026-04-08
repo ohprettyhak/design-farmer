@@ -25,6 +25,8 @@ find . -maxdepth 4 -name "DESIGN.md" 2>/dev/null | grep -v node_modules | head -
 
 If a `DESIGN.md` file is found, check for existing pipeline state:
 
+**Empty file guard**: If DESIGN.md exists but is empty (0 bytes), treat it as not existing.
+
 ```bash
 # Check for existing config.json with pipeline state
 config_path="{directory_containing_DESIGN.md}/.design-farmer/config.json"
@@ -76,17 +78,19 @@ If user chose **A**:
 
 3. **If critical fields are still missing** (packageManager, framework, systemPath, isMonorepo, designSystemPackage, componentScope, themeStrategy), ask ONE AskUserQuestion with all missing fields at once — do not ask one-at-a-time for this recovery step.
 
+   **Critical field validation guard**: If the user's response still doesn't provide one or more critical fields, emit **Status: BLOCKED** with message: 'Cannot reconstruct config without required fields: {missing list}. Recovery: restart Phase 0 with complete information.'
+
 4. **Derive computed identifiers** from the parsed fields:
    - `createdAt`: ISO 8601 timestamp of when this config was reconstructed (e.g., `2026-04-08T12:34:56Z`)
    - `designSystemDir`: `basename(systemPath)` (e.g., `design-system`)
    - `designSystemPackage`: read from `{systemPath}/package.json` `"name"` field (e.g., `@acme/design-system`)
    - `productName`: strip `@scope/` prefix from `designSystemPackage`, then title-case (e.g., `Design System`)
 
-5. **Persist** the reconstructed `DesignFarmerConfig` (including derived fields) to `{systemPath}/.design-farmer/config.json`. Also copy to `config.backup.json` in the same directory.
+5. **Persist** the reconstructed `DesignFarmerConfig` (including derived fields and `completedPhases: []`) to `{systemPath}/.design-farmer/config.json`. Also copy to `config.backup.json` in the same directory.
 
-6. **Mark skipped phases** — set `skippedPhases: ["phase-1", "phase-2", "phase-3", "phase-4", "phase-4b", "phase-4.5"]` in config.json so Phase 1 re-entry detection knows these phases were intentionally bypassed. Update `config.backup.json`.
+   **Read-after-write validation**: Read back config.json to verify the write succeeded. If the file is missing or invalid JSON, emit BLOCKED with recovery instructions.
 
-7. **Validate critical fields** — after persisting config, verify that `designMaturity` is present. If missing, ask via AskUserQuestion:
+6. **Validate critical fields** — after persisting config, verify that `designMaturity` is present. If missing, ask via AskUserQuestion:
 
    > Your DESIGN.md doesn't specify design maturity. This determines the implementation approach.
    >
@@ -99,6 +103,10 @@ If user chose **A**:
 
    Note: This is a preliminary user-estimated maturity. Phase 2 provides a formal maturity assessment that will override this value.
 
+7. **Mark skipped phases** — set `skippedPhases: ["phase-1", "phase-2", "phase-3", "phase-4", "phase-4b", "phase-4.5"]` in config.json so Phase 1 re-entry detection knows these phases were intentionally bypassed. Update `config.backup.json`.
+
+   Note: skippedPhases is marked only after all validations pass.
+
 8. **Run a quick architecture scan** — read the existing `{systemPath}/` directory structure to detect:
    - **Styling approach**: Check for `tailwind.config.*` (Tailwind), `*.module.css` / `*.module.scss` (CSS Modules), or plain CSS/SCSS files (vanilla CSS)
    - **Token directory layout**: Look for `tokens/`, `themes/`, `styles/`, or `src/tokens/` directories
@@ -109,7 +117,7 @@ If user chose **A**:
 
    This scan substitutes for Phase 4 output — downstream phases (5–11) use these fields the same way they would if Phase 4 had run normally.
 
-9. **Mark phase complete** — ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-0'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
+9. **Mark phase complete** — ensure `completedPhases` exists in config.json (initialize as `[]` if undefined). If `'phase-0'` is already present in the array, skip the append (idempotent). Otherwise, append `'phase-0'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
 
 10. **Jump directly to Phase 5.** Do not run Phases 1–4. Phase 5 will run its own Config Validation Protocol at entry to verify all required fields are present.
 
@@ -129,9 +137,9 @@ If user chose **B**:
 
   Run **Config Validation Protocol** (see `operational-notes.md`) on the reconstructed config before jumping to Phase 3.5. Verify required fields (`designMaturity`, `componentScope`, `themeStrategy`, `systemPath`) are present and valid. If validation fails, emit **Status: BLOCKED** with recovery options: re-run Phase 1 or manually correct the config.
 
-  Persist the reconstructed config (including `designMaturity`, `maturityScore`, and all parsed fields) to `{systemPath}/.design-farmer/config.json`. Also copy to `config.backup.json`.
+  Persist the reconstructed config (including `designMaturity`, `maturityScore`, `completedPhases: []`, and all parsed fields) to `{systemPath}/.design-farmer/config.json`. Also copy to `config.backup.json`.
 
-  Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-0'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`. Then **resume from Phase 3.5** (extraction is already done in the draft).
+  Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined). If `'phase-0'` is already present in the array, skip the append (idempotent). Otherwise, append `'phase-0'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`. Then **resume from Phase 3.5** (extraction is already done in the draft).
 - **If finalized**: continue to Phase 1 (Discovery Interview) as normal — run fresh Phases 1–4.
 
 If user chose **C**: continue to Phase 1 (Discovery Interview) as normal.
@@ -156,6 +164,7 @@ If user chose **A**: continue to Phase 1 (Discovery Interview). Record `strategy
 If user chose **B**: continue to Phase 1 (Discovery Interview). Record `strategy: "migrate"` in config.json.
 If user chose **C**: continue to Phase 1 (Discovery Interview). Record `strategy: "greenfield"` in config.json.
 
-Before emitting status, ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-0'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
+Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined). If `'phase-0'` is already present in the array, skip the append (idempotent). Otherwise, append `'phase-0'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
 
 **Status: DONE** — Pre-flight complete. Proceed to Phase 1: Discovery Interview.
+

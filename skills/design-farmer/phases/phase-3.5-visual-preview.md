@@ -4,7 +4,7 @@
 
 ## Phase Start: Config Validation
 
-Before reading config, verify that `{systemPath}/.design-farmer/config.json` exists and is valid JSON with the required fields (`designMaturity`, `componentScope`, `themeStrategy`). If missing, unparseable, or missing required fields, emit:
+Before reading config, verify that `{systemPath}/.design-farmer/config.json` exists and is valid JSON with the required fields (`designMaturity`, `componentScope`, `themeStrategy`, `systemPath`). If missing, unparseable, or missing required fields, emit:
 
 **Status: BLOCKED** — Config validation failed: {reason}. Recovery: re-run Phase 1 Discovery Interview to regenerate config, or restore from `{systemPath}/.design-farmer/config.backup.json` if available.
 
@@ -57,7 +57,7 @@ If `false`: skip 3.5.1. Instead, present a **text summary** of the extracted des
 
 **→ STOP — wait for user response.**
 
-If user approved the text summary (chose A above): `previewOutcome` is already set to `'skipped'` (line 39 above). Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-3.5'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`. Then proceed to Phase 4 (Architecture Design). No further approval gate is needed.
+If user approved the text summary (chose A above): `previewOutcome` is already set to `'skipped'` (line 39 above). Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-3.5'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. If `'phase-3.5'` is already present in the array, skip the append (idempotent). Also update `config.backup.json`. Then proceed to Phase 4 (Architecture Design). No further approval gate is needed.
 If user chose B: ask follow-up questions, adjust values, re-present summary.
 If user chose C: follow Option E reset logic below (return to Phase 1).
 This is an intentional skip, not a failure — do NOT use the error-state Fallback Path (3.5.3).
@@ -145,7 +145,7 @@ Via AskUserQuestion, ask:
 
 **STOP. Do NOT proceed until user responds.**
 
-If user chose A: Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-3.5'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`. Proceed to Phase 4 (Architecture Design).
+If user chose A: Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-3.5'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. If `'phase-3.5'` is already present in the array, skip the append (idempotent). Also update `config.backup.json`. Proceed to Phase 4 (Architecture Design).
 
 If user chose B, C, or D:
 - Ask follow-up questions ONE AT A TIME to understand desired changes
@@ -162,7 +162,7 @@ If user chose E:
 2. Read `{systemPath}/.design-farmer/config.json` if it exists
 3. Set `resetFromPhase: "3.5"` in config (signals Phase 1 re-entry detection)
 4. Reset completedPhases to `["phase-0"]` (Phase 0 pre-flight is still valid)
-5. Clear design-specific fields: `brandColor`, `colorDirection`, `customComponents`, `designMaturity`, `maturityScore`, `generatePreview`, `previewOutcome`, `skippedPhases`
+5. Clear design-specific fields: `brandColor`, `colorDirection`, `customComponents`, `designMaturity`, `maturityScore`, `maturityJustification`, `generatePreview`, `previewOutcome`, `skippedPhases`, `stylingApproach`
 6. Preserve project-specific fields: `packageManager`, `framework`, `isMonorepo`, `systemPath`, `designSystemPackage`, `componentScope`, `headlessLibrary`, `themeStrategy`, `themeLibrary`, `accessibilityLevel`, `targetPlatforms`, `vision`, `painPoint`, `productName`, `designSystemDir`
 7. Persist the reset config back to `{systemPath}/.design-farmer/config.json` (and config.backup.json)
 8. Log: "Phase 3.5: User chose to start over. Resetting design extraction state. Project structure settings preserved."
@@ -185,6 +185,6 @@ If preview generation fails (e.g., no color palette extracted, tooling error):
 4. Ask user to confirm the text-based direction before proceeding
 5. Continue to Phase 4 with user's textual approval
 
-Before emitting status, ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-3.5'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
+Before emitting status, ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-3.5'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. If `'phase-3.5'` is already present in the array, skip the append (idempotent). Also update `config.backup.json`.
 
 **Status: DONE** — Visual preview reviewed and approved. Proceed to Phase 4: Architecture Design.
