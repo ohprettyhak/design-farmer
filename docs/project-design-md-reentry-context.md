@@ -40,10 +40,11 @@ Revise re-entry semantics so existing `DESIGN.md` pre-fills defaults and informs
 
 ## Acceptance Criteria
 
-- [ ] Phase 0 Option A no longer instructs skip-to-Phase-5 behavior.
-- [ ] Phase 0 Option A explicitly states critical discovery gates must still run.
-- [ ] Cross-phase contract docs describe DESIGN.md as context input for re-entry.
-- [ ] Validation and semantic tests pass with the updated contract.
+- [x] Phase 0 Option A no longer instructs skip-to-Phase-5 behavior.
+- [x] Phase 0 Option A explicitly states critical discovery gates must still run.
+- [x] Cross-phase contract docs describe DESIGN.md as context input for re-entry.
+- [x] Validation and semantic tests pass with the updated contract.
+- [x] Template/example/operational references no longer describe legacy "Phase 0 → Phase 5 shortcut" wording.
 
 ## Dependencies
 
@@ -60,3 +61,4 @@ Revise re-entry semantics so existing `DESIGN.md` pre-fills defaults and informs
 | Date | Author | Change |
 |------|--------|--------|
 | 2026-04-09 | Codex | Initial draft |
+| 2026-04-09 | Codex | Marked acceptance criteria complete and added anti-drift completion evidence |
