@@ -282,6 +282,26 @@ Use **two tsconfig files** — one for IDE/typecheck, one for production build:
 This auto-generates Tailwind utility classes (e.g., `bg-primary-500`, `p-4`, `rounded-md`)
 from your design tokens, maintaining a single source of truth.
 
+**Monorepo `@source` note:** In monorepo setups where this CSS file is imported from a separate
+package (e.g., Storybook at `apps/storybook/`), Tailwind v4's automatic source detection may not
+scan the design system's component source files. Use the `source()` parameter on `@import` to
+explicitly set the base path for source detection:
+
+```css
+/* Set base path relative to this CSS file */
+/* From src/styles/, ".." resolves to src/ — the component source root */
+@import "tailwindcss" source("..");
+
+/* Or disable auto-detection and register paths explicitly */
+@import "tailwindcss" source(none);
+@source "..";
+```
+
+For full details and the decision matrix, see:
+- **Phase 7 (Storybook Integration)** — Step 2.5: Storybook-specific `@source` guidance
+- **Phase 10 (App Integration)** — Section 10.3, "Tailwind v4 `@source` for Monorepo Consumers"
+  subsection: `@source` guidance for all monorepo consumers (Next.js, Vite+React, Remix, Astro, SvelteKit, Nuxt, plain React)
+
 **Alternative: Style Dictionary 4.x**
 
 For projects requiring multi-platform token output (CSS + iOS Swift + Android Kotlin + React Native JS),

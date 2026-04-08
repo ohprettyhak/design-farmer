@@ -92,8 +92,17 @@ Use that version throughout — do NOT assume any specific major version number.
      d. Run init from inside the new package: `cd apps/storybook && {packageManager} dlx storybook@latest init`
      e. In `apps/storybook/.storybook/main.ts`, set the `stories` glob to reach the design system:
         `stories: ['../../packages/{designSystemDir}/src/**/*.stories.@(ts|tsx)']`
-     f. Import the design system's tokens/CSS from the workspace package in `preview.tsx`:
-        `import '{designSystemPackage}/src/tokens/index.css'`
+     f. Import the design system's global CSS entry from the workspace package in `preview.tsx`:
+        `import '{designSystemPackage}/src/styles/index.css'`
+        (If the project uses a non-Tailwind token pipeline, import the actual generated
+        CSS entry discovered in Phase 4.3.)
+   - **Tailwind v4 monorepo warning:** If the design system uses Tailwind v4
+     (`@import "tailwindcss"` in its CSS entry), Tailwind's automatic source detection
+     may not scan the design system's component source files when Storybook runs from
+     a separate package directory. Add `@source` directives in the design system's
+     Tailwind CSS file (see Step 2.5 Tailwind v4 section below) to explicitly register
+     the source paths. Without this, utility classes used in components will not be
+     generated and styles will appear missing in Storybook.
    - IMPORTANT: After init, add `@storybook/react` to the design system package's devDependencies:
      `{packageManager} --filter {designSystemPackage} add -D @storybook/react@latest`
      This installs the @storybook/react type definitions inside the design system package so
@@ -150,6 +159,79 @@ Note: Use `@storybook/react-vite` framework for Vite-based projects (most monore
 ```typescript
 import type { Preview } from "@storybook/react";
 import "../../packages/{designSystemDir}/src/styles/index.css";
+
+const preview: Preview = {
+  parameters: {
+    layout: "centered",
+    docs: {
+      toc: true,
+    },
+  },
+  tags: ["autodocs"],
+};
+
+export default preview;
+```
+
+**Tailwind v4 `@source` directive (monorepo Option B):**
+
+When the design system uses Tailwind v4 (`@import "tailwindcss"` in its CSS entry) and Storybook
+lives in a separate monorepo package (e.g., `apps/storybook/`), Tailwind's automatic source file
+detection may not scan the design system's source directories. This causes utility classes used in
+components to not be generated, resulting in missing styles in Storybook.
+
+Tailwind v4 detects source files based on the CSS file's location and the current working directory.
+When the CSS is imported across package boundaries, Tailwind may not reach the component source files
+in `packages/{designSystemDir}/src/`.
+
+**Fix — add `@source` directives to the design system's Tailwind CSS entry:**
+
+In the design system's CSS file that contains `@import "tailwindcss"` (e.g.,
+`packages/{designSystemDir}/src/styles/index.css` or `src/tokens/tokens.css`), add `@source`
+directives to explicitly register the component source paths:
+
+```css
+/* Option A: Keep auto-detection, set base path */
+/* From src/styles/, ".." resolves to src/ — the component source root */
+@import "tailwindcss" source("..");
+
+/* Option B: Disable auto-detection, register paths explicitly */
+/* Use this when you need full control over which directories Tailwind scans */
+@import "tailwindcss" source(none);
+@source "..";
+@source "../../other-package/src";
+```
+
+**Monorepo `@source` decision matrix:**
+
+| Scenario | Directive | Why |
+|----------|-----------|-----|
+| Design system CSS in `src/styles/`, components in `src/` | `@import "tailwindcss"` (default) | Auto-detection covers same directory and children |
+| Storybook at `apps/storybook/`, design system at `packages/ds/` | `@import "tailwindcss" source("..")` | From `src/styles/`, `".."` resolves to `src/` — the component source root |
+| Multiple packages use Tailwind utilities | `source(none)` + explicit `@source` per path | Full control; prevents scanning unintended directories |
+| Storybook preview imports design system CSS via workspace | `@source` in the design system CSS, NOT in preview.tsx | `@source` must be in the same file as `@import "tailwindcss"` |
+
+**Common mistake:** Adding `@source` in Storybook's `preview.tsx` import instead of the design
+system's CSS file. The `@source` directive must be in the **same physical file** as
+`@import "tailwindcss"`. It cannot be in a separate CSS file — `@source` directives do
+not cascade across `@import` boundaries. Importing a CSS file that already contains both
+`@import "tailwindcss"` and `@source` works, but adding `@source` in the importing file
+does not.
+
+**Verification:** After adding `@source`, restart Storybook and confirm that utility classes
+used in design system components (e.g., `bg-primary-500`, `p-4`, `rounded-md`) are applied.
+If styles are still missing, verify the `@source` path is correct relative to the CSS file
+containing `@import "tailwindcss"`, not relative to the project root.
+
+**Tailwind v4 `preview.tsx` variant for monorepo Option B:**
+
+```typescript
+// apps/storybook/.storybook/preview.tsx — Tailwind v4 monorepo variant
+import type { Preview } from "@storybook/react";
+
+// Import the design system's CSS which contains @import "tailwindcss" and @source directives.
+// Do NOT add @source here — it must live in the design system's CSS file alongside @import "tailwindcss".
+import "{designSystemPackage}/src/styles/index.css";
 
 const preview: Preview = {
   parameters: {
