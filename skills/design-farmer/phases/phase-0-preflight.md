@@ -129,6 +129,8 @@ If user chose **B**:
 
   Run **Config Validation Protocol** (see `operational-notes.md`) on the reconstructed config before jumping to Phase 3.5. Verify required fields (`designMaturity`, `componentScope`, `themeStrategy`, `systemPath`) are present and valid. If validation fails, emit **Status: BLOCKED** with recovery options: re-run Phase 1 or manually correct the config.
 
+  Persist the reconstructed config (including `designMaturity`, `maturityScore`, and all parsed fields) to `{systemPath}/.design-farmer/config.json`. Also copy to `config.backup.json`.
+
   Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-0'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`. Then **resume from Phase 3.5** (extraction is already done in the draft).
 - **If finalized**: continue to Phase 1 (Discovery Interview) as normal — run fresh Phases 1–4.
 
@@ -147,6 +149,8 @@ If an existing design system is detected (but no DESIGN.md), report the pre-flig
 > - C) **Start fresh** — build a new design system alongside existing components
 
 **→ STOP — wait for user response before continuing.**
+
+Create `{systemPath}/.design-farmer/config.json` (directory and file) if it doesn't exist. Set `systemPath` to the directory where the existing design system was detected (from preflight scan steps 2–3). Initialize with `{"completedPhases": []}`. Also copy to `config.backup.json`.
 
 If user chose **A**: continue to Phase 1 (Discovery Interview). Record `strategy: "extend"` in config.json.
 If user chose **B**: continue to Phase 1 (Discovery Interview). Record `strategy: "migrate"` in config.json.

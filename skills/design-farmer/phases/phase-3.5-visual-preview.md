@@ -37,6 +37,7 @@ For GREENFIELD: skip this AskUserQuestion gate, set `generatePreview: true` and 
 
 Set `generatePreview` in config.json (`true` if GREENFIELD or chose A; `false` if chose B).
 Set `previewOutcome` in config.json (`'generated'` if GREENFIELD or chose A; `'skipped'` if chose B).
+Also update `config.backup.json`.
 If `false`: skip 3.5.1. Instead, present a **text summary** of the extracted design direction
 (color palette OKLCH values, typography choices, spacing scale) via AskUserQuestion:
 

@@ -58,7 +58,7 @@ If framework is in [astro, sveltekit, nuxt] AND componentScope ≠ 'foundation':
   
   **→ STOP — wait for user response before continuing.**
 
-  Update `headlessLibrary` in config.json with the user's choice before proceeding to 6.0.1.
+  Update `headlessLibrary` in config.json with the user's choice before proceeding to 6.0.1. Also update `config.backup.json`.
 ```
 
 The implementation path depends on **Design Maturity** (from Phase 2) and **Headless Library**
@@ -221,7 +221,7 @@ For interactive elements (Input, Select trigger, Textarea, etc.), use **box-shad
 }
 ```
 
-**Why box-shadow:** No layout shift (zero width impact), composable with drop shadows in one property, and `transition: box-shadow` is cleaner than `transition: border-color`.
+**Why box-shadow:** Zero width impact prevents layout shift, composes with drop shadows in one property, and enables cleaner transitions than border-color.
 
 **Define these tokens in `src/styles/tokens.css`:**
 
