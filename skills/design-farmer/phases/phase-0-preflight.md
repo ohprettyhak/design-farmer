@@ -36,7 +36,7 @@ config_path="{directory_containing_DESIGN.md}/.design-farmer/config.json"
 **Draft guard**: Read the first 5 lines of DESIGN.md (or all lines if the file has fewer than 5). If any of those lines contain `**DRAFT**`, it is an incomplete Phase 3 draft — do NOT offer Option A. Only offer B (continue from where you left off) and C (start from scratch).
 
 If DESIGN.md exists but `config.json` does NOT exist at `{directory_containing_DESIGN.md}/.design-farmer/config.json`, treat as a partial re-entry — the design document exists but pipeline state was lost. Offer:
-- A) Reconstruct config from DESIGN.md and jump to Phase 5
+- A) Reconstruct config from DESIGN.md and continue to Phase 1 with pre-filled defaults
 - B) Start fresh from Phase 1 (Discovery Interview)
 
 Then ask via AskUserQuestion **before anything else**:
@@ -53,7 +53,7 @@ Then ask via AskUserQuestion **before anything else**:
 >
 > {If DRAFT: show only B and C. If finalized: show A, B, and C.}
 > Options:
-> - A) **Use it as-is** — load DESIGN.md as the design source of truth and jump directly to Phase 5 (Token Implementation) {omit if DRAFT}
+> - A) **Use it as context** — load DESIGN.md as a design reference, pre-fill discovery defaults, and continue to Phase 1 (critical decisions are still confirmed) {omit if DRAFT}
 > - B) **Update it** — {If DRAFT: "resume from Phase 3.5 (extraction is done, continue with preview and architecture)"} {If finalized: "run fresh analysis (Phases 1–4), then update DESIGN.md with any changes"}
 > - C) **Ignore it** — start from scratch (DESIGN.md will be overwritten in Phase 4.5)
 
@@ -103,11 +103,7 @@ If user chose **A**:
 
    Note: This is a preliminary user-estimated maturity. Phase 2 provides a formal maturity assessment that will override this value.
 
-7. **Mark skipped phases** — set `skippedPhases: ["phase-1", "phase-2", "phase-3", "phase-4", "phase-4b", "phase-4.5"]` in config.json so Phase 1 re-entry detection knows these phases were intentionally bypassed. Update `config.backup.json`.
-
-   Note: skippedPhases is marked only after all validations pass.
-
-8. **Run a quick architecture scan** — read the existing `{systemPath}/` directory structure to detect:
+7. **Run a quick architecture scan** — read the existing `{systemPath}/` directory structure to detect:
    - **Styling approach**: Check for `tailwind.config.*` (Tailwind), `*.module.css` / `*.module.scss` (CSS Modules), or plain CSS/SCSS files (vanilla CSS)
    - **Token directory layout**: Look for `tokens/`, `themes/`, `styles/`, or `src/tokens/` directories
    - **Component directory structure**: Check `src/primitives/`, `src/components/`, or similar
@@ -115,11 +111,13 @@ If user chose **A**:
 
    Populate the following config fields from scan results: `stylingApproach` (if not already set), and verify `systemPath` directory exists.
 
-   This scan substitutes for Phase 4 output — downstream phases (5–11) use these fields the same way they would if Phase 4 had run normally.
+   This scan is contextual only. Do NOT treat it as a substitute for Discovery/Architecture phases.
+
+8. **Mark context-import mode** — set `reentryMode: "design-context"` in config.json to indicate DESIGN.md was imported as context and must still pass Discovery gates. Update `config.backup.json`.
 
 9. **Mark phase complete** — ensure `completedPhases` exists in config.json (initialize as `[]` if undefined). If `'phase-0'` is already present in the array, skip the append (idempotent). Otherwise, append `'phase-0'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
 
-10. **Jump directly to Phase 5.** Do not run Phases 1–4. Phase 5 will run its own Config Validation Protocol at entry to verify all required fields are present.
+10. **Continue to Phase 1 (Discovery Interview).** Do NOT skip critical decision gates (Q3 scope, Q3-1 headless library, Q5 theme strategy, Q5-1 theme library). Use imported DESIGN.md values as defaults/context, not as auto-approved final decisions.
 
 If user chose **B**:
 - **If DRAFT**: Load the draft's `## Config` YAML to reconstruct `DesignFarmerConfig`. If `designMaturity` is missing from the parsed config, ask via AskUserQuestion:
@@ -179,4 +177,3 @@ If user chose **C**: continue to Phase 1 (Discovery Interview). Record `strategy
 Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined). If `'phase-0'` is already present in the array, skip the append (idempotent). Otherwise, append `'phase-0'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
 
 **Status: DONE** — Pre-flight complete. Proceed to Phase 1: Discovery Interview.
-

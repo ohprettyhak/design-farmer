@@ -371,12 +371,12 @@ echo ""
 # ---------------------------------------------------------------------------
 echo "=== TEST 9: Phase 0 — Re-Entry Paths ==="
 
-# Path A: Use DESIGN.md as-is → skip to Phase 5
-if grep -q "Jump directly to Phase 5" "$PHASES_DIR/phase-0-preflight.md" &&
-   grep -q "Do not run Phases 1–4" "$PHASES_DIR/phase-0-preflight.md"; then
-  pass "Re-entry path A: skip to Phase 5 with Phase 1-4 bypass"
+if grep -q "Use it as context" "$PHASES_DIR/phase-0-preflight.md" &&
+   grep -q "Continue to Phase 1" "$PHASES_DIR/phase-0-preflight.md" &&
+   grep -q "Do NOT skip critical decision gates" "$PHASES_DIR/phase-0-preflight.md"; then
+  pass "Re-entry path A: context import continues to Phase 1 with required gates"
 else
-  fail "Re-entry path A: missing skip-to-Phase-5 or Phase-1-4 bypass"
+  fail "Re-entry path A: missing context-import continuation and decision-gate guard"
 fi
 
 # Path A must parse Config YAML from DESIGN.md
@@ -393,6 +393,21 @@ if grep -q 'chose.*B.*or.*C.*continue to Phase 1' "$PHASES_DIR/phase-0-preflight
   pass "Re-entry path B/C: continues to Phase 1 normally"
 else
   fail "Re-entry path B/C: missing continuation to Phase 1"
+fi
+
+if grep -q "reentryMode" "$PHASES_DIR/phase-1-discovery.md" &&
+   grep -q "design-context" "$PHASES_DIR/phase-1-discovery.md"; then
+  pass "Re-entry path A: Phase 1 handles reentryMode design-context"
+else
+  fail "Re-entry path A: Phase 1 missing reentryMode design-context handling"
+fi
+
+if ! grep -q "Phase 0 → Phase 5 shortcut" "$PHASES_DIR/phase-4.5-design-source-of-truth.md" &&
+   ! grep -q "Phase 0 → Phase 5 shortcut" "$EXAMPLES_DIR/DESIGN.md" &&
+   ! grep -q "before jumping to Phase 5" "$PHASES_DIR/operational-notes.md"; then
+  pass "Re-entry docs/templates align with context-first contract"
+else
+  fail "Re-entry docs/templates contain stale Phase 0→5 shortcut wording"
 fi
 
 echo ""

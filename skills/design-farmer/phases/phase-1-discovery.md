@@ -14,7 +14,9 @@ Before asking Q0, check if `{systemPath}/.design-farmer/config.json` exists. Che
 
 If either is true, this is a restart from Phase 3.5.
 
-Also check if `skippedPhases` exists in config.json — this indicates Phases 1–4 were intentionally bypassed via Phase 0→5 shortcut. If `skippedPhases` is present and includes `"phase-1"`, this is a re-entry from a shortcut path. Log the skipped phases and proceed with the interview (the user chose to re-run Phase 1 after the shortcut).
+Also check if `skippedPhases` exists in config.json — this indicates a legacy run where Phases 1–4 were intentionally bypassed via the older Phase 0→5 shortcut. If `skippedPhases` is present and includes `"phase-1"`, this is a re-entry from a legacy shortcut path. Log the skipped phases and proceed with the interview.
+
+Also check if `reentryMode` equals `"design-context"` (set by Phase 0 when importing an existing DESIGN.md). If true, treat all DESIGN.md-derived values as pre-filled context only. Do NOT auto-accept these values: still run all required discovery gates and ask for explicit confirmation/changes, especially Q3, Q3-1, Q5, and Q5-1.
 
 If `completedPhases` exists but is empty (`[]`), treat this as a partial Phase 0 run that didn't complete. Proceed to Phase 1 as normal (no re-entry shortcuts).
 
@@ -413,6 +415,7 @@ interface DesignFarmerConfig {
   // Pipeline state — managed automatically, not user-facing
   completedPhases?: string[]; // e.g., ["phase-0","phase-1","phase-2"] — tracks which phases have finished
   skippedPhases?: string[]; // e.g., ["phase-1","phase-2"] — phases intentionally skipped (Phase 0→5 shortcut)
+  reentryMode?: 'design-context'; // set by Phase 0 when importing an existing DESIGN.md as context
   createdAt?: string; // ISO 8601 timestamp of initial config creation
   lastReviewScore?: number; // Phase 8 aggregate review score (0–10)
   lastReviewDate?: string; // ISO 8601 timestamp of last Phase 8 review
@@ -456,7 +459,8 @@ mkdir -p {systemPath}/.design-farmer
 # Also copy to config.backup.json in the same directory
 # Set createdAt to the current ISO 8601 timestamp
 # Initialize completedPhases as ["phase-0"] if undefined; preserve existing array on re-entry
-# Preserve skippedPhases if present (set by Phase 0→5 shortcut)
+# Preserve skippedPhases if present (legacy Phase 0→5 shortcut)
+# Preserve reentryMode if present (Phase 0 context-import flow)
 
 # Read-after-write validation: Read back config.json to verify the write succeeded.
 # If the file is missing or invalid JSON, emit **Status: BLOCKED** with recovery

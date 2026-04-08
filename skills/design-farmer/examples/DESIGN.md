@@ -8,7 +8,7 @@
 > All color values use OKLCH. All sizes are in pixels unless noted.
 
 ## Config
-<!-- Required for Design Farmer re-entry (Phase 0 → Phase 5 shortcut). Update before use. -->
+<!-- Required for Design Farmer re-entry context import (Phase 0 → Phase 1 with discovery confirmation gates). Update before use. -->
 ```yaml
 packageManager: pnpm
 framework: next-app-router

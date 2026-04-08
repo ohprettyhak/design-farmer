@@ -24,6 +24,7 @@ This document defines release-quality checks for maintainers updating the Design
 - Phase transitions must keep explicit “STOP / proceed” control points where required.
 - Final verification commands (in `phases/phase-9-documentation.md` and `phases/phase-11-readiness-handoff.md`) remain explicit and testable.
 - Phase 3.5 preview approval (maturity-conditional opt-in), Phase 4.5 DESIGN.md generation, and Phase 11 readiness handoff remain aligned with the current lifecycle.
+- Phase 0 re-entry with existing DESIGN.md must preserve context import semantics: pre-fill defaults, but still run critical Discovery decision gates.
 - Every phase must append its ID to `completedPhases` in config.json upon completion.
 - Phase 3 must generate an early DESIGN.md draft without overwriting existing files.
 - Phase 3.5 preview file must be generated inside `.design-farmer/`, not the project root.
