@@ -2,6 +2,8 @@
 
 Read `DESIGN.md` to verify integration aligns with the approved design architecture and token system. All CSS import paths, ThemeProvider configuration, and token references must match the DESIGN.md source of truth.
 
+**Config Validation:** Before proceeding, verify that `systemPath`, `framework`, `themeStrategy`, and `themeLibrary` are present in `{systemPath}/.design-farmer/config.json`. If any required field is missing, emit **Status: BLOCKED** with recovery instructions: re-run the affected phase or manually correct the config.
+
 Via AskUserQuestion, ask:
 
 > Your design system is built, tested, and documented. The final step is wiring it
@@ -68,6 +70,8 @@ the step with inferred or omitted payload fields.
 
 ## 10.1 Dependency Installation
 
+**Light-only guard:** If `themeStrategy` is `'light-only'` (from config.json), skip ThemeProvider installation in steps 10.1–10.2. CSS token imports (step 10.3) still apply. Jump to step 10.3 after installing design system peer dependencies.
+
 Compatibility gate (MANDATORY):
 
 - Next.js -> `next-themes` or `custom`
@@ -106,6 +110,8 @@ fi
 ```
 
 ## 10.2 Root Layout Integration
+
+**Light-only guard:** If `themeStrategy` is `'light-only'`, skip ThemeProvider wrapping. Only add the CSS import (step 10.3) to the root layout. Do NOT add `suppressHydrationWarning` or any theme provider — light-only mode has no theme switching.
 
 Apply root integration based on the detected framework from Phase 0.
 Do NOT assume Next.js App Router. Use ONLY the path that exists for the detected stack.
@@ -235,7 +241,7 @@ DO NOT replace values inside:
 ## App Integration Summary
 
 ### Changes Made
-- Layout/root entry: {actual framework file path — added ThemeProvider + hydration-safe theming setup}
+- Layout/root entry: {actual framework file path — {if themeStrategy='light-only': "added CSS token imports (no ThemeProvider — light-only mode)" else: "added ThemeProvider + hydration-safe theming setup"}}
 - CSS imports: {list of added imports with order}
 - Dependencies: {list of added/updated packages}
 - Token replacements: {count} hardcoded values -> design tokens (if applicable)
@@ -244,7 +250,7 @@ DO NOT replace values inside:
 - [ ] App starts without errors
 - [ ] TypeScript compilation passes
 - [ ] Lint passes with zero suppressions
-- [ ] Theme toggle works
+- [ ] {if themeStrategy='light-only': "Light theme tokens applied correctly" else: "Theme toggle works"}
 - [ ] Design tokens are visible in rendered output
 ```
 

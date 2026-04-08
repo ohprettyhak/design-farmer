@@ -571,6 +571,8 @@ If no styling framework detected:
   -> Consider recommending Tailwind v4 for utility-first workflow
 ```
 
+Before emitting status, append `'phase-4b'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
+
 If themeStrategy = 'light-only':
 **Status: DONE** — Light-only theme system and styling approach defined. ThemeProvider, dark mode, and scoped theming skipped per configuration. Proceed to Phase 4.5: Design Source of Truth (DESIGN.md).
 

@@ -391,4 +391,6 @@ Calibrate your review against the documented design decisions.
 Flag any implementation that deviates from the documented direction as HIGH severity."
 ```
 
+Before emitting status, append `'phase-4.5'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
+
 **Status: DONE** — DESIGN.md generated and saved as the persistent design source of truth. Proceed to Phase 5: Token Implementation.

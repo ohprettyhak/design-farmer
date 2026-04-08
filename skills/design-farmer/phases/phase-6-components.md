@@ -4,6 +4,8 @@ Implement components ONE AT A TIME, in dependency order.
 
 ## 6.0 Framework Guardrail
 
+**Config Validation:** Before proceeding, verify that `systemPath`, `framework`, `designMaturity`, `componentScope`, `headlessLibrary`, and `themeStrategy` are present in `{systemPath}/.design-farmer/config.json`. If any required field is missing, emit **Status: BLOCKED** with recovery instructions: re-run the affected phase or manually correct the config.
+
 Read `framework`, `designMaturity`, and `componentScope` from `{systemPath}/.design-farmer/config.json`.
 
 - React (full support): `next-app-router`, `next-pages-router`, `vite-react`, `remix`
@@ -15,6 +17,7 @@ If framework is in [next-app-router, next-pages-router, vite-react, remix]:
 
 If framework is in [astro, sveltekit, nuxt] AND componentScope = 'foundation':
   → SKIP component implementation (tokens only — already done in Phase 5)
+  → Set `storybookSkipped: true` in `{systemPath}/.design-farmer/config.json` (Phase 7 is React-oriented and has no components to document)
   → Append `'phase-6'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
   → Emit DONE: "Token-only implementation complete for {framework}. Phase 6 skipped: component
     patterns require React. Use the generated CSS tokens directly in your {framework} components."
@@ -33,8 +36,8 @@ If framework is in [astro, sveltekit, nuxt] AND componentScope ≠ 'foundation':
   **→ STOP — wait for user response before continuing.**
 
   If A: validate headless library compatibility (see below), then proceed to 6.0.1. After Phase 6 completion, proceed to Phase 7.
-  If B: append `'phase-6'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`. Emit DONE_WITH_CONCERNS and jump to Phase 8. Phase 7 skipped.
-  If C: append `'phase-6'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`. Emit DONE_WITH_CONCERNS and jump to Phase 8. Phase 7 skipped.
+  If B: set `storybookSkipped: true` in config.json. Append `'phase-6'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`. Emit DONE_WITH_CONCERNS and jump to Phase 8. Phase 7 skipped.
+  If C: set `storybookSkipped: true` in config.json. Append `'phase-6'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`. Emit DONE_WITH_CONCERNS and jump to Phase 8. Phase 7 skipped.
 
   **If user chose A (generate React components for a non-React framework):**
   The headless library selected in Phase 1 Q3-1 may be framework-specific (e.g., Melt UI for Svelte,

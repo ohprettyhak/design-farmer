@@ -84,7 +84,9 @@ If user chose **A**:
 
 5. **Persist** the reconstructed `DesignFarmerConfig` (including derived fields) to `{systemPath}/.design-farmer/config.json`. Also copy to `config.backup.json` in the same directory.
 
-6. **Validate critical fields** — after persisting config, verify that `designMaturity` is present. If missing, ask via AskUserQuestion:
+6. **Mark skipped phases** — set `skippedPhases: ["phase-1", "phase-2", "phase-3", "phase-4", "phase-4b", "phase-4.5"]` in config.json so Phase 1 re-entry detection knows these phases were intentionally bypassed. Update `config.backup.json`.
+
+7. **Validate critical fields** — after persisting config, verify that `designMaturity` is present. If missing, ask via AskUserQuestion:
 
    > Your DESIGN.md doesn't specify design maturity. This determines the implementation approach.
    >
@@ -95,9 +97,17 @@ If user chose **A**:
 
    Set `designMaturity` and `maturityScore` (0 for greenfield, 5 for emerging, 8 for mature) from user's choice, then persist to both `config.json` and `config.backup.json`.
 
-7. **Run a quick architecture scan** — read the existing `{systemPath}/` directory structure to determine the styling strategy (Tailwind/CSS Modules/vanilla CSS) and token directory layout. This substitutes for Phase 4 when jumping directly to Phase 5.
+8. **Run a quick architecture scan** — read the existing `{systemPath}/` directory structure to detect:
+   - **Styling approach**: Check for `tailwind.config.*` (Tailwind), `*.module.css` / `*.module.scss` (CSS Modules), or plain CSS/SCSS files (vanilla CSS)
+   - **Token directory layout**: Look for `tokens/`, `themes/`, `styles/`, or `src/tokens/` directories
+   - **Component directory structure**: Check `src/primitives/`, `src/components/`, or similar
+   - **Build tooling**: Detect Style Dictionary config (`config.json` with `$value` tokens), PostCSS, or other build tools
 
-8. **Jump directly to Phase 5.** Do not run Phases 1–4.
+   Populate the following config fields from scan results: `stylingApproach` (if not already set), and verify `systemPath` directory exists.
+
+   This scan substitutes for Phase 4 output — downstream phases (5–11) use these fields the same way they would if Phase 4 had run normally.
+
+9. **Jump directly to Phase 5.** Do not run Phases 1–4. Phase 5 will run its own Config Validation Protocol at entry to verify all required fields are present.
 
 If user chose **B**:
 - **If DRAFT**: Load the draft's `## Config` YAML to reconstruct `DesignFarmerConfig`. If `designMaturity` is missing from the parsed config, ask via AskUserQuestion:
@@ -135,5 +145,7 @@ If an existing design system is detected (but no DESIGN.md), report the pre-flig
 If user chose **A**: continue to Phase 1 (Discovery Interview). Record `strategy: "extend"` in config.json.
 If user chose **B**: continue to Phase 1 (Discovery Interview). Record `strategy: "migrate"` in config.json.
 If user chose **C**: continue to Phase 1 (Discovery Interview). Record `strategy: "greenfield"` in config.json.
+
+Before emitting status, append `'phase-0'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
 
 **Status: DONE** — Pre-flight complete. Proceed to Phase 1: Discovery Interview.

@@ -183,8 +183,11 @@ After completing the analysis report, update `DesignFarmerConfig` with the matur
 # Update {systemPath}/.design-farmer/config.json with:
 # "designMaturity": "greenfield" | "emerging" | "mature"
 # "maturityScore": <N>   (0–10 from the scoring criteria above)
+# Also update config.backup.json with the same values.
 ```
 
 All downstream phases branch on `DesignFarmerConfig.designMaturity` — this update is required before proceeding.
+
+Before emitting status, append `'phase-2'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
 
 **Status: DONE** — Repository analysis complete. Design maturity assessed and written to config. Proceed to Phase 3: Design Pattern Extraction.

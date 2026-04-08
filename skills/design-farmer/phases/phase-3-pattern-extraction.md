@@ -11,7 +11,9 @@ GREENFIELD (score 0–2): No significant patterns to extract. Skip sections 3.1�
   → Output uses the same structure as extracted values — downstream phases treat them identically.
 
 EMERGING (score 3–5): Partial extraction. Run sections 3.1–3.7 but fill gaps with generated defaults.
-  → Mark extracted values as [EXTRACTED] and generated defaults as [GENERATED] in the output.
+  → Mark extracted values as `[EXTRACTED]` and generated defaults as `[GENERATED]` in the output.
+  → Marker format: append the tag as an inline suffix to each value, e.g., `oklch(0.55 0.20 250) [EXTRACTED]` or `Inter [GENERATED]`.
+  → These markers appear in the Phase 3 output draft and are consumed by Phase 4 to decide which patterns to preserve vs. replace.
 
 MATURE (score 6+): Full extraction. Run sections 3.1–3.7 as written.
   → Extraction is authoritative; do not substitute defaults.
@@ -174,5 +176,7 @@ If `DESIGN.md` does not already exist, generate a minimal draft at `{systemPath}
 - `## 5. Layout Principles` with extracted/default spacing scale
 
 Do NOT overwrite an existing DESIGN.md. Phase 4.5 merges this draft into the final version.
+
+Before emitting status, append `'phase-3'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
 
 **Status: DONE** — Pattern extraction complete. Proceed to Phase 3.5: Visual Preview.

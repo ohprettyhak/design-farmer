@@ -2,6 +2,8 @@
 
 ## 5.0 Platform Branch
 
+**Config Validation:** Before proceeding, verify that `systemPath`, `designMaturity`, `componentScope`, and `themeStrategy` are present in `{systemPath}/.design-farmer/config.json`. If any required field is missing, emit **Status: BLOCKED** with recovery instructions: re-run the affected phase or manually correct the config.
+
 Read `targetPlatforms` from `{systemPath}/.design-farmer/config.json` before proceeding.
 
 ```
