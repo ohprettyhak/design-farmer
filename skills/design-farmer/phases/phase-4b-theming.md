@@ -303,7 +303,15 @@ module.exports = { darkMode: ['selector', '[data-theme="dark"]'] }
 - B) Switch to light-dark theming instead
 - C) Switch to light-only theming
 
-Multi-brand requires a ThemeProvider that manages two dimensions: brand identity (which color palette) and mode (light/dark). Generate the following:
+**→ STOP — wait for user response before continuing.**
+
+If user chose A: collect brand palette data, then continue to multi-brand ThemeProvider generation below.
+If user chose B: update `themeStrategy` to `'light-dark'` in config.json and config.backup.json, then skip this section and continue from **## 4b.1 Theme Setup** (light-dark theming applies).
+If user chose C: update `themeStrategy` to `'light-only'` in config.json and config.backup.json, then skip this section and continue from **## 4b.5 Light-Only Token Overrides** (light-only theming applies).
+
+---
+
+If user chose A (define brand palettes): Multi-brand requires a ThemeProvider that manages two dimensions: brand identity (which color palette) and mode (light/dark). Generate the following:
 
 ```tsx
 // components/brand-provider.tsx

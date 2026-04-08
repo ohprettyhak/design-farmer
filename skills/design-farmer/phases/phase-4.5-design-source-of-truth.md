@@ -2,7 +2,7 @@
 
 Generate a `DESIGN.md` file at `{systemPath}/DESIGN.md` so the design artifact always lives beside the generated design-system work it describes.
 
-**Pre-flight validation**: Before generating DESIGN.md, verify that `completedPhases` in config.json includes both `'phase-4'` AND `'phase-4b'`. If `'phase-4b'` is missing, emit **BLOCKED** — "Phase 4b (Theme & Styling) must complete before Phase 4.5 can generate DESIGN.md. Please re-run Phase 4b first."
+**Pre-flight validation**: Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then verify that `completedPhases` includes both `'phase-4'` AND `'phase-4b'`. If `'phase-4b'` is missing, emit **BLOCKED** — "Phase 4b (Theme & Styling) must complete before Phase 4.5 can generate DESIGN.md. Please re-run Phase 4b first."
 
 ## 4.5.1 DESIGN.md Structure
 

@@ -441,7 +441,7 @@ If all 5 reviewer delegation passes fail (timeout, tool unavailable, or all retu
    > - A) Show me the basic check results — I'll investigate manually
    > - B) Proceed anyway — skip to Phase 8.5 (visual QA)
    > - C) Re-run reviewers — try again with fresh context
-5. If user chose A or B: proceed to Phase 8.5 (independent verification method). If user chose C: re-run reviewer delegation from Step 1 (do NOT proceed to Phase 8.5 until reviewers complete or fail again).
+5. If user chose A or B: ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-8'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`. Proceed to Phase 8.5 (independent verification method). If user chose C: re-run reviewer delegation from Step 1 (do NOT proceed to Phase 8.5 until reviewers complete or fail again).
 
 ---
 
@@ -469,7 +469,7 @@ Hard cap: 30 fixes maximum.
 
 4. If zero CRITICAL findings across all reviewers:
    -> Status: DONE
-   -> Proceed to Phase 9 (Documentation)
+   -> Proceed to Phase 8.5 (Design Review — Live Visual QA)
 
 5. If any CRITICAL findings:
    -> Fix CRITICAL issues (one at a time, atomic commits)

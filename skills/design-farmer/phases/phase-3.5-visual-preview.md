@@ -18,9 +18,9 @@ Read `designMaturity` from `{systemPath}/.design-farmer/config.json`.
 
 | Maturity | Behavior | Recommendation |
 |----------|----------|----------------|
-| GREENFIELD (0–2) | Mandatory — proceed to 3.5.1 | Always generate |
-| EMERGING (3–5) | Ask user | Recommend A (generate) |
-| MATURE (6+) | Ask user | Recommend B (skip) |
+| GREENFIELD | Mandatory — proceed to 3.5.1 | Always generate |
+| EMERGING | Ask user | Recommend A (generate) |
+| MATURE | Ask user | Recommend B (skip) |
 
 For EMERGING/MATURE, ask via AskUserQuestion:
 
@@ -161,7 +161,7 @@ If user chose E:
 2. Read `{systemPath}/.design-farmer/config.json` if it exists
 3. Set `resetFromPhase: "3.5"` in config (signals Phase 1 re-entry detection)
 4. Reset completedPhases to `["phase-0"]` (Phase 0 pre-flight is still valid)
-5. Clear design-specific fields: `brandColor`, `colorDirection`, `customComponents`, `designMaturity`, `maturityScore`, `generatePreview`, `previewOutcome`
+5. Clear design-specific fields: `brandColor`, `colorDirection`, `customComponents`, `designMaturity`, `maturityScore`, `generatePreview`, `previewOutcome`, `skippedPhases`
 6. Preserve project-specific fields: `packageManager`, `framework`, `isMonorepo`, `systemPath`, `designSystemPackage`, `componentScope`, `headlessLibrary`, `themeStrategy`, `themeLibrary`, `accessibilityLevel`, `targetPlatforms`, `vision`, `painPoint`, `productName`, `designSystemDir`
 7. Persist the reset config back to `{systemPath}/.design-farmer/config.json` (and config.backup.json)
 8. Log: "Phase 3.5: User chose to start over. Resetting design extraction state. Project structure settings preserved."

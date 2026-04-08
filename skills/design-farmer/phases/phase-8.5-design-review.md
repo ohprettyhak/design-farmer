@@ -207,7 +207,7 @@ Base: 0%
 
 Thresholds:
   > 20%: STOP. Ask user whether to continue via AskUserQuestion.
-  > 30%: Hard stop. Emit **Status: DONE_WITH_CONCERNS** — risk threshold exceeded at {N}%. Report remaining findings as TODO items in the completion report.
+  > 30%: Hard stop. Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-8.5'` to `completedPhases` in `{systemPath}/.design-farmer/config.json` (the phase ran but hit risk threshold). Set `visualQAMode: 'auto'` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`. Emit **Status: DONE_WITH_CONCERNS** — risk threshold exceeded at {N}%. Report remaining findings as TODO items in the completion report.
   Maximum: 30 fixes per review session.
 ```
 
