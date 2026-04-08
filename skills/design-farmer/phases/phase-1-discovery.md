@@ -441,7 +441,7 @@ mkdir -p {systemPath}/.design-farmer
 # Write DesignFarmerConfig as JSON to {systemPath}/.design-farmer/config.json
 # Also copy to config.backup.json in the same directory
 # Set createdAt to the current ISO 8601 timestamp
-# Initialize completedPhases as ["phase-0", "phase-1"]
+# Initialize completedPhases as ["phase-0"]
 ```
 
 Before emitting status, ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-1'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.

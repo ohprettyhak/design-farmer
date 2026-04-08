@@ -31,7 +31,7 @@ config_path="{directory_containing_DESIGN.md}/.design-farmer/config.json"
 # Read completedPhases, createdAt from config.json if it exists
 ```
 
-**Draft guard**: Read lines 1–5 (inclusive) of DESIGN.md (if the file has fewer than 5 lines, treat it as finalized — a DRAFT marker cannot exist in fewer lines). If the file contains `**DRAFT**` in its header, it is an incomplete Phase 3 draft — do NOT offer Option A. Only offer B (continue from where you left off) and C (start from scratch).
+**Draft guard**: Read the first 5 lines of DESIGN.md (or all lines if the file has fewer than 5). If any of those lines contain `**DRAFT**`, it is an incomplete Phase 3 draft — do NOT offer Option A. Only offer B (continue from where you left off) and C (start from scratch).
 
 If DESIGN.md exists but `config.json` does NOT exist at `{directory_containing_DESIGN.md}/.design-farmer/config.json`, treat as a partial re-entry — the design document exists but pipeline state was lost. Offer:
 - A) Reconstruct config from DESIGN.md and jump to Phase 5
