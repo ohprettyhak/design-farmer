@@ -67,19 +67,19 @@ choice (from Question 3-1):
 ## 6.0.1 Path Selection
 
 ```
-If Design Maturity = GREENFIELD (score 0-2):
+If designMaturity = 'greenfield':
   -> Use the approved preview and DESIGN.md as the sizing/styling reference
   -> If headless library chosen: wrap headless primitives with styled layer
   -> If no library: build custom primitives from scratch
   -> Every sizing decision (height, padding, font-size, radius) comes from the approved design reference in DESIGN.md
 
-If Design Maturity = EMERGING (score 3-5):
+If designMaturity = 'emerging':
   -> Analyze existing component patterns first
   -> Identify inconsistencies vs. the approved design reference in DESIGN.md
   -> Standardize existing patterns, fill gaps with DESIGN.md defaults
   -> Migrate to headless library gradually if chosen
 
-If Design Maturity = MATURE (score 6+):
+If designMaturity = 'mature':
   -> Deep analysis of existing component API patterns
   -> Preserve existing props interface where possible
   -> Add missing accessibility, token integration, and theme support
@@ -470,6 +470,6 @@ Only implement components within the user's chosen scope from Phase 1 Question 3
 - **full**: All 20 components in priority order
 - **custom**: User-specified list from Phase 1 discovery
 
-Before emitting status, append `'phase-6'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
+Before emitting status, ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-6'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
 
 **Status: DONE** — All components in scope implemented, tested, and accessible. Proceed to Phase 7: Storybook Integration.

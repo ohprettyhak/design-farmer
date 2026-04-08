@@ -56,7 +56,7 @@ If `false`: skip 3.5.1. Instead, present a **text summary** of the extracted des
 
 **→ STOP — wait for user response.**
 
-If user approved the text summary (chose A above): `previewOutcome` is already set to `'skipped'` (line 39 above). Append `'phase-3.5'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`. Then proceed to Phase 4 (Architecture Design). No further approval gate is needed.
+If user approved the text summary (chose A above): `previewOutcome` is already set to `'skipped'` (line 39 above). Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-3.5'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`. Then proceed to Phase 4 (Architecture Design). No further approval gate is needed.
 If user chose B: ask follow-up questions, adjust values, re-present summary.
 If user chose C: follow Option E reset logic below (return to Phase 1).
 This is an intentional skip, not a failure — do NOT use the error-state Fallback Path (3.5.3).
@@ -144,10 +144,11 @@ Via AskUserQuestion, ask:
 
 **STOP. Do NOT proceed until user responds.**
 
-If user chose A: Append `'phase-3.5'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`. Proceed to Phase 4 (Architecture Design).
+If user chose A: Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-3.5'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`. Proceed to Phase 4 (Architecture Design).
 
 If user chose B, C, or D:
 - Ask follow-up questions ONE AT A TIME to understand desired changes
+- After applying changes, update the Phase 3 draft DESIGN.md at `{systemPath}/DESIGN.md` with the adjusted values. Replace the corresponding sections (Color Palette, Typography, etc.) with the user-approved values. This ensures Phase 4.5 receives an up-to-date draft.
 - Regenerate the preview with adjustments
 - Loop back to the review gate
 
@@ -167,7 +168,12 @@ If user chose E:
 
 Note: Phase 1 will re-run from Q0. Preserved values serve as defaults — the agent should present them as pre-filled answers.
 
-## 3.5.3 Fallback Path
+**Control flow after 3.5.1:**
+- If preview generation succeeded → proceed to 3.5.2 (Preview Review Gate)
+- If preview generation failed → proceed to 3.5.3 (Fallback Path)
+- If user chose to skip preview at gate 3.5.0 → the approval flow in 3.5.0 handles continuation directly; do NOT enter 3.5.3
+
+## 3.5.3 Fallback Path (generation failure only — do NOT enter from user-initiated skips)
 
 **This fallback is ONLY for generation failures.** If `previewOutcome = 'skipped'` (user chose B at gate 3.5.0), do NOT enter this section — the user already approved via text summary.
 
@@ -178,6 +184,6 @@ If preview generation fails (e.g., no color palette extracted, tooling error):
 4. Ask user to confirm the text-based direction before proceeding
 5. Continue to Phase 4 with user's textual approval
 
-Before emitting status, append `'phase-3.5'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
+Before emitting status, ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-3.5'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
 
 **Status: DONE** — Visual preview reviewed and approved. Proceed to Phase 4: Architecture Design.

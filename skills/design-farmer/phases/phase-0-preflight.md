@@ -97,6 +97,8 @@ If user chose **A**:
 
    Set `designMaturity` and `maturityScore` (0 for greenfield, 5 for emerging, 8 for mature) from user's choice, then persist to both `config.json` and `config.backup.json`.
 
+   Note: This is a preliminary user-estimated maturity. Phase 2 provides a formal maturity assessment that will override this value.
+
 8. **Run a quick architecture scan** — read the existing `{systemPath}/` directory structure to detect:
    - **Styling approach**: Check for `tailwind.config.*` (Tailwind), `*.module.css` / `*.module.scss` (CSS Modules), or plain CSS/SCSS files (vanilla CSS)
    - **Token directory layout**: Look for `tokens/`, `themes/`, `styles/`, or `src/tokens/` directories
@@ -120,6 +122,8 @@ If user chose **B**:
   > - C) Mature — comprehensive design system exists, extract and document
 
   Set `designMaturity` and `maturityScore` (0 for greenfield, 5 for emerging, 8 for mature) from user's choice.
+
+  Note: This is a preliminary user-estimated maturity. Phase 2 provides a formal maturity assessment that will override this value.
 
   Run **Config Validation Protocol** (see `operational-notes.md`) on the reconstructed config before jumping to Phase 3.5. Verify required fields (`designMaturity`, `componentScope`, `themeStrategy`, `systemPath`) are present and valid. If validation fails, emit **Status: BLOCKED** with recovery options: re-run Phase 1 or manually correct the config.
 
@@ -146,6 +150,6 @@ If user chose **A**: continue to Phase 1 (Discovery Interview). Record `strategy
 If user chose **B**: continue to Phase 1 (Discovery Interview). Record `strategy: "migrate"` in config.json.
 If user chose **C**: continue to Phase 1 (Discovery Interview). Record `strategy: "greenfield"` in config.json.
 
-Before emitting status, append `'phase-0'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
+Before emitting status, ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-0'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
 
 **Status: DONE** — Pre-flight complete. Proceed to Phase 1: Discovery Interview.

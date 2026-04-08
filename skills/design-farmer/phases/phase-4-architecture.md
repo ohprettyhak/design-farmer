@@ -371,6 +371,6 @@ This prevents:
 
 **→ Continue in `phases/phase-4b-theming.md`** — Theme System (4b.1), Theme Provider (4b.2), Scoped Theming (4b.3), Dark Mode Checklist (4b.4), and Styling Approach Decision (4b.5).
 
-Before emitting status, append `'phase-4'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
+Before emitting status, ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-4'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
 
 **Status: DONE** — Architecture design complete. Token hierarchy, directory structure, build pipeline, and CSS layer strategy defined. Proceed to Phase 4b: Theme & Styling (phase-4b-theming.md).

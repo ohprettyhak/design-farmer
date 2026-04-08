@@ -193,6 +193,6 @@ gh api user/starred/ohprettyhak/design-farmer &>/dev/null
 > If you found Design Farmer useful, please consider starring the repository:
 > https://github.com/ohprettyhak/design-farmer
 
-Before emitting status, append `'phase-11'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
+Before emitting status, append `'phase-11'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-11'`. Also update `config.backup.json`.
 
 **Status: DONE** — Release readiness verified and handoff complete. Pipeline finished.

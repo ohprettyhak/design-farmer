@@ -21,7 +21,8 @@ Via AskUserQuestion, ask:
 
 If user chose C (skip Storybook):
 1. Set `storybookSkipped: true` in `{systemPath}/.design-farmer/config.json` (signals Phase 8 to skip Storybook-related review criteria). Also update `config.backup.json`.
-2. Emit:
+2. Do NOT append `'phase-7'` to `completedPhases` — the phase was skipped by user choice, consistent with Phase 10 (App Integration) skip behavior.
+3. Emit:
 
 **Status: DONE** — User chose to skip Storybook. Proceeding to Phase 8: Multi-Reviewer Verification with code-based tests only.
 
@@ -520,4 +521,4 @@ Common Storybook errors:
 
 **Status: DONE** (Fix Loop: passed on attempt {N}/5) — Storybook configured with stories for all components, accessibility addon, and dark mode support. Proceed to Phase 8: Multi-Reviewer Verification.
 
-Before emitting status, append `'phase-7'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
+Before emitting status, ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-7'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.

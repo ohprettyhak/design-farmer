@@ -5,21 +5,21 @@
 Read `designMaturity` from `DesignFarmerConfig` (set by Phase 2). If unavailable, read from `{systemPath}/.design-farmer/config.json`.
 
 ```
-GREENFIELD (score 0–2): No significant patterns to extract. Skip sections 3.1–3.7 extraction loops.
+GREENFIELD (designMaturity = 'greenfield'): No significant patterns to extract. Skip sections 3.1–3.7 extraction loops.
   → Generate defaults from the brand color (DesignFarmerConfig.brandColor).
   → Apply typography and spacing defaults defined below.
   → Output uses the same structure as extracted values — downstream phases treat them identically.
 
-EMERGING (score 3–5): Partial extraction. Run sections 3.1–3.7 but fill gaps with generated defaults.
+EMERGING (designMaturity = 'emerging'): Partial extraction. Run sections 3.1–3.7 but fill gaps with generated defaults.
   → Mark extracted values as `[EXTRACTED]` and generated defaults as `[GENERATED]` in the output.
   → Marker format: append the tag as an inline suffix to each value, e.g., `oklch(0.55 0.20 250) [EXTRACTED]` or `Inter [GENERATED]`.
   → These markers appear in the Phase 3 output draft and are consumed by Phase 4 to decide which patterns to preserve vs. replace.
 
-MATURE (score 6+): Full extraction. Run sections 3.1–3.7 as written.
+MATURE (designMaturity = 'mature'): Full extraction. Run sections 3.1–3.7 as written.
   → Extraction is authoritative; do not substitute defaults.
 ```
 
-### Greenfield Defaults (apply when designMaturity = GREENFIELD)
+### Greenfield Defaults (apply when designMaturity = 'greenfield')
 
 **Color**: Generate 11-step OKLCH palette from `DesignFarmerConfig.brandColor`.
 If no brand color was provided (user chose neutral-first in Q2), start from `oklch(0.55 0.22 264)` (indigo).
@@ -177,6 +177,6 @@ If `DESIGN.md` does not already exist, generate a minimal draft at `{systemPath}
 
 Do NOT overwrite an existing DESIGN.md. Phase 4.5 merges this draft into the final version.
 
-Before emitting status, append `'phase-3'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
+Before emitting status, append `'phase-3'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-3'`. Also update `config.backup.json`.
 
 **Status: DONE** — Pattern extraction complete. Proceed to Phase 3.5: Visual Preview.

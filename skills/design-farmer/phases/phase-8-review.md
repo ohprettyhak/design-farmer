@@ -434,7 +434,7 @@ If all 5 reviewer delegation passes fail (timeout, tool unavailable, or all retu
    - Verify token files exist: primitive, semantic, and component token files are present
    - Verify CSS custom properties are defined in light and dark theme files
    - Check that component directories contain test files
-3. If basic checks pass: emit **DONE_WITH_CONCERNS** with results. Proceed to Phase 8.5.
+3. If basic checks pass: emit **DONE_WITH_CONCERNS** with results. Also append `'phase-8'` to `completedPhases` in `{systemPath}/.design-farmer/config.json` (the phase ran, just in degraded mode). Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined). Also update `config.backup.json`. Proceed to Phase 8.5.
 4. If basic checks fail: emit **BLOCKED** — "Reviewers failed AND basic checks failed. Manual intervention required." Ask via AskUserQuestion:
    > All automated reviewers failed, and basic verification checks also found issues.
    > Options:
@@ -508,8 +508,8 @@ Hard cap: 30 fixes maximum.
 ### Risk Level: {percentage}%
 ```
 
-After review completes, write `lastReviewScore` (0–10) and `lastReviewDate` (ISO 8601) to config.json. Also update config.backup.json.
+After review completes, write `lastReviewScore` (0–10) and `lastReviewDate` (ISO 8601 with Z timezone, e.g., `2026-04-08T12:34:56Z`) to config.json. Also update config.backup.json.
 
-Before emitting status, append `'phase-8'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
+Before emitting status, append `'phase-8'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-8'`. Also update `config.backup.json`.
 
 **Status: DONE** — Multi-reviewer verification complete. All CRITICAL findings resolved. Proceed to Phase 8.5: Design Review (Live Visual QA).

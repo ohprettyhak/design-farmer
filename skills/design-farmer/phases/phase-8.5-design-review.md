@@ -45,7 +45,7 @@ sleep 5
 
 If no dev server is available (e.g., library-only package without a preview app),
 use Storybook stories as the evaluation target. If neither exists, skip this phase
-and note it in the completion report. Do NOT append `'phase-8.5'` to `completedPhases`
+and note it in the completion report. Set `visualQASkipped: true` and `visualQAMode: 'skipped'` in `{systemPath}/.design-farmer/config.json` (signals downstream phases that visual QA was unavailable). Also update `config.backup.json`. Do NOT append `'phase-8.5'` to `completedPhases`
 — the phase did not run.
 
 **No project browser tooling fallback:**
@@ -56,7 +56,7 @@ Prompt user: "No browser tooling detected. Please provide screenshots of each co
 in both light and dark themes for visual QA review."
 ```
 
-**Status: DONE_WITH_CONCERNS** — Visual QA deferred to manual verification. Checklist saved to `{systemPath}/docs/visual-qa-checklist.md`. Append `'phase-8.5'` to `completedPhases` in `{systemPath}/.design-farmer/config.json` (the phase ran in degraded mode). Also update `config.backup.json`. Proceed to Phase 9.
+**Status: DONE_WITH_CONCERNS** — Visual QA deferred to manual verification. Checklist saved to `{systemPath}/docs/visual-qa-checklist.md`. Append `'phase-8.5'` to `completedPhases` in `{systemPath}/.design-farmer/config.json` (the phase ran in degraded mode). Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-8.5'`. Set `visualQAMode: 'manual'` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`. Proceed to Phase 9.
 
 Note: Phase 9 completion report should reflect that automated visual QA was not performed.
 
@@ -166,7 +166,9 @@ Evidence: {screenshot before fix}
 
 Findings are appended immediately upon discovery — never batch.
 
-## 8.5.5 Fix Loop
+## 8.5.5 Finding Fix Protocol
+
+Note: This is a sequential finding-fix process with risk thresholds, distinct from the Fix Loop Protocol in `operational-notes.md` (which runs typecheck/lint/build/test verification commands).
 
 For each finding, starting from HIGH impact down to MEDIUM:
 
@@ -236,6 +238,6 @@ Via AskUserQuestion, ask:
 After fixing, re-score the affected categories. Include before/after grades in
 the completion report.
 
-**Status: DONE** — Live visual QA complete. All HIGH findings resolved. Proceed to Phase 9: Documentation & Completion.
+**Status: DONE** — Live visual QA complete. All HIGH findings resolved. Set `visualQAMode: 'auto'` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`. Proceed to Phase 9: Documentation & Completion.
 
-Before emitting status, append `'phase-8.5'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
+Before emitting status, append `'phase-8.5'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-8.5'`. Also update `config.backup.json`.

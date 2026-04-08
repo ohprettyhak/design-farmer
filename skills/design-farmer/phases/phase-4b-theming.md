@@ -297,6 +297,12 @@ module.exports = { darkMode: ['selector', '[data-theme="dark"]'] }
 
 **Only applies when `themeStrategy = 'multi-brand'`.**
 
+**Pre-validation**: If `themeStrategy = 'multi-brand'`, verify that `DesignFarmerConfig` contains brand palette data (at least two brand definitions with distinct color palettes). If no brand data exists, ask via AskUserQuestion:
+"You selected multi-brand theming, but no brand palettes were defined. How would you like to proceed?"
+- A) Define brand palettes now (collect brand names and colors)
+- B) Switch to light-dark theming instead
+- C) Switch to light-only theming
+
 Multi-brand requires a ThemeProvider that manages two dimensions: brand identity (which color palette) and mode (light/dark). Generate the following:
 
 ```tsx
@@ -571,7 +577,7 @@ If no styling framework detected:
   -> Consider recommending Tailwind v4 for utility-first workflow
 ```
 
-Before emitting status, append `'phase-4b'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
+Before emitting status, ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-4b'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
 
 If themeStrategy = 'light-only':
 **Status: DONE** — Light-only theme system and styling approach defined. ThemeProvider, dark mode, and scoped theming skipped per configuration. Proceed to Phase 4.5: Design Source of Truth (DESIGN.md).

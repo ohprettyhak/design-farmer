@@ -212,6 +212,6 @@ Max attempts: 5
 
 Do NOT proceed to Phase 6 until typecheck, lint, and tests pass. If the loop exhausts all attempts, emit BLOCKED and ask the user.
 
-Before emitting status, append `'phase-5'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
+Before emitting status, ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-5'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
 
 **Status: DONE** (Fix Loop: passed on attempt {N}/5) — Token system implemented with primitive, semantic, and component tokens. Tests passing. Proceed to Phase 6: Component Implementation.

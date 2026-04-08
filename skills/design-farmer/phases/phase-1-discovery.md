@@ -8,7 +8,7 @@ If the user expresses impatience after 3+ questions, offer to use sensible defau
 
 ### Re-entry Detection
 
-Before asking Q0, check if `{systemPath}/.design-farmer/config.json` exists and either `completedPhases` includes `"phase-3.5"` or `resetFromPhase` equals `"3.5"`. If either condition is true, this is a restart from Phase 3.5 Option E. After loading preserved values as defaults, clear the `resetFromPhase` field from config to prevent false positives on subsequent runs.
+Before asking Q0, check if `{systemPath}/.design-farmer/config.json` exists and `completedPhases` includes `"phase-3.5"`. If true, this is a restart from Phase 3.5 Option E.
 
 Also check if `skippedPhases` exists in config.json — this indicates Phases 1–4 were intentionally bypassed via Phase 0→5 shortcut. If `skippedPhases` is present and includes `"phase-1"`, this is a re-entry from a shortcut path. Log the skipped phases and proceed with the interview (the user chose to re-run Phase 1 after the shortcut).
 
@@ -407,6 +407,8 @@ interface DesignFarmerConfig {
   previewOutcome?: 'generated' | 'skipped' | 'failed'; // Phase 3.5 internal state — distinguishes generation result from intentional skip
   storybookSkipped?: boolean; // true when Phase 6 non-React skip also skips Phase 7 (consumed by Phase 8)
   integrationStatus?: string; // "completed" | "skipped" — set by Phase 10
+  visualQASkipped?: boolean; // Phase 8.5 skipped due to no dev server or Storybook
+  visualQAMode?: 'auto' | 'manual' | 'skipped'; // Phase 8.5 execution mode
 }
 
 // derivation rules:
@@ -442,6 +444,6 @@ mkdir -p {systemPath}/.design-farmer
 # Initialize completedPhases as ["phase-0", "phase-1"]
 ```
 
-Before emitting status, append `'phase-1'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
+Before emitting status, ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-1'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
 
 **Status: DONE** — Discovery interview complete. `DesignFarmerConfig` built and persisted. Proceed to Phase 2: Repository Analysis.
