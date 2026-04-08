@@ -92,8 +92,10 @@ Use that version throughout — do NOT assume any specific major version number.
      d. Run init from inside the new package: `cd apps/storybook && {packageManager} dlx storybook@latest init`
      e. In `apps/storybook/.storybook/main.ts`, set the `stories` glob to reach the design system:
         `stories: ['../../packages/{designSystemDir}/src/**/*.stories.@(ts|tsx)']`
-     f. Import the design system's tokens/CSS from the workspace package in `preview.tsx`:
-        `import '{designSystemPackage}/src/tokens/index.css'`
+     f. Import the design system's global CSS entry from the workspace package in `preview.tsx`:
+        `import '{designSystemPackage}/src/styles/index.css'`
+        (If the project uses a non-Tailwind token pipeline, import the actual generated
+        CSS entry discovered in Phase 4.3.)
    - **Tailwind v4 monorepo warning:** If the design system uses Tailwind v4
      (`@import "tailwindcss"` in its CSS entry), Tailwind's automatic source detection
      may not scan the design system's component source files when Storybook runs from
