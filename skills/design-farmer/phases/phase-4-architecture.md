@@ -289,11 +289,12 @@ explicitly set the base path for source detection:
 
 ```css
 /* Set base path relative to this CSS file */
-@import "tailwindcss" source("../src");
+/* From src/styles/, ".." resolves to src/ — the component source root */
+@import "tailwindcss" source("..");
 
 /* Or disable auto-detection and register paths explicitly */
 @import "tailwindcss" source(none);
-@source "../src";
+@source "..";
 ```
 
 For full details and the decision matrix, see:

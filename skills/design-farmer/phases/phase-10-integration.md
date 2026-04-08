@@ -217,11 +217,12 @@ Phase 4 (Architecture), Phase 7 (Storybook), and this phase.
 /* packages/{designSystemDir}/src/styles/index.css */
 
 /* Option A: Keep auto-detection, set base path relative to this CSS file */
-@import "tailwindcss" source("../src");
+/* From src/styles/, ".." resolves to src/ — the component source root */
+@import "tailwindcss" source("..");
 
 /* Option B: Disable auto-detection, register paths explicitly */
 @import "tailwindcss" source(none);
-@source "../src";
+@source "..";
 @source "../../other-package/src";
 ```
 

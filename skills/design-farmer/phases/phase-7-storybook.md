@@ -190,13 +190,13 @@ directives to explicitly register the component source paths:
 
 ```css
 /* Option A: Keep auto-detection, set base path */
-/* source() sets the base directory relative to this CSS file */
-@import "tailwindcss" source("../src");
+/* From src/styles/, ".." resolves to src/ — the component source root */
+@import "tailwindcss" source("..");
 
 /* Option B: Disable auto-detection, register paths explicitly */
 /* Use this when you need full control over which directories Tailwind scans */
 @import "tailwindcss" source(none);
-@source "../src";
+@source "..";
 @source "../../other-package/src";
 ```
 
@@ -205,7 +205,7 @@ directives to explicitly register the component source paths:
 | Scenario | Directive | Why |
 |----------|-----------|-----|
 | Design system CSS in `src/styles/`, components in `src/` | `@import "tailwindcss"` (default) | Auto-detection covers same directory and children |
-| Storybook at `apps/storybook/`, design system at `packages/ds/` | `@import "tailwindcss" source("../src")` | Ensures component sources are scanned regardless of where CSS is imported from |
+| Storybook at `apps/storybook/`, design system at `packages/ds/` | `@import "tailwindcss" source("..")` | From `src/styles/`, `".."` resolves to `src/` — the component source root |
 | Multiple packages use Tailwind utilities | `source(none)` + explicit `@source` per path | Full control; prevents scanning unintended directories |
 | Storybook preview imports design system CSS via workspace | `@source` in the design system CSS, NOT in preview.tsx | `@source` must be in the same file as `@import "tailwindcss"` |
 
