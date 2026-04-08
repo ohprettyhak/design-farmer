@@ -64,6 +64,7 @@ If user chose **A**:
 1. **Read the `## Config` YAML block** from DESIGN.md (if present). If the `## Config` section is missing or malformed, fall back to preflight scan (steps 1–5) plus user prompts for critical fields — do not block. Parse it to reconstruct `DesignFarmerConfig`:
    - `packageManager`, `framework`, `isMonorepo`, `systemPath`, `designSystemPackage`
    - `componentScope`, `headlessLibrary`, `themeStrategy`, `themeLibrary`, `accessibilityLevel`
+   - `radiusTone`
    - `targetPlatforms`, `designMaturity`, `maturityScore`
 
    **Conditional fields** (may be absent depending on user choices):

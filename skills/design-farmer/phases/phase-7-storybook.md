@@ -271,7 +271,7 @@ export default preview;
 
 **Critical rules for story files:**
 1. Always use the EXACT prop values defined in the component's TypeScript interface
-   - ✅ `size="small"` if the component defines `"small" | "medium" | "large"`
+   - ✅ `size="x-small"` if the component defines `"x-small" | "small" | "medium" | "large"`
    - ❌ `size="sm"` — this will fail TypeScript and show errors in the IDE
 2. Import types from the design system package: `import type { Meta, StoryObj } from "@storybook/react"`
 3. Always define `meta.component` so autodocs generates the props table
@@ -312,8 +312,11 @@ export const AllVariants: Story = {
 
 **Dimension 2 — Size Axis (CRITICAL):**
 Every size option gets a dedicated story, PLUS an AllSizes comparison story.
+Use the same size axis for all form controls that expose `size` (Button, Input, Select):
+`x-small | small | medium | large`.
 
 ```tsx
+export const XSmall: Story = { args: { size: 'x-small', children: 'X-Small' } }
 export const Small: Story = { args: { size: 'small', children: 'Small' } }
 export const Medium: Story = { args: { size: 'medium', children: 'Medium' } }
 export const Large: Story = { args: { size: 'large', children: 'Large' } }
@@ -321,7 +324,7 @@ export const Large: Story = { args: { size: 'large', children: 'Large' } }
 export const AllSizes: Story = {
   render: () => (
     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-      {['small', 'medium', 'large'].map(s => (
+      {['x-small', 'small', 'medium', 'large'].map(s => (
         <Button key={s} size={s}>{s}</Button>
       ))}
     </div>
