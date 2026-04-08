@@ -15,7 +15,10 @@ access just to probe availability.
 
 ```bash
 # Prefer browser tooling already declared in the project, including nested workspace packages
-if find . -path '*/node_modules' -prune -o -name 'playwright.config.*' -print -quit | grep -q . || grep -R -l '"@playwright/test"\|"playwright"' . --include 'package.json' --exclude-dir node_modules >/dev/null 2>&1; then
+# Use portable file existence checks (avoid GNU find -prune for cross-platform compatibility)
+if ls playwright.config.* 2>/dev/null | grep -q .; then
+  echo "VISUAL_TOOL=playwright"
+elif grep -rl '"@playwright/test"\|"playwright"' --include='package.json' --exclude-dir=node_modules . 2>/dev/null | grep -q .; then
   echo "VISUAL_TOOL=playwright"
 else
   echo "VISUAL_TOOL=none"
@@ -30,7 +33,10 @@ sleep 5
 **Option A — Project-declared browser tooling (preferred if already configured):**
 - Use the repository's existing browser tooling against the running dev server or Storybook
 - Capture screenshots per component per theme
-- Responsive viewport testing via viewport configuration
+- Responsive viewport testing via viewport configuration at three breakpoints:
+  - Mobile: 375×812 (iPhone viewport)
+  - Tablet: 768×1024 (iPad viewport)
+  - Desktop: 1440×900 (standard desktop)
 
 **Option B — Manual verification fallback:**
 - If no project browser tool is available, scope Phase 8.5 as manual verification
@@ -39,7 +45,8 @@ sleep 5
 
 If no dev server is available (e.g., library-only package without a preview app),
 use Storybook stories as the evaluation target. If neither exists, skip this phase
-and note it in the completion report.
+and note it in the completion report. Set `visualQASkipped: true` and `visualQAMode: 'skipped'` in `{systemPath}/.design-farmer/config.json` (signals downstream phases that visual QA was unavailable). Also update `config.backup.json`. Do NOT append `'phase-8.5'` to `completedPhases`
+— the phase did not run.
 
 **No project browser tooling fallback:**
 ```
@@ -49,7 +56,13 @@ Prompt user: "No browser tooling detected. Please provide screenshots of each co
 in both light and dark themes for visual QA review."
 ```
 
+**Status: DONE_WITH_CONCERNS** — Visual QA deferred to manual verification. Checklist saved to `{systemPath}/docs/visual-qa-checklist.md`. Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-8.5'` to `completedPhases` in `{systemPath}/.design-farmer/config.json` (the phase ran in degraded mode). If `'phase-8.5'` is already present, skip the append (idempotent). Set `visualQAMode: 'manual'` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`. Proceed to Phase 9.
+
+Note: Phase 9 completion report should reflect that automated visual QA was not performed.
+
 ## 8.5.2 Visual Design Audit (10 Categories)
+
+**If `themeStrategy = 'light-only'`: skip Category 7 (Dark Mode Quality) entirely — score it N/A. No dark mode infrastructure or visual checks apply to light-only projects.**
 
 Evaluate each rendered component against these 10 categories. For each finding,
 capture a screenshot as evidence.
@@ -138,7 +151,7 @@ Each category receives a letter grade:
 - Each MEDIUM finding drops half a letter grade
 - POLISH findings are noted but don't affect grade
 
-**Overall Design Score** = weighted average of all 10 category grades.
+**Overall Design Score** = weighted average of all 10 category grades. If any category is scored N/A (e.g., Category 7 in light-only mode), exclude it from the calculation and redistribute its weight proportionally across the remaining categories so weights always sum to 100%.
 
 ## 8.5.4 Finding Format
 
@@ -155,7 +168,9 @@ Evidence: {screenshot before fix}
 
 Findings are appended immediately upon discovery — never batch.
 
-## 8.5.5 Fix Loop
+## 8.5.5 Finding Fix Protocol
+
+Note: This is a sequential finding-fix process with risk thresholds, distinct from the Fix Loop Protocol in `operational-notes.md` (which runs typecheck/lint/build/test verification commands).
 
 For each finding, starting from HIGH impact down to MEDIUM:
 
@@ -193,8 +208,8 @@ Base: 0%
 + 20% per unrelated file touch
 
 Thresholds:
-  > 20%: STOP. Ask user whether to continue via AskUserQuestion.
-  > 30%: Hard stop. Report remaining findings as TODO items.
+  > 20%: When risk exceeds 20% but is ≤30%: warn the user and ask whether to continue. When risk exceeds 30%: recommend stopping and ask the user whether to continue or stop. Use AskUserQuestion with options: A) Continue despite risk, B) Stop and review manually.
+  > 30%: Hard stop. Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-8.5'` to `completedPhases` in `{systemPath}/.design-farmer/config.json` (the phase ran but hit risk threshold). If `'phase-8.5'` is already present, skip the append (idempotent). Set `visualQAMode: 'auto'` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`. Emit **Status: DONE_WITH_CONCERNS** — risk threshold exceeded at {N}%. Report remaining findings as TODO items in the completion report.
   Maximum: 30 fixes per review session.
 ```
 
@@ -225,4 +240,6 @@ Via AskUserQuestion, ask:
 After fixing, re-score the affected categories. Include before/after grades in
 the completion report.
 
-**Status: DONE** — Live visual QA complete. All HIGH findings resolved. Proceed to Phase 9: Documentation & Completion.
+**Status: DONE** — Live visual QA complete. All HIGH findings resolved. Set `visualQAMode: 'auto'` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`. Proceed to Phase 9: Documentation & Completion.
+
+Before emitting status, append `'phase-8.5'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-8.5'`. If `'phase-8.5'` is already present, skip the append (idempotent). Also update `config.backup.json`.

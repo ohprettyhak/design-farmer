@@ -1,5 +1,9 @@
 # Phase 10: App Integration
 
+Read `DESIGN.md` to verify integration aligns with the approved design architecture and token system. All CSS import paths, ThemeProvider configuration, and token references must match the DESIGN.md source of truth.
+
+**Config Validation:** Run the **Config Validation Protocol** (see `operational-notes.md`) before proceeding. Verify that `systemPath`, `framework`, and `themeStrategy` are present in `{systemPath}/.design-farmer/config.json`. If `themeStrategy` is not `'light-only'`, also verify that `themeLibrary` is present. If any required field is missing, emit **Status: BLOCKED** with recovery instructions: re-run the affected phase or manually correct the config.
+
 Via AskUserQuestion, ask:
 
 > Your design system is built, tested, and documented. The final step is wiring it
@@ -22,8 +26,9 @@ If user chose C (skip integration), emit:
 **Status: DONE** — User chose to integrate manually. Skipping integration steps. Proceed to Phase 11: Release Readiness & Handoff.
 
 Set `integrationStatus: "skipped"` in `{systemPath}/.design-farmer/config.json`. Update `config.backup.json`.
+Do NOT append `'phase-10'` to `completedPhases` — the phase was skipped by user choice, consistent with Phase 7 (Storybook) skip behavior.
 
-Then stop — do NOT execute steps 10.1 through 10.7.
+Then stop — do NOT execute steps 10.1 through 10.7. No code changes were made, so the Fix Loop (step 10.7) is not required. The user is responsible for verifying the design system builds in their application context.
 
 ---
 
@@ -53,7 +58,19 @@ Before asking "Approve this change?", include ALL of the following in the previe
 If any field is unknown, STOP and ask a clarification question first. Do NOT execute
 the step with inferred or omitted payload fields.
 
+**Clarification question template:**
+> Before executing Step {N}, I need to confirm the following:
+>
+> - `frameworkBranch`: {detected or "unknown"}
+> - `targetFiles`: {detected or "unknown"}
+> - `themeLibrary`: {from config or "unknown"}
+> - `cssEntryTarget`: {detected or "none"}
+>
+> Please provide the missing value(s) so I can show you the correct diff preview.
+
 ## 10.1 Dependency Installation
+
+**Light-only guard:** If `themeStrategy` is `'light-only'` (from config.json), skip ThemeProvider installation in steps 10.1–10.2. CSS token imports (step 10.3) still apply. Jump to step 10.3 after installing design system peer dependencies.
 
 Compatibility gate (MANDATORY):
 
@@ -93,6 +110,8 @@ fi
 ```
 
 ## 10.2 Root Layout Integration
+
+**Light-only guard:** If `themeStrategy` is `'light-only'`, skip ThemeProvider wrapping. Only add the CSS import (step 10.3) to the root layout. Do NOT add `suppressHydrationWarning` or any theme provider — light-only mode has no theme switching.
 
 Apply root integration based on the detected framework from Phase 0.
 Do NOT assume Next.js App Router. Use ONLY the path that exists for the detected stack.
@@ -145,18 +164,24 @@ to discover the actual file locations:**
 find {systemPath} -name '*.css' -type f | sort
 ```
 
+**Light-only guard:** If `themeStrategy` is `'light-only'`, skip importing `dark.css` — only import the light theme CSS file and token definitions.
+
 Then import them in the correct order. Common output patterns:
 
 ```
 // Pattern A — tokens/css/ directory (Style Dictionary output):
 import '{systemPath}/tokens/css/tokens.css'
 import '{systemPath}/tokens/css/light.css'
+{if themeStrategy ≠ 'light-only':}
 import '{systemPath}/tokens/css/dark.css'
+{/if}
 
 // Pattern B — src/themes/ directory (custom build):
 import '{systemPath}/src/themes/tokens.css'
 import '{systemPath}/src/themes/light.css'
+{if themeStrategy ≠ 'light-only':}
 import '{systemPath}/src/themes/dark.css'
+{/if}
 
 // Pattern C — Tailwind v4 @theme (no separate CSS files):
 // Tokens are injected via @theme in the Tailwind config — no manual CSS import needed
@@ -168,7 +193,7 @@ import '{systemPath}/components/styles.css'  // or wherever component CSS was ge
 Verify the import ORDER is correct:
 1. Reset / base styles (if any)
 2. Token definitions (primitives -> semantics)
-3. Theme files (light.css, dark.css)
+3. Theme files (light.css, dark.css if not light-only)
 4. Component styles
 5. Application-specific overrides (existing app CSS)
 
@@ -222,7 +247,7 @@ DO NOT replace values inside:
 ## App Integration Summary
 
 ### Changes Made
-- Layout/root entry: {actual framework file path — added ThemeProvider + hydration-safe theming setup}
+- Layout/root entry: {actual framework file path — {if themeStrategy='light-only': "added CSS token imports (no ThemeProvider — light-only mode)" else: "added ThemeProvider + hydration-safe theming setup"}}
 - CSS imports: {list of added imports with order}
 - Dependencies: {list of added/updated packages}
 - Token replacements: {count} hardcoded values -> design tokens (if applicable)
@@ -231,7 +256,7 @@ DO NOT replace values inside:
 - [ ] App starts without errors
 - [ ] TypeScript compilation passes
 - [ ] Lint passes with zero suppressions
-- [ ] Theme toggle works
+- [ ] {if themeStrategy='light-only': "Light theme tokens applied correctly" else: "Theme toggle works"}
 - [ ] Design tokens are visible in rendered output
 ```
 
@@ -259,5 +284,7 @@ Common integration errors and their root causes:
 Do NOT emit DONE until the Fix Loop passes on all three checks.
 
 After the Fix Loop passes, set `integrationStatus: "completed"` in `{systemPath}/.design-farmer/config.json`. Update `config.backup.json`.
+
+Before emitting status, append `'phase-10'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-10'`. If `'phase-10'` is already present, skip the append (idempotent). Also update `config.backup.json`.
 
 **Status: DONE** (Fix Loop: passed on attempt {N}/5) — Design system integrated into application. Theme toggle working, tokens visible in rendered output. Proceed to Phase 11: Release Readiness & Handoff.

@@ -4,6 +4,8 @@ Implement components ONE AT A TIME, in dependency order.
 
 ## 6.0 Framework Guardrail
 
+**Config Validation:** Before proceeding, verify that `systemPath`, `framework`, `designMaturity`, `componentScope`, `headlessLibrary`, and `themeStrategy` are present in `{systemPath}/.design-farmer/config.json`. If any required field is missing, emit **Status: BLOCKED** with recovery instructions: re-run the affected phase or manually correct the config.
+
 Read `framework`, `designMaturity`, and `componentScope` from `{systemPath}/.design-farmer/config.json`.
 
 - React (full support): `next-app-router`, `next-pages-router`, `vite-react`, `remix`
@@ -15,6 +17,8 @@ If framework is in [next-app-router, next-pages-router, vite-react, remix]:
 
 If framework is in [astro, sveltekit, nuxt] AND componentScope = 'foundation':
   → SKIP component implementation (tokens only — already done in Phase 5)
+  → Set `storybookSkipped: true` in `{systemPath}/.design-farmer/config.json` (Phase 7 is React-oriented and has no components to document)
+  → Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-6'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. If `'phase-6'` is already present in the array, skip the append (idempotent). Also update `config.backup.json`.
   → Emit DONE: "Token-only implementation complete for {framework}. Phase 6 skipped: component
     patterns require React. Use the generated CSS tokens directly in your {framework} components."
   → Jump to Phase 8 (skip Phase 7 — Storybook is React-oriented and has no components to document)
@@ -31,7 +35,9 @@ If framework is in [astro, sveltekit, nuxt] AND componentScope ≠ 'foundation':
   
   **→ STOP — wait for user response before continuing.**
 
-  If A: validate headless library compatibility (see below), then proceed to 6.0.1. If B: emit DONE_WITH_CONCERNS and jump to Phase 8 (no components to document in Storybook). If C: emit DONE_WITH_CONCERNS and jump to Phase 8.
+  If A: validate headless library compatibility (see below), then proceed to 6.0.1. After Phase 6 completion, proceed to Phase 7.
+  If B: set `storybookSkipped: true` in config.json. Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-6'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. If `'phase-6'` is already present in the array, skip the append (idempotent). Also update `config.backup.json`. Emit DONE_WITH_CONCERNS and jump to Phase 8. Phase 7 skipped.
+  If C: set `storybookSkipped: true` in config.json. Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-6'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. If `'phase-6'` is already present in the array, skip the append (idempotent). Also update `config.backup.json`. Emit DONE_WITH_CONCERNS and jump to Phase 8. Phase 7 skipped.
 
   **If user chose A (generate React components for a non-React framework):**
   The headless library selected in Phase 1 Q3-1 may be framework-specific (e.g., Melt UI for Svelte,
@@ -52,7 +58,7 @@ If framework is in [astro, sveltekit, nuxt] AND componentScope ≠ 'foundation':
   
   **→ STOP — wait for user response before continuing.**
 
-  Update `headlessLibrary` in config.json with the user's choice before proceeding to 6.0.1.
+  Update `headlessLibrary` in config.json with the user's choice before proceeding to 6.0.1. Also update `config.backup.json`.
 ```
 
 The implementation path depends on **Design Maturity** (from Phase 2) and **Headless Library**
@@ -61,19 +67,19 @@ choice (from Question 3-1):
 ## 6.0.1 Path Selection
 
 ```
-If Design Maturity = GREENFIELD (score 0-2):
+If designMaturity = 'greenfield':
   -> Use the approved preview and DESIGN.md as the sizing/styling reference
   -> If headless library chosen: wrap headless primitives with styled layer
   -> If no library: build custom primitives from scratch
   -> Every sizing decision (height, padding, font-size, radius) comes from the approved design reference in DESIGN.md
 
-If Design Maturity = EMERGING (score 3-5):
+If designMaturity = 'emerging':
   -> Analyze existing component patterns first
   -> Identify inconsistencies vs. the approved design reference in DESIGN.md
   -> Standardize existing patterns, fill gaps with DESIGN.md defaults
   -> Migrate to headless library gradually if chosen
 
-If Design Maturity = MATURE (score 6+):
+If designMaturity = 'mature':
   -> Deep analysis of existing component API patterns
   -> Preserve existing props interface where possible
   -> Add missing accessibility, token integration, and theme support
@@ -215,7 +221,7 @@ For interactive elements (Input, Select trigger, Textarea, etc.), use **box-shad
 }
 ```
 
-**Why box-shadow:** No layout shift (zero width impact), composable with drop shadows in one property, and `transition: box-shadow` is cleaner than `transition: border-color`.
+**Why box-shadow:** Zero width impact prevents layout shift, composes with drop shadows in one property, and enables cleaner transitions than border-color.
 
 **Define these tokens in `src/styles/tokens.css`:**
 
@@ -457,5 +463,13 @@ Composed (depends on all above):
 ```
 
 Only implement components within the user's chosen scope from Phase 1 Question 3.
+
+**Scope-to-component mapping:**
+- **foundation**: Foundation layer only (tokens, styles, utilities — no UI components)
+- **core**: Foundation + Core UI (items 4–10: Button, Input, TextArea, Checkbox, Radio, Select, Switch/Toggle)
+- **full**: All 20 components in priority order
+- **custom**: User-specified list from Phase 1 discovery
+
+Before emitting status, ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-6'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. If `'phase-6'` is already present in the array, skip the append (idempotent). Also update `config.backup.json`.
 
 **Status: DONE** — All components in scope implemented, tested, and accessible. Proceed to Phase 7: Storybook Integration.

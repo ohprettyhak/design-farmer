@@ -38,6 +38,12 @@ If `themeStrategy = 'light-only'`, skip dark mode evaluation in all reviewers (8
 compares only that light CSS exists, 8.4 category 7 Dark Mode Quality is scored N/A, 8.5 dark mode
 infrastructure checks are skipped).
 
+If `storybookSkipped` is set in config.json (Phase 7 option C), skip Storybook-related review criteria:
+- 8.2 Code Quality: skip story file existence checks
+- 8.3 Scientist: skip Storybook-specific component metrics
+- 8.4 Visual Design: skip Storybook rendering checks
+- 8.5 Engineer: skip Storybook DX evaluation
+
 ---
 
 ## 8.1 Design System Critic
@@ -418,6 +424,29 @@ If not APPROVED: numbered list of required changes, ordered by impact.
 
 ---
 
+## 8.5b Reviewer Failure Fallback
+
+If all 5 reviewer delegation passes fail (timeout, tool unavailable, or all return errors):
+
+1. Log: "Phase 8: All reviewer passes failed. Falling back to basic verification."
+2. Run basic verification checks only:
+   Basic verification consists of exactly these checks: (1) config.json exists and is valid JSON, (2) all required fields per Config Validation Protocol are present, (3) token CSS files exist at expected paths, (4) at least one component file exists (if componentScope ≠ foundation).
+   - Grep for hardcoded colors in component files (should be zero)
+   - Verify token files exist: primitive, semantic, and component token files are present
+   - Verify CSS custom properties are defined in light theme files (and dark theme files if `themeStrategy` is not `'light-only'`)
+   - Check that component directories contain test files
+3. If basic checks pass: emit **DONE_WITH_CONCERNS** with results. Also append `'phase-8'` to `completedPhases` in `{systemPath}/.design-farmer/config.json` (the phase ran, just in degraded mode). Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined). If `'phase-8'` is already present, skip the append (idempotent). Also update `config.backup.json`. Proceed to Phase 8.5.
+4. If basic checks fail: emit **BLOCKED** — "Reviewers failed AND basic checks failed. Manual intervention required." Ask via AskUserQuestion:
+   > All automated reviewers failed, and basic verification checks also found issues.
+   > Options:
+   > - A) Show me the basic check results — I'll investigate manually
+   > - B) Proceed anyway — skip to Phase 8.5 (visual QA)
+   > - C) Re-run reviewers — try again with fresh context
+   **→ STOP. Do NOT proceed until user responds.**
+5. If user chose A or B: ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-8'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. If `'phase-8'` is already present, skip the append (idempotent). Also update `config.backup.json`. Proceed to Phase 8.5 (independent verification method). If user chose C: re-run reviewer delegation from Step 1 (do NOT proceed to Phase 8.5 until reviewers complete or fail again).
+
+---
+
 ## 8.6 Review Aggregation & Risk Regulation
 
 After all reviewers complete, aggregate results.
@@ -430,7 +459,7 @@ Base: 0%
 + 1% per fix after the 15th fix
 ```
 
-If risk > 20%: STOP and ask user whether to continue.
+When risk exceeds 20% but is ≤30%: warn the user and ask whether to continue. When risk exceeds 30%: recommend stopping and ask the user whether to continue or stop. Use AskUserQuestion with options: A) Continue despite risk, B) Stop and review manually.
 Hard cap: 30 fixes maximum.
 
 **Aggregation logic:**
@@ -442,7 +471,7 @@ Hard cap: 30 fixes maximum.
 
 4. If zero CRITICAL findings across all reviewers:
    -> Status: DONE
-   -> Proceed to Phase 9 (Documentation)
+   -> Proceed to Phase 8.5 (Design Review — Live Visual QA)
 
 5. If any CRITICAL findings:
    -> Fix CRITICAL issues (one at a time, atomic commits)
@@ -455,6 +484,7 @@ Hard cap: 30 fixes maximum.
    -> STOP. Do NOT proceed until user responds.
 
 7. If same issue persists after 3 fix attempts:
+   For this check, "same issue" is defined by matching file path + line number + finding category. Different reviewers flagging the same file:line for different categories do not count as the same issue.
    -> Status: BLOCKED
    -> Report to user with analysis of why the fix isn't working
    -> STOP. Do NOT proceed until user responds.
@@ -481,6 +511,8 @@ Hard cap: 30 fixes maximum.
 ### Risk Level: {percentage}%
 ```
 
-After review completes, write `lastReviewScore` (0–10) and `lastReviewDate` (ISO 8601) to config.json. Also update config.backup.json.
+After review completes, write `lastReviewScore` (0–10) and `lastReviewDate` (ISO 8601 with Z timezone, e.g., `2026-04-08T12:34:56Z`) to config.json. Also update config.backup.json.
+
+Before emitting status, append `'phase-8'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-8'`. If `'phase-8'` is already present, skip the append (idempotent). Also update `config.backup.json`.
 
 **Status: DONE** — Multi-reviewer verification complete. All CRITICAL findings resolved. Proceed to Phase 8.5: Design Review (Live Visual QA).

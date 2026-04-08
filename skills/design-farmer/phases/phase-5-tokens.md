@@ -2,6 +2,8 @@
 
 ## 5.0 Platform Branch
 
+**Config Validation:** Before proceeding, verify that `systemPath`, `designMaturity`, `componentScope`, and `themeStrategy` are present in `{systemPath}/.design-farmer/config.json`. If any required field is missing, emit **Status: BLOCKED** with recovery instructions: re-run the affected phase or manually correct the config.
+
 Read `targetPlatforms` from `{systemPath}/.design-farmer/config.json` before proceeding.
 
 ```
@@ -19,6 +21,7 @@ If targetPlatforms = 'web-native' or 'multi-platform':
       CSS layer:       oklch(0.55 0.22 264)   → keep as-is (CSS supports OKLCH)
       iOS/Android/RN:  oklch(0.55 0.22 264)   → convert to #4f46e5 (sRGB hex)
       Use: https://oklch.com or a build-time conversion (oklch npm package)
+      → If an OKLCH value is out of gamut for the target color space, clamp the chroma (C) to the maximum gamut-safe value for that hue/lightness combination. Log the clamping but do not block.
   → After generating multi-platform tokens, continue to 5.3–5.7 for the web layer only
 
 If targetPlatforms = 'web-hybrid' (e.g. Capacitor, Tauri):
@@ -33,6 +36,14 @@ import { formatHex } from 'oklch';
 ```
 
 ---
+
+### Maturity-Dependent Token Strategy
+
+Read `designMaturity` from `{systemPath}/.design-farmer/config.json` before implementing tokens:
+
+- **GREENFIELD**: Generate all tokens from scratch using DESIGN.md values. No backward compatibility concerns.
+- **EMERGING**: Generate new tokens; preserve any existing token names found in the repo for backward compatibility. Map old names to new semantic tokens where possible.
+- **MATURE**: Map existing token names/values to the new semantic layer. **NEVER rename existing tokens that are consumed by components** — create aliases if the naming convention differs.
 
 Implement tokens in this order. Use the following implementation brief by default when specialized delegation is available; otherwise execute the same work directly:
 
@@ -68,13 +79,13 @@ never primitive tokens directly. This enables theming without component API chan
 
 ## 5.5 Token Snapshot Tests
 
-Tests use vitest globals (`describe`, `it`, `expect`) available via `tsconfig.json` types — see section 5.6 for setup.
+Tests use vitest globals (`describe`, `it`, `expect`) available via `tsconfig.json` types — see section 5.6 for setup. If the project uses a different test framework (jest, ava), adapt test syntax accordingly. Check `package.json` for the configured `test` script.
 
 ```typescript
 // __tests__/tokens.test.ts
 // - Verify generated CSS is deterministic (snapshot comparison)
 // - Verify all semantic tokens resolve to valid OKLCH values
-// - Verify light/dark theme CSS files contain identical property names
+// - Verify light/dark theme CSS files contain identical property names (skip if themeStrategy = 'light-only')
 // - Verify no primitive token is directly consumed by any component
 ```
 
@@ -196,10 +207,12 @@ Read extracted patterns from Phase 3 output — or from DESIGN.md if Phase 3 was
 After all token files, utilities, and tests are written, run the **Fix Loop Protocol** (see `operational-notes.md`):
 
 ```
-Checks: typecheck, test
+Checks: typecheck, lint, test
 Max attempts: 5
 ```
 
-Do NOT proceed to Phase 6 until typecheck and tests pass. If the loop exhausts all attempts, emit BLOCKED and ask the user.
+Do NOT proceed to Phase 6 until typecheck, lint, and tests pass. If the loop exhausts all attempts, emit BLOCKED and ask the user.
+
+Before emitting status, ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-5'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. If `'phase-5'` is already present, skip the append (idempotent). Also update `config.backup.json`.
 
 **Status: DONE** (Fix Loop: passed on attempt {N}/5) — Token system implemented with primitive, semantic, and component tokens. Tests passing. Proceed to Phase 6: Component Implementation.

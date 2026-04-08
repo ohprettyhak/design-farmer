@@ -30,7 +30,6 @@ Before this project, agents had no repeatable workflow for:
 - Automated installer (`install.sh`) with atomic bundle deployment.
 - Structural validation script (`scripts/validate-skill-md.sh`).
 - Semantic consistency test suite (`tests/test-semantic-consistency.sh`).
-- Exhaustive simulation test suite (`tests/test-exhaustive-simulation.sh`).
 - CI pipeline (GitHub Actions: structural validation + install smoke tests).
 - Version check utility (`bin/version-check`).
 
@@ -75,9 +74,8 @@ skills/design-farmer/
   examples/
     DESIGN.md                       # Nova UI greenfield reference
   tests/
-    run-all.sh                      # Master test runner (3 suites)
-    test-semantic-consistency.sh    # 72 semantic checks
-    test-exhaustive-simulation.sh   # 169 checks, 26 dimensions, 1152 paths
+    run-all.sh                      # Master test runner (2 suites)
+    test-semantic-consistency.sh    # Semantic + core simulation checks
 ```
 
 ### Key Design Decisions

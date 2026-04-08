@@ -8,7 +8,15 @@ If the user expresses impatience after 3+ questions, offer to use sensible defau
 
 ### Re-entry Detection
 
-Before asking Q0, check if `{systemPath}/.design-farmer/config.json` exists and `completedPhases` includes `"3.5"`. If so, this is a restart from Phase 3.5 Option E — the user chose to start over.
+Before asking Q0, check if `{systemPath}/.design-farmer/config.json` exists. Check two conditions for Phase 3.5 restart detection:
+- `resetFromPhase` equals `"3.5"` (set by Phase 3.5 Option E reset logic)
+- OR `completedPhases` includes `"phase-3.5"` (normal completion path)
+
+If either is true, this is a restart from Phase 3.5.
+
+Also check if `skippedPhases` exists in config.json — this indicates Phases 1–4 were intentionally bypassed via Phase 0→5 shortcut. If `skippedPhases` is present and includes `"phase-1"`, this is a re-entry from a shortcut path. Log the skipped phases and proceed with the interview (the user chose to re-run Phase 1 after the shortcut).
+
+If `completedPhases` exists but is empty (`[]`), treat this as a partial Phase 0 run that didn't complete. Proceed to Phase 1 as normal (no re-entry shortcuts).
 
 Load the following preserved fields from config.json and present them as pre-filled defaults alongside each question:
 
@@ -199,6 +207,8 @@ Via AskUserQuestion, ask:
 > Using a headless library saves weeks of accessibility engineering. The library handles
 > keyboard navigation, ARIA, and focus management. You provide the visual layer using
 > your design tokens and styling approach.
+>
+> (Note: Some headless libraries are framework-specific. If you selected a non-React headless library (e.g., Melt UI for Svelte, Radix Vue), Phase 6 will prompt you to choose a React-compatible replacement.)
 
 **→ STOP — wait for user response before continuing.**
 
@@ -255,7 +265,7 @@ Via AskUserQuestion, ask:
 
 ### Question 5-1: Dark Mode Library (conditional)
 
-**Only ask this if the user chose A (Light + Dark), C (Multi-brand), or D (Custom with dark mode) in Question 5. Skip if user chose B (Light only).**
+**Only ask this if the user chose A (Light + Dark), C (Multi-brand), or D (Custom themes) in Question 5 and the user's custom requirements include dark mode. Skip if user chose B (Light only) or if D was chosen without dark mode.**
 
 Detect the user's framework from Phase 0 pre-flight, then recommend the most popular
 and battle-tested theme library for that framework.
@@ -394,14 +404,23 @@ interface DesignFarmerConfig {
   designSystemPackage: string; // npm package name, e.g., '@acme/design-system' (= package.json name)
   // Set from Phase 2 output — propagate to all subsequent phases
   designMaturity?: 'greenfield' | 'emerging' | 'mature';
-  maturityScore?: number; // 0–10 from Phase 2 scoring criteria
+  maturityScore?: number; // 0–10 from Phase 2 scoring criteria (output-only — displayed in DESIGN.md; branching uses designMaturity string)
+  maturityJustification?: string; // Created in Phase 2. Brief justification of maturity score (e.g., '4/10 — has dedicated component dir (✓), tokens (✗)')
+  // Phase 4 output — styling approach determination
+  stylingApproach?: string; // Determined in Phase 4. One of: 'tailwind-v4', 'tailwind-v3', 'css-modules', 'styled-components', 'vanilla-extract', 'panda-css', 'vanilla'
   // Pipeline state — managed automatically, not user-facing
-  completedPhases?: string[]; // e.g., ["0","1","2"] — tracks which phases have finished
+  completedPhases?: string[]; // e.g., ["phase-0","phase-1","phase-2"] — tracks which phases have finished
+  skippedPhases?: string[]; // e.g., ["phase-1","phase-2"] — phases intentionally skipped (Phase 0→5 shortcut)
   createdAt?: string; // ISO 8601 timestamp of initial config creation
   lastReviewScore?: number; // Phase 8 aggregate review score (0–10)
   lastReviewDate?: string; // ISO 8601 timestamp of last Phase 8 review
-  generatePreview?: boolean; // whether to generate HTML preview in Phase 3.5
-  integrationStatus?: string; // "completed" | "skipped" — set by Phase 10
+  generatePreview?: boolean; // whether to generate HTML preview in Phase 3.5 (consumed by Phase 3.5 to decide preview behavior)
+  previewOutcome?: 'generated' | 'skipped' | 'failed'; // Phase 3.5 internal state — distinguishes generation result from intentional skip
+  storybookSkipped?: boolean; // true when Phase 6 non-React skip also skips Phase 7 (consumed by Phase 8)
+  integrationStatus?: 'skipped' | 'completed'; // Set in Phase 10. Tracks whether app integration was performed or skipped
+  visualQASkipped?: boolean; // Phase 8.5 skipped due to no dev server or Storybook
+  visualQAMode?: 'auto' | 'manual' | 'skipped'; // Phase 8.5 execution mode
+  resetFromPhase?: string; // Phase that triggered a reset (e.g., "3.5" for Phase 3.5 restart → Phase 1 re-entry)
 }
 
 // derivation rules:
@@ -434,6 +453,13 @@ mkdir -p {systemPath}/.design-farmer
 # Write DesignFarmerConfig as JSON to {systemPath}/.design-farmer/config.json
 # Also copy to config.backup.json in the same directory
 # Set createdAt to the current ISO 8601 timestamp
+# Initialize completedPhases as ["phase-0"]
+
+# Read-after-write validation: Read back config.json to verify the write succeeded.
+# If the file is missing or invalid JSON, emit **Status: BLOCKED** with recovery
+# instructions: re-run Phase 1 or manually correct the config.
 ```
+
+Before emitting status, ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-1'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. If `'phase-1'` is already present in the array, skip the append (idempotent). Also update `config.backup.json`.
 
 **Status: DONE** — Discovery interview complete. `DesignFarmerConfig` built and persisted. Proceed to Phase 2: Repository Analysis.

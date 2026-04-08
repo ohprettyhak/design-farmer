@@ -16,10 +16,23 @@ Do NOT proceed until `themeStrategy` is valid.
 ```
 If themeStrategy = 'light-only':
   → Generate ONLY the light theme CSS in 4b.1 (skip [data-theme="dark"] block entirely)
+  → Use `:root` selectors directly instead of `[data-theme="light"]` since no theme switching is needed
   → Skip 4b.2 ThemeProvider (no theme switching needed — apply light tokens at :root)
   → Skip 4b.3 Scoped Theming
   → Skip 4b.4 Dark Mode Checklist
   → Proceed to 4b.5 Styling Approach Decision
+
+  **Light-only CSS example:**
+  ```css
+  /* light-only variant — use :root directly, no [data-theme] wrapper */
+  :root {
+    --surface-default: oklch(1 0 0);
+    --surface-subtle: oklch(0.97 0.005 250);
+    --text-primary: oklch(0.15 0.01 250);
+    --interactive-primary: oklch(0.55 0.20 250);
+    /* ... all light theme tokens */
+  }
+  ```
 
 If themeStrategy = 'light-dark', 'multi-brand', or 'custom':
   → Proceed to 4b.1 as written (generate both light and dark themes)
@@ -284,7 +297,21 @@ module.exports = { darkMode: ['selector', '[data-theme="dark"]'] }
 
 **Only applies when `themeStrategy = 'multi-brand'`.**
 
-Multi-brand requires a ThemeProvider that manages two dimensions: brand identity (which color palette) and mode (light/dark). Generate the following:
+**Pre-validation**: If `themeStrategy = 'multi-brand'`, verify that `DesignFarmerConfig` contains brand palette data (at least two brand definitions with distinct color palettes). If no brand data exists, ask via AskUserQuestion:
+"You selected multi-brand theming, but no brand palettes were defined. How would you like to proceed?"
+- A) Define brand palettes now (collect brand names and colors)
+- B) Switch to light-dark theming instead
+- C) Switch to light-only theming
+
+**→ STOP — wait for user response before continuing.**
+
+If user chose A: collect brand palette data, then continue to multi-brand ThemeProvider generation below.
+If user chose B: update `themeStrategy` to `'light-dark'` in config.json and config.backup.json, then skip this section and continue from **## 4b.1 Theme System** (light-dark theming applies).
+If user chose C: update `themeStrategy` to `'light-only'` in config.json and config.backup.json, then skip this section and continue from **## 4b.0 Theme Strategy Gate** (re-enter so the light-only CSS generation path in 4b.1 runs correctly with `:root` selectors instead of `[data-theme]` blocks).
+
+---
+
+If user chose A (define brand palettes): Multi-brand requires a ThemeProvider that manages two dimensions: brand identity (which color palette) and mode (light/dark). Generate the following:
 
 ```tsx
 // components/brand-provider.tsx
@@ -446,9 +473,13 @@ JavaScript needed. The nearest `[data-theme]` ancestor wins. Components consume
 
 ## 4b.4 Dark Mode Implementation Checklist & Common Failures
 
+> (Skip this entire checklist if `themeStrategy = 'light-only'` — see section 4b.0 for the light-only skip paths.)
+
 **MANDATORY verification after implementing dark mode. Check every item before proceeding.**
 
 ### Implementation Checklist
+
+All items in this checklist are mandatory. If any item cannot be satisfied, note it as a known limitation in DESIGN.md and emit DONE_WITH_CONCERNS rather than DONE.
 
 ```
 [ ] <html> has suppressHydrationWarning (Next.js App Router with next-themes)
@@ -557,6 +588,8 @@ If no styling framework detected:
   -> Lightweight, zero-dependency approach
   -> Consider recommending Tailwind v4 for utility-first workflow
 ```
+
+Before emitting status, ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-4b'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. If `'phase-4b'` is already present, skip the append (idempotent). Also update `config.backup.json`.
 
 If themeStrategy = 'light-only':
 **Status: DONE** — Light-only theme system and styling approach defined. ThemeProvider, dark mode, and scoped theming skipped per configuration. Proceed to Phase 4.5: Design Source of Truth (DESIGN.md).

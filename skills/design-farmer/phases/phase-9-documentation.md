@@ -1,5 +1,9 @@
 # Phase 9: Documentation & Completion
 
+Check if `DESIGN.md` exists at `{systemPath}/DESIGN.md` before reading. If missing, emit **Status: BLOCKED** — DESIGN.md not found at `{systemPath}/DESIGN.md`. Recovery: re-run Phase 4.5 to generate the design source of truth, or restore from a backup if available.
+
+Read `DESIGN.md` from Phase 4.5 to calibrate documentation content against the approved design decisions. All token names, component APIs, and theme values in the generated documentation must match the DESIGN.md source of truth.
+
 ## 9.1 Generate Documentation
 
 Create documentation at `{systemPath}/docs/` or inline in source:
@@ -70,8 +74,16 @@ All must pass with zero errors before declaring completion.
 - List one bullet per degradation in the format: `{Phase}: {primary_path} failed ({reason}) → {fallback_path}`
 - If no degradations occurred, write: `- None`
 
+### Visual QA Status
+Read `visualQAMode` from `{systemPath}/.design-farmer/config.json` to determine visual QA status:
+- If `visualQAMode = 'manual'`: include "Visual QA: completed via manual verification (degraded mode)"
+- If `visualQAMode = 'skipped'` or `visualQASkipped = true`: include "Visual QA: skipped (no dev server or Storybook available)"
+- If `visualQAMode = 'auto'` or undefined: include "Visual QA: automated verification passed"
+
 ### Next Steps
 See Phase 10 (App Integration) to wire the design system into your application.
 ```
+
+Before emitting status, append `'phase-9'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-9'`. Also update `config.backup.json`.
 
 **Status: DONE** — Documentation generated and final verification passed. Design system is production-ready. Proceed to Phase 10: App Integration (optional).

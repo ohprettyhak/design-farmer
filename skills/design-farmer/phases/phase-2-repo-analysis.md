@@ -54,7 +54,7 @@ GREENFIELD (score 0-2):
 
 EMERGING (score 3-5):
   - Some CSS variables or theme config exists
-  - Partial component library (5-15 components)
+  - Partial component library (approximately 5–15 components — use judgment for borderline cases)
   - Inconsistent naming or mixing of patterns
   - Action: Analyze existing patterns, standardize and extend
 
@@ -68,8 +68,8 @@ Scoring criteria (1 point each):
   [ ] CSS custom properties or theme variables exist
   [ ] Token naming follows a pattern (e.g., --color-primary-500)
   [ ] Components are in a dedicated directory
-  [ ] Component props follow consistent patterns
-  [ ] Accessibility attributes present on interactive components
+  [ ] Component props follow consistent patterns (same naming, same styling approach across ≥80% of components)
+  [ ] Accessibility attributes present on interactive components (aria-label, role, tabIndex on interactive elements)
   [ ] Tests exist for UI components
   [ ] Dark mode or theming mechanism exists
   [ ] Typography uses a defined scale
@@ -77,13 +77,31 @@ Scoring criteria (1 point each):
   [ ] Documentation exists for component usage
 ```
 
-Report the maturity level and score in the analysis report. This determines whether
-to follow the **greenfield path** (build from best practices) or the **enhancement path**
-(analyze and extend existing patterns) in subsequent phases.
+Report the maturity level and score in the analysis report. This determines which
+implementation path to follow in subsequent phases:
+
+- **greenfield path** (score 0–2): Build from best practices — no existing patterns to preserve
+- **emerging path** (score 3–5): Extract and extend — standardize existing patterns, fill gaps
+- **mature path** (score 6+): Audit and migrate — preserve existing APIs, migrate to OKLCH, add missing layers
+
+**Borderline scores (exactly 2, 3, or 5):** ask the user via AskUserQuestion which level better reflects their project's maturity:
+> Your project scored {score}/10, which is on the boundary between {lower} and {upper} maturity levels.
+>
+> Options:
+> - A) {lower level} — my project needs more structure
+> - B) {upper level} — my project has enough patterns to build on
+
+Where {lower}/{upper} are the two adjacent maturity levels. Use the user's choice to set designMaturity.
+
+**Maturity impact on downstream phases:**
+- Phase 3: GREENFIELD skips extraction (generates defaults); EMERGING extracts with gap-filling; MATURE runs full authoritative extraction
+- Phase 3.5: GREENFIELD mandatory preview; EMERGING recommended opt-in; MATURE default skip
+- Phase 5: MATURE preserves existing token names for backward compatibility; GREENFIELD/EMERGING generate new tokens
+- Phase 6: GREENFIELD builds from headless primitives; EMERGING standardizes existing components; MATURE wraps existing component APIs
 
 ## 2.2 Existing Pattern Extraction
 
-Use the following analysis brief by default when your environment supports specialized delegation; otherwise perform the same scan directly:
+Use the following analysis brief by default when your environment supports specialized delegation; otherwise perform the same scan directly using the bash commands from sections 2.3 and the patterns below:
 
 ```
 Scan the codebase for:
@@ -174,8 +192,11 @@ After completing the analysis report, update `DesignFarmerConfig` with the matur
 # Update {systemPath}/.design-farmer/config.json with:
 # "designMaturity": "greenfield" | "emerging" | "mature"
 # "maturityScore": <N>   (0–10 from the scoring criteria above)
+# Also update config.backup.json with the same values.
 ```
 
 All downstream phases branch on `DesignFarmerConfig.designMaturity` — this update is required before proceeding.
+
+Before emitting status, append `'phase-2'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then append `'phase-2'`. Also update `config.backup.json`.
 
 **Status: DONE** — Repository analysis complete. Design maturity assessed and written to config. Proceed to Phase 3: Design Pattern Extraction.

@@ -25,13 +25,19 @@ find . -maxdepth 4 -name "DESIGN.md" 2>/dev/null | grep -v node_modules | head -
 
 If a `DESIGN.md` file is found, check for existing pipeline state:
 
+**Empty file guard**: If DESIGN.md exists but is empty (0 bytes), treat it as not existing.
+
 ```bash
 # Check for existing config.json with pipeline state
 config_path="{directory_containing_DESIGN.md}/.design-farmer/config.json"
 # Read completedPhases, createdAt from config.json if it exists
 ```
 
-**Draft guard**: Read the first 5 lines of DESIGN.md. If the file contains `**DRAFT**` in its header, it is an incomplete Phase 3 draft — do NOT offer Option A. Only offer B (continue from where you left off) and C (start from scratch).
+**Draft guard**: Read the first 5 lines of DESIGN.md (or all lines if the file has fewer than 5). If any of those lines contain `**DRAFT**`, it is an incomplete Phase 3 draft — do NOT offer Option A. Only offer B (continue from where you left off) and C (start from scratch).
+
+If DESIGN.md exists but `config.json` does NOT exist at `{directory_containing_DESIGN.md}/.design-farmer/config.json`, treat as a partial re-entry — the design document exists but pipeline state was lost. Offer:
+- A) Reconstruct config from DESIGN.md and jump to Phase 5
+- B) Start fresh from Phase 1 (Discovery Interview)
 
 Then ask via AskUserQuestion **before anything else**:
 
@@ -55,25 +61,34 @@ Then ask via AskUserQuestion **before anything else**:
 
 If user chose **A**:
 
-1. **Read the `## Config` YAML block** from DESIGN.md (if present). Parse it to reconstruct `DesignFarmerConfig`:
+1. **Read the `## Config` YAML block** from DESIGN.md (if present). If the `## Config` section is missing or malformed, fall back to preflight scan (steps 1–5) plus user prompts for critical fields — do not block. Parse it to reconstruct `DesignFarmerConfig`:
    - `packageManager`, `framework`, `isMonorepo`, `systemPath`, `designSystemPackage`
    - `componentScope`, `headlessLibrary`, `themeStrategy`, `themeLibrary`, `accessibilityLevel`
    - `targetPlatforms`, `designMaturity`, `maturityScore`
+
+   **Conditional fields** (may be absent depending on user choices):
+   - `brandColor`: read from Config if present; if missing and `colorDirection` is `'keep'`, leave unset (Phase 3 will extract it from the codebase); if missing and `colorDirection` is `'neutral'`, set to `null`
+   - `themeLibrary`: read from Config if present; if missing and `themeStrategy` is `'light-only'`, set to `'none'`
 
 2. **Fill gaps from preflight scan** (steps 1–5 above already ran):
    - `packageManager`: infer from lock file (bun.lock → bun, pnpm-lock.yaml → pnpm, etc.)
    - `framework`: infer from `package.json` dependencies
    - `isMonorepo`: infer from workspace files
    - `systemPath`: use the directory containing DESIGN.md
+   - `designSystemPackage`: read from `{systemPath}/package.json` `"name"` field (e.g., `@acme/design-system`)
 
-3. **If critical fields are still missing** (packageManager, framework, systemPath), ask ONE AskUserQuestion with all missing fields at once — do not ask one-at-a-time for this recovery step.
+3. **If critical fields are still missing** (packageManager, framework, systemPath, isMonorepo, designSystemPackage, componentScope, themeStrategy), ask ONE AskUserQuestion with all missing fields at once — do not ask one-at-a-time for this recovery step.
+
+   **Critical field validation guard**: If the user's response still doesn't provide one or more critical fields, emit **Status: BLOCKED** with message: 'Cannot reconstruct config without required fields: {missing list}. Recovery: restart Phase 0 with complete information.'
 
 4. **Derive computed identifiers** from the parsed fields:
+   - `createdAt`: ISO 8601 timestamp of when this config was reconstructed (e.g., `2026-04-08T12:34:56Z`)
    - `designSystemDir`: `basename(systemPath)` (e.g., `design-system`)
-   - `designSystemPackage`: read from `{systemPath}/package.json` `"name"` field (e.g., `@acme/design-system`)
    - `productName`: strip `@scope/` prefix from `designSystemPackage`, then title-case (e.g., `Design System`)
 
-5. **Persist** the reconstructed `DesignFarmerConfig` (including derived fields) to `{systemPath}/.design-farmer/config.json`. Also copy to `config.backup.json` in the same directory.
+5. **Persist** the reconstructed `DesignFarmerConfig` (including derived fields and `completedPhases: []`) to `{systemPath}/.design-farmer/config.json`. Also copy to `config.backup.json` in the same directory.
+
+   **Read-after-write validation**: Read back config.json to verify the write succeeded. If the file is missing or invalid JSON, emit BLOCKED with recovery instructions.
 
 6. **Validate critical fields** — after persisting config, verify that `designMaturity` is present. If missing, ask via AskUserQuestion:
 
@@ -86,9 +101,25 @@ If user chose **A**:
 
    Set `designMaturity` and `maturityScore` (0 for greenfield, 5 for emerging, 8 for mature) from user's choice, then persist to both `config.json` and `config.backup.json`.
 
-7. **Run a quick architecture scan** — read the existing `{systemPath}/` directory structure to determine the styling strategy (Tailwind/CSS Modules/vanilla CSS) and token directory layout. This substitutes for Phase 4 when jumping directly to Phase 5.
+   Note: This is a preliminary user-estimated maturity. Phase 2 provides a formal maturity assessment that will override this value.
 
-8. **Jump directly to Phase 5.** Do not run Phases 1–4.
+7. **Mark skipped phases** — set `skippedPhases: ["phase-1", "phase-2", "phase-3", "phase-4", "phase-4b", "phase-4.5"]` in config.json so Phase 1 re-entry detection knows these phases were intentionally bypassed. Update `config.backup.json`.
+
+   Note: skippedPhases is marked only after all validations pass.
+
+8. **Run a quick architecture scan** — read the existing `{systemPath}/` directory structure to detect:
+   - **Styling approach**: Check for `tailwind.config.*` (Tailwind), `*.module.css` / `*.module.scss` (CSS Modules), or plain CSS/SCSS files (vanilla CSS)
+   - **Token directory layout**: Look for `tokens/`, `themes/`, `styles/`, or `src/tokens/` directories
+   - **Component directory structure**: Check `src/primitives/`, `src/components/`, or similar
+   - **Build tooling**: Detect Style Dictionary config (`config.json` with `$value` tokens), PostCSS, or other build tools
+
+   Populate the following config fields from scan results: `stylingApproach` (if not already set), and verify `systemPath` directory exists.
+
+   This scan substitutes for Phase 4 output — downstream phases (5–11) use these fields the same way they would if Phase 4 had run normally.
+
+9. **Mark phase complete** — ensure `completedPhases` exists in config.json (initialize as `[]` if undefined). If `'phase-0'` is already present in the array, skip the append (idempotent). Otherwise, append `'phase-0'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
+
+10. **Jump directly to Phase 5.** Do not run Phases 1–4. Phase 5 will run its own Config Validation Protocol at entry to verify all required fields are present.
 
 If user chose **B**:
 - **If DRAFT**: Load the draft's `## Config` YAML to reconstruct `DesignFarmerConfig`. If `designMaturity` is missing from the parsed config, ask via AskUserQuestion:
@@ -102,7 +133,13 @@ If user chose **B**:
 
   Set `designMaturity` and `maturityScore` (0 for greenfield, 5 for emerging, 8 for mature) from user's choice.
 
-  Persist to config.json (and config.backup.json), then **resume from Phase 3.5** (extraction is already done in the draft).
+  Note: This is a preliminary user-estimated maturity. Phase 2 provides a formal maturity assessment that will override this value.
+
+  Run **Config Validation Protocol** (see `operational-notes.md`) on the reconstructed config before jumping to Phase 3.5. Verify required fields (`designMaturity`, `componentScope`, `themeStrategy`, `systemPath`) are present and valid. If validation fails, emit **Status: BLOCKED** with recovery options: re-run Phase 1 or manually correct the config.
+
+  Persist the reconstructed config (including `designMaturity`, `maturityScore`, `completedPhases: []`, and all parsed fields) to `{systemPath}/.design-farmer/config.json`. Also copy to `config.backup.json`.
+
+  Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined). If `'phase-0'` is already present in the array, skip the append (idempotent). Otherwise, append `'phase-0'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`. Then **resume from Phase 3.5** (extraction is already done in the draft).
 - **If finalized**: continue to Phase 1 (Discovery Interview) as normal — run fresh Phases 1–4.
 
 If user chose **C**: continue to Phase 1 (Discovery Interview) as normal.
@@ -121,8 +158,13 @@ If an existing design system is detected (but no DESIGN.md), report the pre-flig
 
 **→ STOP — wait for user response before continuing.**
 
+Create `{systemPath}/.design-farmer/config.json` (directory and file) if it doesn't exist. Set `systemPath` to the directory where the existing design system was detected (from preflight scan steps 2–3). Initialize with `{"completedPhases": []}`. Also copy to `config.backup.json`.
+
 If user chose **A**: continue to Phase 1 (Discovery Interview). Record `strategy: "extend"` in config.json.
 If user chose **B**: continue to Phase 1 (Discovery Interview). Record `strategy: "migrate"` in config.json.
 If user chose **C**: continue to Phase 1 (Discovery Interview). Record `strategy: "greenfield"` in config.json.
 
+Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined). If `'phase-0'` is already present in the array, skip the append (idempotent). Otherwise, append `'phase-0'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
+
 **Status: DONE** — Pre-flight complete. Proceed to Phase 1: Discovery Interview.
+
