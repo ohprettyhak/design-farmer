@@ -2,7 +2,7 @@
 
 Read `DESIGN.md` to verify integration aligns with the approved design architecture and token system. All CSS import paths, ThemeProvider configuration, and token references must match the DESIGN.md source of truth.
 
-**Config Validation:** Before proceeding, verify that `systemPath`, `framework`, `themeStrategy`, and `themeLibrary` are present in `{systemPath}/.design-farmer/config.json`. If any required field is missing, emit **Status: BLOCKED** with recovery instructions: re-run the affected phase or manually correct the config.
+**Config Validation:** Before proceeding, verify that `systemPath`, `framework`, and `themeStrategy` are present in `{systemPath}/.design-farmer/config.json`. If `themeStrategy` is not `'light-only'`, also verify that `themeLibrary` is present. If any required field is missing, emit **Status: BLOCKED** with recovery instructions: re-run the affected phase or manually correct the config.
 
 Via AskUserQuestion, ask:
 
