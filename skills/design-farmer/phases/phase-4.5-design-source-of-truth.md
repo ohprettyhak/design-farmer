@@ -204,7 +204,7 @@ Resolve `sm` / `md` / `lg` / `full` values from `radiusTone` in the config.
 - Font size: use shared control size mapping above
 - Border: `box-shadow: 0 0 0 1px {--border-default}, {--shadow-sm}`
 - Focus: `box-shadow: 0 0 0 1px {--border-focus}, {--shadow-sm}`
-- Border-radius: `{--input-radius}` or `{--button-radius}` (must map to same radius tier as Button/Input)
+- Border-radius: `{--select-radius}` (mapped to same `md` tier as Button/Input)
 - Chevron icon slot: trailing inline-end, centered vertically
 
 > **Why box-shadow for borders?** Using `box-shadow: 0 0 0 1px` instead of CSS `border` prevents layout shift when switching between default/focus/error states (no width change).
