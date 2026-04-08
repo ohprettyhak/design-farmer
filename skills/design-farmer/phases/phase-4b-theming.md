@@ -306,8 +306,8 @@ module.exports = { darkMode: ['selector', '[data-theme="dark"]'] }
 **→ STOP — wait for user response before continuing.**
 
 If user chose A: collect brand palette data, then continue to multi-brand ThemeProvider generation below.
-If user chose B: update `themeStrategy` to `'light-dark'` in config.json and config.backup.json, then skip this section and continue from **## 4b.1 Theme Setup** (light-dark theming applies).
-If user chose C: update `themeStrategy` to `'light-only'` in config.json and config.backup.json, then skip this section and continue from **## 4b.5 Light-Only Token Overrides** (light-only theming applies).
+If user chose B: update `themeStrategy` to `'light-dark'` in config.json and config.backup.json, then skip this section and continue from **## 4b.1 Theme System** (light-dark theming applies).
+If user chose C: update `themeStrategy` to `'light-only'` in config.json and config.backup.json, then skip this section and continue from **## 4b.5 Styling Approach Decision** (light-only theming applies).
 
 ---
 

@@ -71,7 +71,7 @@ Generate a self-contained HTML file at {systemPath}/.design-farmer/design-previe
 1. **Color Palette Display** — Show all generated OKLCH palettes as color swatches with:
    - 11-step swatches (50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950) for each hue
    - Hex/OKLCH values displayed under each swatch
-   - Light and dark theme variants side by side
+   - Light and dark theme variants side by side (skip dark variant if `themeStrategy = 'light-only'`)
 
 2. **Typography Specimen** — Render text samples:
    - Each font family at all defined sizes
@@ -89,7 +89,7 @@ Generate a self-contained HTML file at {systemPath}/.design-farmer/design-previe
    - Card with header, body, and footer
    - Badge with status colors
 
-5. **Theme Toggle** — A JavaScript toggle at the top:
+5. **Theme Toggle** — A JavaScript toggle at the top (skip this entire step if `themeStrategy = 'light-only'`):
    - Switches between light and dark themes
    - Applies [data-theme='light'] / [data-theme='dark'] to body
    - All CSS custom properties switch accordingly
