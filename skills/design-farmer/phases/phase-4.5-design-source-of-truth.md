@@ -2,7 +2,7 @@
 
 Generate a `DESIGN.md` file at `{systemPath}/DESIGN.md` so the design artifact always lives beside the generated design-system work it describes.
 
-**Pre-flight validation**: Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then verify that `completedPhases` includes `'phase-4'`. Also verify `'phase-4b'` is present unless `themeStrategy = 'light-only'` (light-only projects may have legacy configs where 4b was skipped before skip paths were fully documented). If `'phase-4b'` is missing and `themeStrategy ≠ 'light-only'`, emit **BLOCKED** — "Phase 4b (Theme & Styling) must complete before Phase 4.5 can generate DESIGN.md. Please re-run Phase 4b first."
+**Pre-flight validation**: Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined), then verify that `completedPhases` includes `'phase-4'`. Also verify `'phase-4b'` is present unless both `themeStrategy = 'light-only'` AND `stylingApproach` is defined in config.json (light-only projects may have legacy configs where 4b was skipped before skip paths were fully documented, but the critical 4b output — `stylingApproach` — must still be present). If `'phase-4b'` is missing and the above exception does not apply, emit **BLOCKED** — "Phase 4b (Theme & Styling) must complete before Phase 4.5 can generate DESIGN.md. Please re-run Phase 4b first."
 
 ## 4.5.1 DESIGN.md Structure
 
