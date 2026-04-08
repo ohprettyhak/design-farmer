@@ -210,8 +210,11 @@ directives to explicitly register the component source paths:
 | Storybook preview imports design system CSS via workspace | `@source` in the design system CSS, NOT in preview.tsx | `@source` must be in the same file as `@import "tailwindcss"` |
 
 **Common mistake:** Adding `@source` in Storybook's `preview.tsx` import instead of the design
-system's CSS file. The `@source` directive must be in the same file as (or imported alongside)
-`@import "tailwindcss"` — it cannot be in a separate CSS file.
+system's CSS file. The `@source` directive must be in the **same physical file** as
+`@import "tailwindcss"`. It cannot be in a separate CSS file — `@source` directives do
+not cascade across `@import` boundaries. Importing a CSS file that already contains both
+`@import "tailwindcss"` and `@source` works, but adding `@source` in the importing file
+does not.
 
 **Verification:** After adding `@source`, restart Storybook and confirm that utility classes
 used in design system components (e.g., `bg-primary-500`, `p-4`, `rounded-md`) are applied.

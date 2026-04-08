@@ -183,12 +183,88 @@ import '{systemPath}/src/themes/light.css'
 import '{systemPath}/src/themes/dark.css'
 {/if}
 
-// Pattern C — Tailwind v4 @theme (no separate CSS files):
-// Tokens are injected via @theme in the Tailwind config — no manual CSS import needed
+// Pattern C — Tailwind v4 @theme (tokens registered via @import "tailwindcss"):
+// Import the design system's Tailwind entry CSS which contains @import "tailwindcss"
+// and @source directives for monorepo setups.
+// See "Tailwind v4 @source for Monorepo Consumers" subsection below.
 
-// Component styles (if not using CSS modules):
-import '{systemPath}/components/styles.css'  // or wherever component CSS was generated
+import '{systemPath}/src/styles/index.css'
 ```
+
+### Tailwind v4 `@source` for Monorepo Consumers
+
+When the design system uses Tailwind v4 (`@import "tailwindcss"` in its CSS entry) and
+the consuming app lives in a separate monorepo package (e.g., `apps/web/`, `apps/docs/`),
+Tailwind's automatic source file detection may not scan the design system's component
+source files. This causes utility classes used in design system components to not be
+generated, resulting in missing styles in the consuming app.
+
+**Root cause:** Tailwind v4 detects source files based on the CSS file's location and the
+current working directory (CWD). When the design system's CSS is imported across package
+boundaries, Tailwind may not reach the component source files in
+`packages/{designSystemDir}/src/`.
+
+**Where to add `@source`:** The `@source` directive must be in the **same physical file** as
+`@import "tailwindcss"` — NOT in the consuming app's CSS entry, JS entry point, or layout
+file. `@source` directives do not cascade across `@import` boundaries: importing a CSS
+file that already contains both `@import "tailwindcss"` and `@source` works, but adding
+`@source` in the importing file does not. This rule is documented consistently in
+Phase 4 (Architecture), Phase 7 (Storybook), and this phase.
+
+**Fix — add `@source` directives in the design system's Tailwind CSS entry:**
+
+```css
+/* packages/{designSystemDir}/src/styles/index.css */
+
+/* Option A: Keep auto-detection, set base path relative to this CSS file */
+@import "tailwindcss" source("../src");
+
+/* Option B: Disable auto-detection, register paths explicitly */
+@import "tailwindcss" source(none);
+@source "../src";
+@source "../../other-package/src";
+```
+
+**Framework-specific consumer setup:**
+
+For each framework below, the consuming app only needs to import the design system's CSS
+file — the `@source` directives inside that file handle source detection. The consuming
+app does NOT need its own `@import "tailwindcss"` unless it also uses Tailwind utilities
+directly in app code.
+
+| Framework | App CSS Entry | Notes |
+|-----------|--------------|-------|
+| Next.js App Router | `app/globals.css` → `import '@{scope}/design-system/src/styles/index.css'` | No additional `@source` needed in app CSS |
+| Next.js Pages Router | `styles/globals.css` → `import '@{scope}/design-system/src/styles/index.css'` | Same as App Router |
+| Vite + React | `src/index.css` → `import '@{scope}/design-system/src/styles/index.css'` | No Vite plugin changes needed — `@source` is CSS-level |
+| Remix | `app/root.tsx` → import in stylesheet linkage | No additional config |
+| Astro | Main layout stylesheet → `import '@{scope}/design-system/src/styles/index.css'` | No additional config |
+| SvelteKit | `src/routes/+layout.svelte` → style import | No additional config |
+| Nuxt | `nuxt.config.ts` `css` array or layout import | No additional config |
+| Plain React (Vite or CRA) | `src/index.css` → `import '@{scope}/design-system/src/styles/index.css'` | No additional config (Vite recommended; CRA is deprecated) |
+
+**When `@source` is needed vs. not needed:**
+
+| Scenario | `@source` Required? | Why |
+|----------|-------------------|-----|
+| Design system and app are in the same package (single repo) | No | Tailwind's default auto-detection covers the package |
+| Design system at `packages/ds/`, app at `apps/web/`, same monorepo | Yes (in design system CSS) | CSS file location differs from component source — add `@source` in design system CSS. All consuming apps inherit the directives via workspace import |
+| Multiple apps (Next.js, Remix, Nuxt) consume one design system | No (per app) | Add `@source` once in the design system's CSS — all consuming apps inherit it |
+| Design system published to npm, consumed as external dependency | Design system author must handle | Published packages should include `@source` in their distributed CSS. Consumers cannot reliably add `@source` for external dependencies because source paths vary by build tool and installation layout |
+| App also uses Tailwind utilities directly in its own components | Yes (in app CSS) | If the app has its own `@import "tailwindcss"`, add `@source` in the app's CSS pointing to `node_modules/{pkg}/src/` so the app's Tailwind instance scans design system classes too. Prefer letting the design system own Tailwind when possible |
+
+**Common mistake:** Adding `@source` in the consuming app's CSS file or JS entry instead of
+the design system's CSS file. The `@source` directive must be in the same file as
+`@import "tailwindcss"`.
+
+**Verification:** After integrating, start the dev server and confirm that utility classes
+used in design system components (e.g., `bg-primary-500`, `p-4`, `rounded-md`) are applied
+in the consuming app. If styles are missing, verify the `@source` path is correct relative
+to the CSS file containing `@import "tailwindcss"`, not relative to the app's project root.
+
+**Cross-references:**
+- Phase 4 (Architecture) section 4.3 — `@source` in the token build pipeline
+- Phase 7 (Storybook) Step 2.5 — Storybook-specific `@source` guidance and decision matrix
 
 Verify the import ORDER is correct:
 1. Reset / base styles (if any)
