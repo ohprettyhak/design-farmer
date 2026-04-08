@@ -92,8 +92,10 @@ Use that version throughout — do NOT assume any specific major version number.
      d. Run init from inside the new package: `cd apps/storybook && {packageManager} dlx storybook@latest init`
      e. In `apps/storybook/.storybook/main.ts`, set the `stories` glob to reach the design system:
         `stories: ['../../packages/{designSystemDir}/src/**/*.stories.@(ts|tsx)']`
-     f. Import the design system's tokens/CSS from the workspace package in `preview.tsx`:
-        `import '{designSystemPackage}/src/tokens/index.css'`
+     f. Import the design system's global CSS entry from the workspace package in `preview.tsx`:
+        `import '{designSystemPackage}/src/styles/index.css'`
+        (If the project uses a non-Tailwind token pipeline, import the actual generated
+        CSS entry discovered in Phase 4.3.)
    - **Tailwind v4 monorepo warning:** If the design system uses Tailwind v4
      (`@import "tailwindcss"` in its CSS entry), Tailwind's automatic source detection
      may not scan the design system's component source files when Storybook runs from
@@ -190,13 +192,13 @@ directives to explicitly register the component source paths:
 
 ```css
 /* Option A: Keep auto-detection, set base path */
-/* source() sets the base directory relative to this CSS file */
-@import "tailwindcss" source("../src");
+/* From src/styles/, ".." resolves to src/ — the component source root */
+@import "tailwindcss" source("..");
 
 /* Option B: Disable auto-detection, register paths explicitly */
 /* Use this when you need full control over which directories Tailwind scans */
 @import "tailwindcss" source(none);
-@source "../src";
+@source "..";
 @source "../../other-package/src";
 ```
 
@@ -205,13 +207,16 @@ directives to explicitly register the component source paths:
 | Scenario | Directive | Why |
 |----------|-----------|-----|
 | Design system CSS in `src/styles/`, components in `src/` | `@import "tailwindcss"` (default) | Auto-detection covers same directory and children |
-| Storybook at `apps/storybook/`, design system at `packages/ds/` | `@import "tailwindcss" source("../src")` | Ensures component sources are scanned regardless of where CSS is imported from |
+| Storybook at `apps/storybook/`, design system at `packages/ds/` | `@import "tailwindcss" source("..")` | From `src/styles/`, `".."` resolves to `src/` — the component source root |
 | Multiple packages use Tailwind utilities | `source(none)` + explicit `@source` per path | Full control; prevents scanning unintended directories |
 | Storybook preview imports design system CSS via workspace | `@source` in the design system CSS, NOT in preview.tsx | `@source` must be in the same file as `@import "tailwindcss"` |
 
 **Common mistake:** Adding `@source` in Storybook's `preview.tsx` import instead of the design
-system's CSS file. The `@source` directive must be in the same file as (or imported alongside)
-`@import "tailwindcss"` — it cannot be in a separate CSS file.
+system's CSS file. The `@source` directive must be in the **same physical file** as
+`@import "tailwindcss"`. It cannot be in a separate CSS file — `@source` directives do
+not cascade across `@import` boundaries. Importing a CSS file that already contains both
+`@import "tailwindcss"` and `@source` works, but adding `@source` in the importing file
+does not.
 
 **Verification:** After adding `@source`, restart Storybook and confirm that utility classes
 used in design system components (e.g., `bg-primary-500`, `p-4`, `rounded-md`) are applied.
@@ -266,7 +271,7 @@ export default preview;
 
 **Critical rules for story files:**
 1. Always use the EXACT prop values defined in the component's TypeScript interface
-   - ✅ `size="small"` if the component defines `"small" | "medium" | "large"`
+   - ✅ `size="x-small"` if the component defines `"x-small" | "small" | "medium" | "large"`
    - ❌ `size="sm"` — this will fail TypeScript and show errors in the IDE
 2. Import types from the design system package: `import type { Meta, StoryObj } from "@storybook/react"`
 3. Always define `meta.component` so autodocs generates the props table
@@ -307,8 +312,11 @@ export const AllVariants: Story = {
 
 **Dimension 2 — Size Axis (CRITICAL):**
 Every size option gets a dedicated story, PLUS an AllSizes comparison story.
+Use the same size axis for all form controls that expose `size` (Button, Input, Select):
+`x-small | small | medium | large`.
 
 ```tsx
+export const XSmall: Story = { args: { size: 'x-small', children: 'X-Small' } }
 export const Small: Story = { args: { size: 'small', children: 'Small' } }
 export const Medium: Story = { args: { size: 'medium', children: 'Medium' } }
 export const Large: Story = { args: { size: 'large', children: 'Large' } }
@@ -316,7 +324,7 @@ export const Large: Story = { args: { size: 'large', children: 'Large' } }
 export const AllSizes: Story = {
   render: () => (
     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-      {['small', 'medium', 'large'].map(s => (
+      {['x-small', 'small', 'medium', 'large'].map(s => (
         <Button key={s} size={s}>{s}</Button>
       ))}
     </div>

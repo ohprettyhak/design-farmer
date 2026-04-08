@@ -289,15 +289,18 @@ explicitly set the base path for source detection:
 
 ```css
 /* Set base path relative to this CSS file */
-@import "tailwindcss" source("../src");
+/* From src/styles/, ".." resolves to src/ — the component source root */
+@import "tailwindcss" source("..");
 
 /* Or disable auto-detection and register paths explicitly */
 @import "tailwindcss" source(none);
-@source "../src";
+@source "..";
 ```
 
-For full details and the decision matrix, see Phase 7 (Storybook Integration) — Step 2.5
-Tailwind v4 `@source` directive section.
+For full details and the decision matrix, see:
+- **Phase 7 (Storybook Integration)** — Step 2.5: Storybook-specific `@source` guidance
+- **Phase 10 (App Integration)** — Section 10.3, "Tailwind v4 `@source` for Monorepo Consumers"
+  subsection: `@source` guidance for all monorepo consumers (Next.js, Vite+React, Remix, Astro, SvelteKit, Nuxt, plain React)
 
 **Alternative: Style Dictionary 4.x**
 
