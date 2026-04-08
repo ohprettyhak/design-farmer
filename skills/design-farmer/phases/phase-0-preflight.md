@@ -64,6 +64,7 @@ If user chose **A**:
 1. **Read the `## Config` YAML block** from DESIGN.md (if present). If the `## Config` section is missing or malformed, fall back to preflight scan (steps 1–5) plus user prompts for critical fields — do not block. Parse it to reconstruct `DesignFarmerConfig`:
    - `packageManager`, `framework`, `isMonorepo`, `systemPath`, `designSystemPackage`
    - `componentScope`, `headlessLibrary`, `themeStrategy`, `themeLibrary`, `accessibilityLevel`
+   - `radiusTone`
    - `targetPlatforms`, `designMaturity`, `maturityScore`
 
    **Conditional fields** (may be absent depending on user choices):
@@ -179,4 +180,3 @@ If user chose **C**: continue to Phase 1 (Discovery Interview). Record `strategy
 Ensure `completedPhases` exists in config.json (initialize as `[]` if undefined). If `'phase-0'` is already present in the array, skip the append (idempotent). Otherwise, append `'phase-0'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
 
 **Status: DONE** — Pre-flight complete. Proceed to Phase 1: Discovery Interview.
-

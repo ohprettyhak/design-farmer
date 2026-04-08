@@ -51,10 +51,13 @@ and component design decisions. Use it as the concrete reference when building g
 
 **Spacing defaults**: Base-4 scale: `2, 4, 6, 8, 10, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96` px
 
-**Border radius defaults:**
-- Tight: `4px` (badges, tags)
-- Default: `6px` (buttons, inputs)
-- Loose: `8px` (cards, dialogs, popovers)
+**Border radius defaults** (derived from `DesignFarmerConfig.radiusTone`):
+- `sharp` → Tight: `0px`, Default: `2px`, Loose: `4px`
+- `subtle` → Tight: `2px`, Default: `4px`, Loose: `6px`
+- `rounded` → Tight: `4px`, Default: `8px`, Loose: `12px`
+- `soft` → Tight: `6px`, Default: `12px`, Loose: `16px`
+
+If `radiusTone` is missing (legacy config), use `subtle` as fallback.
 
 **Shadow defaults** using `oklch(0 0 0 / alpha)`:
 - SM: `0 1px 3px oklch(0 0 0 / 0.06)`

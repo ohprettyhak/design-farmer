@@ -279,9 +279,10 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 // Component consumes ONLY semantic tokens via CSS custom properties.
 // Sizing values from the approved design reference (DESIGN.md):
-//   sm: h-32px px-12px text-14px
-//   md: h-36px px-16px text-14px
-//   lg: h-40px px-20px text-16px
+//   x-small: h-28px px-10px text-12px
+//   small:   h-32px px-12px text-13px
+//   medium:  h-36px px-14px text-14px
+//   large:   h-40px px-16px text-15px
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ variant = 'primary', size = 'medium', loading, className, ...props }, ref) => (
@@ -362,6 +363,8 @@ For each component:
    }
    ```
    Reference `DESIGN.md` for sizing values when building greenfield.
+   For greenfield projects, align control sizes across Button, Input, and Select using the recommended defaults.
+   For mature/emerging projects, use extracted values from Phase 3.
 
 2. **Implementation** — Build the component:
    ```
@@ -375,11 +378,12 @@ For each component:
    Sizing reference: {values from DESIGN.md for this component}
    Token dependencies: {semantic tokens this component uses}
 
-   Requirements:
+    Requirements:
    - If headless library: wrap the library's primitive with styled layer
    - If no library: implement ARIA attributes, keyboard nav, focus management from scratch
    - Consume ONLY semantic tokens (never primitive tokens directly)
-   - All sizes from the approved DESIGN.md reference (height, padding, font-size, radius)
+    - All sizes from the approved DESIGN.md reference (height, padding, font-size, radius)
+    - Align control sizes across Button/Input/Select (`x-small`, `small`, `medium`, `large`) for visual consistency
    - States: hover, focus-visible, active, disabled, loading
    - Support compound component pattern for complex components (Select, Dialog, etc.)
    ```
@@ -408,7 +412,7 @@ For each component:
    - Snapshot-based: CSS snapshot tests as lightweight proxy
 
    Coverage for each component:
-   - All variants x all sizes (e.g., Button: 5 variants x 5 sizes = 25 combinations)
+    - All variants x all sizes (e.g., Button: 5 variants x 4 sizes = 20 combinations)
    - All interactive states (default, hover, focus, disabled, loading)
    - Both themes (light and dark)
    ```
