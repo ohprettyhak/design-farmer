@@ -312,6 +312,8 @@ export const AllVariants: Story = {
 
 **Dimension 2 — Size Axis (CRITICAL):**
 Every size option gets a dedicated story, PLUS an AllSizes comparison story.
+Use the same size axis for all form controls that expose `size` (Button, Input, Select):
+`x-small | small | medium | large`.
 
 ```tsx
 export const XSmall: Story = { args: { size: 'x-small', children: 'X-Small' } }

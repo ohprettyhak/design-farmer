@@ -176,6 +176,20 @@ Reference exact token values inline with backticks.}
 | medium | 36px | 14px | 14px |
 | large | 40px | 16px | 15px |
 
+**Radius-tier mapping by component (must be explicit in generated output):**
+
+| Component | Radius token | Tier |
+|-----------|--------------|------|
+| Button | `--button-radius` | `md` |
+| Input | `--input-radius` | `md` |
+| Select | `--select-radius` | `md` |
+| Card | `--card-radius` | `lg` |
+| Dialog/Modal | `--dialog-radius` | `lg` |
+| Popover/Dropdown/Tooltip | `--popover-radius` | `lg` |
+| Badge/Pill | fixed `9999px` | `full` |
+
+Resolve `sm` / `md` / `lg` / `full` values from `radiusTone` in the config.
+
 ### Select
 
 **Select Trigger** (normal state)

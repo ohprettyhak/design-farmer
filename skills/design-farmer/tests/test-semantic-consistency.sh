@@ -560,6 +560,37 @@ fi
 
 echo ""
 
+echo "=== TEST 16: Radius Tone Contract Consistency ==="
+
+PHASE0_FILE="$PHASES_DIR/phase-0-preflight.md"
+PHASE1_FILE="$PHASES_DIR/phase-1-discovery.md"
+
+if grep -q "radiusTone" "$PHASE0_FILE" &&
+   grep -q "radiusTone" "$PHASE1_FILE" &&
+   grep -q "radiusTone" "$PHASE45_FILE" &&
+   grep -q "radiusTone" "$EXAMPLE_DESIGN_FILE"; then
+  pass "radiusTone propagates through Phase 0, Phase 1, Phase 4.5, and example DESIGN.md"
+else
+  fail "radiusTone propagation is incomplete across required contracts"
+fi
+
+if grep -q 'rounded → sm:' "$PHASE45_FILE" &&
+   grep -q 'md: `8px`' "$PHASE45_FILE" &&
+   grep -q 'lg: `12px`' "$PHASE45_FILE"; then
+  pass "Phase 4.5 defines rounded radius mapping as 4/8/12"
+else
+  fail "Phase 4.5 missing rounded radius mapping 4/8/12"
+fi
+
+if grep -q 'For `radiusTone: rounded`, medium control radius resolves to `8px`' "$EXAMPLE_DESIGN_FILE" &&
+   grep -q -- '- Border-radius: `8px` (`--button-radius`)' "$EXAMPLE_DESIGN_FILE"; then
+  pass "Example DESIGN.md aligns rounded tone with 8px medium control radius"
+else
+  fail "Example DESIGN.md radius values drift from rounded 8px medium control contract"
+fi
+
+echo ""
+
 # ---------------------------------------------------------------------------
 # SUMMARY
 # ---------------------------------------------------------------------------

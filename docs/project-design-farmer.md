@@ -85,6 +85,8 @@ skills/design-farmer/
 | OKLCH as primary color space | Perceptual uniformity, gamut-aware palette generation, natural dark mode derivation via lightness inversion |
 | APCA over WCAG 2.x ratios (with dual-check) | Better perceptual accuracy; legal compliance maintained via parallel WCAG 2.x check |
 | Three-tier token hierarchy (primitive/semantic/component) | Enables theming without component API changes; semantic-token-only rule prevents coupling |
+| User-selected radius tone (`radiusTone`) | Captures corner-style intent early and keeps generated radius defaults aligned with product direction |
+| Shared control size ladder (28/32/36/40) | Keeps Button/Input/Select dimensions consistent so component ergonomics and visual rhythm stay unified |
 | Phase-file decomposition (not monolithic SKILL.md) | Reduces token consumption per phase; agents load only the current phase |
 | DESIGN.md as persistent source of truth | Enables re-entry (Phase 0 → Phase 5 shortcut) and cross-session design continuity |
 | Fix Loop Protocol (5 max attempts) | Self-healing without external plugins; escalates to BLOCKED on exhaustion |
@@ -149,6 +151,8 @@ Phase 0 (Preflight) ──→ detect topology, check DESIGN.md
 - [x] Installer deploys bundle atomically across 5 AI tools.
 - [x] CI pipeline runs on every PR and push to `main`.
 - [x] DESIGN.md Config fields survive Phase 4.5 → Phase 0 round-trip (14 fields).
+- [x] Radius tone preference (`radiusTone`) is captured in discovery and propagated through re-entry/config templates.
+- [x] Button/Input/Select size contracts use one shared ladder (`28/32/36/40`) in phase templates, examples, and semantic tests.
 - [x] All conditional skip/jump paths (6 paths) are valid and tested.
 - [x] Fallback/degradation registry covers all implementation phases (14 entries).
 

@@ -133,7 +133,7 @@ gets +0.01em to improve legibility at 12px.
 **Primary Button** — `variant="primary"`
 - Background: `var(--interactive-primary)` → `oklch(0.55 0.22 264)`
 - Text: `var(--text-inverse)` → `oklch(0.97 0.003 240)`
-- Border-radius: `6px` (`--button-radius`)
+- Border-radius: `8px` (`--button-radius`)
 - Hover: `var(--interactive-primary-hover)` → `oklch(0.48 0.20 264)`
 - Active: `var(--interactive-primary-active)` → `oklch(0.42 0.18 264)`
 - Disabled: `opacity: 40%`
@@ -174,7 +174,7 @@ gets +0.01em to improve legibility at 12px.
 - Height: `28px` (x-small), `32px` (small), `36px` (medium), `40px` (large)
 - Padding X: `10px` (x-small), `12px` (small), `14px` (medium), `16px` (large)
 - Font size: `12px` (x-small), `13px` (small), `14px` (medium), `15px` (large)
-- Border-radius: `6px`
+- Border-radius: `8px`
 - Focus: `box-shadow: 0 0 0 1px var(--border-focus), var(--shadow-sm)`
 - Error: `box-shadow: 0 0 0 1px var(--state-error)`
 - Disabled: `opacity: 40%, cursor: not-allowed, background: var(--surface-subtle)`
@@ -187,10 +187,11 @@ gets +0.01em to improve legibility at 12px.
 - Padding X: `10px` (x-small), `12px` (small), `14px` (medium), `16px` (large)
 - Font size: `12px` (x-small), `13px` (small), `14px` (medium), `15px` (large)
 - Border: `box-shadow: 0 0 0 1px var(--border-default), var(--shadow-sm)`
-- Border-radius: `6px`
+- Border-radius: `8px`
 - Focus: `box-shadow: 0 0 0 1px var(--border-focus), var(--shadow-sm)`
 
 Shared control rule: Button, Input, and Select use the same four-size ladder (28/32/36/40).
+For `radiusTone: rounded`, medium control radius resolves to `8px`.
 
 **CSS tokens defined in tokens.css:**
 ```css
@@ -352,8 +353,8 @@ pixel grid across all viewports.
 
 ### Example Component Prompts
 - "Create a card: `--surface-default` bg, `--border-default` outline, `8px` radius, CardHeader with `--surface-subtle` + `--border-subtle` bottom, CardContent with `16px` padding"
-- "Create a primary button: `--interactive-primary` bg, `--text-inverse` text, `6px` radius, hover `--interactive-primary-hover`, active `--interactive-primary-active`, medium size=`36px` height + `14px` padding-x"
-- "Create an input: medium size=`36px` height + `14px` padding-x, `6px` radius, `box-shadow: --input-shadow`, focus `--input-shadow-focus`, error `--input-shadow-error`, placeholder `--text-tertiary`"
+- "Create a primary button: `--interactive-primary` bg, `--text-inverse` text, `8px` radius, hover `--interactive-primary-hover`, active `--interactive-primary-active`, medium size=`36px` height + `14px` padding-x"
+- "Create an input: medium size=`36px` height + `14px` padding-x, `8px` radius, `box-shadow: --input-shadow`, focus `--input-shadow-focus`, error `--input-shadow-error`, placeholder `--text-tertiary`"
 
 ### Iteration Guide
 1. Always reference semantic tokens, never raw color values
