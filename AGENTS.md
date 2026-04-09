@@ -29,11 +29,12 @@
   - `skills/design-farmer/tests/`: Test suites (`run-all.sh`, `test-semantic-consistency.sh`).
 - `scripts/`: Repository-level validation and CI scripts.
   - `scripts/validate-skill-md.sh`: Structural validation (phase files, router references, contracts).
-  - `scripts/test-install-smoke.sh`: Installer smoke tests across tools and shells.
+  - `scripts/test-install-smoke.sh`: Install/uninstall smoke tests across tools and shells.
 - `.github/`: GitHub configuration.
-  - `.github/workflows/skill-quality.yml`: CI pipeline (structural validation + install smoke tests).
+  - `.github/workflows/skill-quality.yml`: CI pipeline (structural validation + install/uninstall smoke tests).
   - `.github/pull_request_template.md`: PR template with validation evidence checklist.
 - `install.sh`: Automated installer (detects tools, supports selective target flags, downloads skill bundle atomically).
+- `uninstall.sh`: Automated uninstaller (detects/selects tools and removes only `skills/design-farmer` targets safely).
 - `AGENTS.md`: This file — repository-wide rules.
 - `CONTRIBUTING.md`: Contributor workflow (branch naming, commit convention, PR requirements).
 - `README.md`: Project overview, installation, and documentation links.
@@ -128,6 +129,6 @@ Repository-wide quality CI runs on every pull request and push to `main`.
 
 Jobs:
 - `validate-skill`: runs `bash scripts/validate-skill-md.sh` — fails if any structural check fails.
-- `install-smoke`: runs `bash scripts/test-install-smoke.sh` across 5 tools x 2 shells (bash, zsh) — fails if any installer smoke test fails.
+- `install-smoke`: runs `bash scripts/test-install-smoke.sh` across 5 tools x 2 shells (bash, zsh) — fails if any install/uninstall smoke test fails.
 
 All CI jobs must pass before a PR is merged.

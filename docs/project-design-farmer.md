@@ -28,6 +28,7 @@ Before this project, agents had no repeatable workflow for:
 - Companion documentation (`PHASE-INDEX.md`, `QUALITY-GATES.md`, `MAINTENANCE.md`, `EXAMPLES-GALLERY.md`).
 - Greenfield reference example (`examples/DESIGN.md` — Nova UI).
 - Automated installer (`install.sh`) with atomic bundle deployment and selective target options (`--tool`, `--interactive`, `--dry-run`).
+- Automated uninstaller (`uninstall.sh`) with selective target options (`--tool`, `--interactive`, `--dry-run`) and safe path-guarded removal.
 - Structural validation script (`scripts/validate-skill-md.sh`).
 - Semantic consistency test suite (`tests/test-semantic-consistency.sh`).
 - CI pipeline (GitHub Actions: structural validation + install smoke tests).
@@ -151,6 +152,8 @@ Phase 0 (Preflight) ──→ detect topology, check DESIGN.md
 - [x] Exhaustive simulation (169 checks, 1152 paths) passes with zero failures.
 - [x] Installer deploys bundle atomically across 5 AI tools.
 - [x] Installer supports selective target installation (`--tool`, `--interactive`) and preview mode (`--dry-run`).
+- [x] Uninstaller safely removes only `*/skills/design-farmer` targets across 5 AI tools.
+- [x] Uninstaller supports selective target removal (`--tool`, `--interactive`) and preview mode (`--dry-run`).
 - [x] CI pipeline runs on every PR and push to `main`.
 - [x] DESIGN.md Config fields survive Phase 4.5 → Phase 0 round-trip (14 fields).
 - [x] Radius tone preference (`radiusTone`) is captured in discovery and propagated through re-entry/config templates.
@@ -183,3 +186,4 @@ Phase 0 (Preflight) ──→ detect topology, check DESIGN.md
 | 2026-04-09 | Codex | Updated re-entry contract to context-first flow and documented CI anti-drift guards |
 | 2026-04-09 | Codex | Added DESIGN.md source-classification decision to prevent false corruption handling for readable third-party docs |
 | 2026-04-09 | Codex | Added installer selective-target contract (`--tool`, `--interactive`, `--dry-run`) and acceptance criteria |
+| 2026-04-09 | Codex | Added uninstall script contract, safety scope, and install/uninstall smoke test expectations |

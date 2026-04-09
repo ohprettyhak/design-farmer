@@ -4,10 +4,16 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 INSTALLER="$ROOT_DIR/install.sh"
+UNINSTALLER="$ROOT_DIR/uninstall.sh"
 BASH_BIN="$(command -v bash)"
 
 if [[ ! -f "$INSTALLER" ]]; then
   echo "ERROR: Missing installer script: $INSTALLER"
+  exit 1
+fi
+
+if [[ ! -f "$UNINSTALLER" ]]; then
+  echo "ERROR: Missing uninstaller script: $UNINSTALLER"
   exit 1
 fi
 
@@ -428,6 +434,191 @@ test_atomic_install_preserves_existing_on_download_failure() {
   trap - RETURN
 }
 
+test_uninstall_removes_only_requested_target() {
+  local temp_dir
+  temp_dir="$(mktemp -d)"
+  trap 'rm -rf "$temp_dir"' RETURN
+
+  local fake_home="$temp_dir/home"
+  local fake_bin="$temp_dir/bin"
+  mkdir -p "$fake_home"
+  mkdir -p "$(tool_marker_path "claude" "$fake_home")"
+  mkdir -p "$(tool_marker_path "codex" "$fake_home")"
+  write_curl_stub "$fake_bin"
+
+  local install_output="$temp_dir/install.log"
+  HOME="$fake_home" PATH="$fake_bin:/usr/bin:/bin" BRANCH="smoke-test-branch" \
+    "$BASH_BIN" "$INSTALLER" --tool claude --tool codex >"$install_output" 2>&1
+
+  local claude_dir
+  claude_dir="$(installed_skill_dir_path "claude" "$fake_home")"
+  local codex_dir
+  codex_dir="$(installed_skill_dir_path "codex" "$fake_home")"
+
+  if [[ ! -d "$claude_dir" ]] || [[ ! -d "$codex_dir" ]]; then
+    echo "ERROR: Expected both claude and codex bundles to be installed before uninstall"
+    cat "$install_output"
+    exit 1
+  fi
+
+  local uninstall_output="$temp_dir/uninstall.log"
+  HOME="$fake_home" PATH="/usr/bin:/bin" \
+    "$BASH_BIN" "$UNINSTALLER" --tool codex >"$uninstall_output" 2>&1
+
+  if [[ ! -d "$claude_dir" ]]; then
+    echo "ERROR: Uninstall removed unrequested claude target"
+    cat "$uninstall_output"
+    exit 1
+  fi
+
+  if [[ -d "$codex_dir" ]]; then
+    echo "ERROR: Uninstall did not remove requested codex target"
+    cat "$uninstall_output"
+    exit 1
+  fi
+
+  assert_contains "$uninstall_output" "Selected targets:"
+  assert_contains "$uninstall_output" "Codex CLI"
+  assert_contains "$uninstall_output" "Done!"
+
+  rm -rf "$temp_dir"
+  trap - RETURN
+}
+
+test_uninstall_dry_run_does_not_delete_files() {
+  local temp_dir
+  temp_dir="$(mktemp -d)"
+  trap 'rm -rf "$temp_dir"' RETURN
+
+  local fake_home="$temp_dir/home"
+  local fake_bin="$temp_dir/bin"
+  mkdir -p "$fake_home"
+  mkdir -p "$(tool_marker_path "claude" "$fake_home")"
+  write_curl_stub "$fake_bin"
+
+  local install_output="$temp_dir/install.log"
+  HOME="$fake_home" PATH="$fake_bin:/usr/bin:/bin" BRANCH="smoke-test-branch" \
+    "$BASH_BIN" "$INSTALLER" --tool claude >"$install_output" 2>&1
+
+  local claude_dir
+  claude_dir="$(installed_skill_dir_path "claude" "$fake_home")"
+  if [[ ! -d "$claude_dir" ]]; then
+    echo "ERROR: Precondition failed; claude install target missing"
+    cat "$install_output"
+    exit 1
+  fi
+
+  local uninstall_output="$temp_dir/uninstall.log"
+  HOME="$fake_home" PATH="/usr/bin:/bin" \
+    "$BASH_BIN" "$UNINSTALLER" --tool claude --dry-run >"$uninstall_output" 2>&1
+
+  if [[ ! -d "$claude_dir" ]]; then
+    echo "ERROR: uninstall dry-run should not delete installed target"
+    cat "$uninstall_output"
+    exit 1
+  fi
+
+  assert_contains "$uninstall_output" "Dry run"
+  assert_contains "$uninstall_output" "Done (dry run)."
+
+  rm -rf "$temp_dir"
+  trap - RETURN
+}
+
+test_uninstall_absent_target_is_noop_success() {
+  local temp_dir
+  temp_dir="$(mktemp -d)"
+  trap 'rm -rf "$temp_dir"' RETURN
+
+  local fake_home="$temp_dir/home"
+  mkdir -p "$fake_home"
+  mkdir -p "$(tool_marker_path "claude" "$fake_home")"
+
+  local output_file="$temp_dir/uninstall.log"
+  HOME="$fake_home" PATH="/usr/bin:/bin" \
+    "$BASH_BIN" "$UNINSTALLER" --tool claude >"$output_file" 2>&1
+
+  assert_contains "$output_file" "already absent"
+  assert_contains "$output_file" "Done!"
+
+  rm -rf "$temp_dir"
+  trap - RETURN
+}
+
+test_uninstall_no_detected_tools_is_noop_success() {
+  local temp_dir
+  temp_dir="$(mktemp -d)"
+  trap 'rm -rf "$temp_dir"' RETURN
+
+  local fake_home="$temp_dir/home"
+  mkdir -p "$fake_home"
+
+  local output_file="$temp_dir/uninstall.log"
+  HOME="$fake_home" PATH="/usr/bin:/bin" \
+    "$BASH_BIN" "$UNINSTALLER" >"$output_file" 2>&1
+
+  assert_contains "$output_file" "No supported tools detected. Nothing to uninstall."
+
+  rm -rf "$temp_dir"
+  trap - RETURN
+}
+
+test_uninstall_conflicting_flags_fail() {
+  local temp_dir
+  temp_dir="$(mktemp -d)"
+  trap 'rm -rf "$temp_dir"' RETURN
+
+  local fake_home="$temp_dir/home"
+  mkdir -p "$fake_home"
+  mkdir -p "$(tool_marker_path "claude" "$fake_home")"
+
+  local output_file="$temp_dir/output.log"
+  set +e
+  HOME="$fake_home" PATH="/usr/bin:/bin" \
+    "$BASH_BIN" "$UNINSTALLER" --all --tool claude >"$output_file" 2>&1
+  local exit_code=$?
+  set -e
+
+  if [[ $exit_code -eq 0 ]]; then
+    echo "ERROR: Uninstaller should fail for conflicting flags"
+    cat "$output_file"
+    exit 1
+  fi
+
+  assert_contains "$output_file" "--all cannot be combined with --tool"
+
+  rm -rf "$temp_dir"
+  trap - RETURN
+}
+
+test_uninstall_interactive_requires_terminal() {
+  local temp_dir
+  temp_dir="$(mktemp -d)"
+  trap 'rm -rf "$temp_dir"' RETURN
+
+  local fake_home="$temp_dir/home"
+  mkdir -p "$fake_home"
+  mkdir -p "$(tool_marker_path "claude" "$fake_home")"
+
+  local output_file="$temp_dir/output.log"
+  set +e
+  HOME="$fake_home" PATH="/usr/bin:/bin" \
+    "$BASH_BIN" "$UNINSTALLER" --interactive >"$output_file" 2>&1
+  local exit_code=$?
+  set -e
+
+  if [[ $exit_code -eq 0 ]]; then
+    echo "ERROR: Uninstaller should fail for --interactive without TTY"
+    cat "$output_file"
+    exit 1
+  fi
+
+  assert_contains "$output_file" "--interactive requires an interactive terminal"
+
+  rm -rf "$temp_dir"
+  trap - RETURN
+}
+
 main() {
   local tool="${1:-}"
   if [[ -z "$tool" ]]; then
@@ -468,7 +659,25 @@ main() {
   echo "[smoke] failure path: download error preserves existing bundle"
   test_atomic_install_preserves_existing_on_download_failure
 
-  echo "All installer smoke tests passed for tool=$tool"
+  echo "[smoke] uninstall path: --tool removes only requested target"
+  test_uninstall_removes_only_requested_target
+
+  echo "[smoke] uninstall path: --dry-run does not delete files"
+  test_uninstall_dry_run_does_not_delete_files
+
+  echo "[smoke] uninstall path: absent target is noop success"
+  test_uninstall_absent_target_is_noop_success
+
+  echo "[smoke] uninstall path: no detected tools is noop success"
+  test_uninstall_no_detected_tools_is_noop_success
+
+  echo "[smoke] uninstall parser path: conflicting flags fail"
+  test_uninstall_conflicting_flags_fail
+
+  echo "[smoke] uninstall interactive path: requires terminal in CI"
+  test_uninstall_interactive_requires_terminal
+
+  echo "All install/uninstall smoke tests passed for tool=$tool"
 }
 
 main "$@"
