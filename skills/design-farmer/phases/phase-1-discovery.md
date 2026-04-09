@@ -18,6 +18,10 @@ Also check if `skippedPhases` exists in config.json — this indicates a legacy 
 
 Also check if `reentryMode` equals `"design-context"` (set by Phase 0 when importing an existing DESIGN.md). If true, treat all DESIGN.md-derived values as pre-filled context only. Do NOT auto-accept these values: still run all required discovery gates and ask for explicit confirmation/changes, especially Q3, Q3-1, Q5, and Q5-1.
 
+If `designDocSourceType` is present in config (`internal-canonical` or `external-context`), surface it in discovery notes:
+- `internal-canonical`: values likely align with Design Farmer schema, but confirmation is still required.
+- `external-context`: values came from a third-party design doc and are advisory defaults only.
+
 If `completedPhases` exists but is empty (`[]`), treat this as a partial Phase 0 run that didn't complete. Proceed to Phase 1 as normal (no re-entry shortcuts).
 
 Load the following preserved fields from config.json and present them as pre-filled defaults alongside each question:
@@ -440,6 +444,7 @@ interface DesignFarmerConfig {
   completedPhases?: string[]; // e.g., ["phase-0","phase-1","phase-2"] — tracks which phases have finished
   skippedPhases?: string[]; // e.g., ["phase-1","phase-2"] — phases intentionally skipped (Phase 0→5 shortcut)
   reentryMode?: 'design-context'; // set by Phase 0 when importing an existing DESIGN.md as context
+  designDocSourceType?: 'internal-canonical' | 'external-context'; // source classification from Phase 0
   createdAt?: string; // ISO 8601 timestamp of initial config creation
   lastReviewScore?: number; // Phase 8 aggregate review score (0–10)
   lastReviewDate?: string; // ISO 8601 timestamp of last Phase 8 review
@@ -485,6 +490,7 @@ mkdir -p {systemPath}/.design-farmer
 # Initialize completedPhases as ["phase-0"] if undefined; preserve existing array on re-entry
 # Preserve skippedPhases if present (legacy Phase 0→5 shortcut)
 # Preserve reentryMode if present (Phase 0 context-import flow)
+# Preserve designDocSourceType if present (internal-canonical vs external-context)
 
 # Read-after-write validation: Read back config.json to verify the write succeeded.
 # If the file is missing or invalid JSON, emit **Status: BLOCKED** with recovery

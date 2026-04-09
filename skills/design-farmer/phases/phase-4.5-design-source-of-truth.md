@@ -6,6 +6,8 @@ Generate a `DESIGN.md` file at `{systemPath}/DESIGN.md` so the design artifact a
 
 ## 4.5.1 DESIGN.md Structure
 
+Compatibility contract: third-party DESIGN.md files (for example from awesome-design-md) may not include this exact Config schema. Phase 0 must treat readable third-party docs as `external-context` input (not corruption), while this Phase 4.5 schema remains the canonical internal format for full re-entry reconstruction.
+
 ```markdown
 # Design System: {productName}
 

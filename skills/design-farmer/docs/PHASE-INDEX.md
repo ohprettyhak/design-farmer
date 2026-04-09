@@ -13,6 +13,7 @@ This index provides a compact map of the Design Farmer router + phase bundle for
 1. **Phase 0: Pre-flight**
    - Detect project topology, frameworks, package manager, existing design system artifacts.
    - If `DESIGN.md` exists, import it as context and pre-fill discovery defaults (do not bypass critical Phase 1 decisions).
+   - Distinguish `internal-canonical` vs `external-context` DESIGN.md sources; only unreadable files are treated as corrupted.
 2. **Phase 1: Discovery Interview**
    - Ask one question at a time, block on user response, build `DesignFarmerConfig`.
 3. **Phase 2: Repository Analysis**
@@ -63,6 +64,7 @@ This index provides a compact map of the Design Farmer router + phase bundle for
 - Final completion requires explicit verification evidence.
 - Pipeline state (`completedPhases`, `createdAt`, `lastReviewScore`, `lastReviewDate`, `generatePreview`) is tracked in `config.json` and displayed during Phase 0 re-entry.
 - Existing `DESIGN.md` is context input, not an auto-skip trigger for Phases 1–4.5; discovery gates remain required.
+- Readable third-party DESIGN.md files are `external-context` inputs, not corruption events.
 - Early DESIGN.md draft (Phase 3) bridges the extraction→source-of-truth context gap.
 - Preview file lives at `.design-farmer/design-preview.html` (not project root).
 

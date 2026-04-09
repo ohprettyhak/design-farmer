@@ -314,12 +314,31 @@ if ! grep -qE 'Use it as context|design reference' "$REENTRY_PHASE0_FILE" ||
   exit 1
 fi
 
+if ! grep -qF "external-context" "$REENTRY_PHASE0_FILE" ||
+   ! grep -qF "internal-canonical" "$REENTRY_PHASE0_FILE" ||
+   ! grep -qF "Missing or malformed Config YAML alone is NOT corruption" "$REENTRY_PHASE0_FILE"; then
+  echo "ERROR: Phase 0 missing DESIGN.md source-classification semantics"
+  echo "  File: phases/phase-0-preflight.md"
+  echo "  Contract: readable third-party DESIGN.md must be treated as external-context, not corruption"
+  exit 1
+fi
+
+if ! grep -qF "Empty file guard" "$REENTRY_PHASE0_FILE" ||
+   ! grep -qF "treat it as not existing" "$REENTRY_PHASE0_FILE" ||
+   grep -qE '\*\*unreadable\*\*:.*empty file' "$REENTRY_PHASE0_FILE"; then
+  echo "ERROR: Phase 0 empty-file semantics are inconsistent"
+  echo "  File: phases/phase-0-preflight.md"
+  echo "  Contract: empty DESIGN.md is treated as absent; unreadable/corruption applies to non-empty unreadable files"
+  exit 1
+fi
+
 if ! grep -qE 'reentryMode' "$REENTRY_PHASE1_FILE" ||
    ! grep -qE 'design-context' "$REENTRY_PHASE1_FILE" ||
-   ! grep -qE 'Do NOT auto-accept' "$REENTRY_PHASE1_FILE"; then
+   ! grep -qE 'Do NOT auto-accept' "$REENTRY_PHASE1_FILE" ||
+   ! grep -qE 'designDocSourceType' "$REENTRY_PHASE1_FILE"; then
   echo "ERROR: Phase 1 missing design-context confirmation semantics"
   echo "  File: phases/phase-1-discovery.md"
-  echo "  Contract: reentryMode design-context must force explicit confirmation of pre-filled defaults"
+  echo "  Contract: reentryMode design-context must force explicit confirmation and preserve source classification"
   exit 1
 fi
 

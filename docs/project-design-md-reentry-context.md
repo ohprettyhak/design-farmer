@@ -4,6 +4,8 @@
 
 Improve Phase 0 re-entry behavior when an existing `DESIGN.md` is present so Design Farmer treats it as context input, not an automatic phase bypass. This prevents critical discovery decisions (such as component scope and headless library selection) from being silently skipped when users import external DESIGN.md files.
 
+Also clarify corruption semantics: readable third-party DESIGN.md files are valid `external-context` input, while corruption language is reserved for unreadable files only.
+
 ## Evidence
 
 - User feedback: importing DESIGN.md from external repositories (for example, awesome-design-md) is common and currently causes important option gates to be skipped.
@@ -23,13 +25,14 @@ Revise re-entry semantics so existing `DESIGN.md` pre-fills defaults and informs
 - Update Phase 0 wording and control flow to context-first re-entry.
 - Keep config reconstruction from DESIGN.md, but continue to Phase 1 instead of jumping to Phase 5.
 - Add explicit guardrail text to preserve required decision gates.
+- Add source-classification wording (`internal-canonical` vs `external-context`) and constrain corruption messaging to unreadable files.
 - Update router/docs/test contracts and validators to match the new behavior.
 
 ### Out of Scope
 
 - Adding new phase files or changing phase numbering.
 - Redesigning all discovery questions.
-- Introducing external classifiers for DESIGN.md origin quality scoring.
+- Introducing external scoring systems beyond basic source classification.
 
 ## Architecture
 
@@ -43,6 +46,7 @@ Revise re-entry semantics so existing `DESIGN.md` pre-fills defaults and informs
 - [x] Phase 0 Option A no longer instructs skip-to-Phase-5 behavior.
 - [x] Phase 0 Option A explicitly states critical discovery gates must still run.
 - [x] Cross-phase contract docs describe DESIGN.md as context input for re-entry.
+- [x] Re-entry docs clarify that readable external DESIGN.md files are not corruption cases.
 - [x] Validation and semantic tests pass with the updated contract.
 - [x] Template/example/operational references no longer describe legacy direct-to-Phase-5 shortcut wording.
 
@@ -62,3 +66,4 @@ Revise re-entry semantics so existing `DESIGN.md` pre-fills defaults and informs
 |------|--------|--------|
 | 2026-04-09 | Codex | Initial draft |
 | 2026-04-09 | Codex | Marked acceptance criteria complete and added anti-drift completion evidence |
+| 2026-04-09 | Codex | Added source-classification contract and narrowed corruption semantics to unreadable files |
