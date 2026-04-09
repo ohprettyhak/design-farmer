@@ -7,12 +7,12 @@ Improve Phase 0 re-entry behavior when an existing `DESIGN.md` is present so Des
 ## Evidence
 
 - User feedback: importing DESIGN.md from external repositories (for example, awesome-design-md) is common and currently causes important option gates to be skipped.
-- Current contract and tests explicitly allow Phase 0 Option A to jump directly to Phase 5.
+- At proposal start, the contract and tests still allowed a direct Option A jump to Phase 5.
 - Phase 1 contains crucial choices (Q3/Q3-1/Q5/Q5-1) that influence downstream Phase 6 implementation quality.
 
 ## Current Gap
 
-The current Phase 0 Option A path reconstructs config and bypasses Phases 1–4.5. This is fast but can produce low-context or mismatched systems because foundational architecture and library decisions are not re-validated against the active repository.
+At proposal start, Phase 0 Option A reconstructed config and bypassed Phases 1–4.5. That was fast but could produce low-context or mismatched systems because foundational architecture and library decisions were not re-validated against the active repository.
 
 ## Proposed Scope
 
@@ -44,7 +44,7 @@ Revise re-entry semantics so existing `DESIGN.md` pre-fills defaults and informs
 - [x] Phase 0 Option A explicitly states critical discovery gates must still run.
 - [x] Cross-phase contract docs describe DESIGN.md as context input for re-entry.
 - [x] Validation and semantic tests pass with the updated contract.
-- [x] Template/example/operational references no longer describe legacy "Phase 0 → Phase 5 shortcut" wording.
+- [x] Template/example/operational references no longer describe legacy direct-to-Phase-5 shortcut wording.
 
 ## Dependencies
 
