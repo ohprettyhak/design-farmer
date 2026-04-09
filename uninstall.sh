@@ -90,7 +90,7 @@ list_tools() {
 append_unique_tool() {
   local candidate="$1"
   local existing
-  for existing in "${SELECTED[@]}"; do
+  for existing in ${SELECTED[@]+"${SELECTED[@]}"}; do
     if [ "$existing" = "$candidate" ]; then
       return 0
     fi
