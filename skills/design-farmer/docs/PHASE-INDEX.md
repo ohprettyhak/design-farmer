@@ -22,12 +22,12 @@ This index provides a compact map of the Design Farmer router + phase bundle for
    - Convert and normalize color systems, generate scales, validate contrast.
    - Generate early DESIGN.md draft with extraction results for context resilience.
 5. **Phase 3.5: Visual Preview**
-   - Maturity-conditional preview opt-in: mandatory for GREENFIELD, recommended for EMERGING, default skip for MATURE.
-   - Generate self-contained HTML preview at `.design-farmer/design-preview.html`.
-   - Color palette swatches, typography specimens, spacing scale, sample components.
-   - Theme toggle for light/dark comparison.
-   - If preview skipped, text-only approval gate via opt-in gate (3.5.0) — not the error-state fallback (3.5.3).
-   - User approval gate before Phase 4 begins (always, regardless of preview mode).
+    - Maturity-conditional preview opt-in: mandatory for GREENFIELD, recommended for EMERGING, and ask-user with a skip recommendation for MATURE.
+    - Generate self-contained HTML preview at `.design-farmer/design-preview.html`.
+    - Color palette swatches, typography specimens, spacing scale, sample components.
+    - Theme toggle for light/dark comparison.
+    - If preview skipped, text-only approval happens at gate 3.5.0 — not the error-state fallback (3.5.3).
+    - User approval is always required before Phase 4, but the approval gate lives in 3.5.0 for text-only mode and 3.5.2 for generated-preview mode.
 
 6. **Phase 4: Architecture Design**
    - Define token hierarchy, directory structure, build pipeline, and CSS layering.
@@ -62,11 +62,12 @@ This index provides a compact map of the Design Farmer router + phase bundle for
 - Completion statuses are mandatory: `DONE`, `DONE_WITH_CONCERNS`, `BLOCKED`, `NEEDS_CONTEXT`.
 - User-question gating in Discovery must remain one-at-a-time.
 - Final completion requires explicit verification evidence.
-- Pipeline state (`completedPhases`, `createdAt`, `lastReviewScore`, `lastReviewDate`, `generatePreview`) is tracked in `config.json` and displayed during Phase 0 re-entry.
+- Pipeline state (`completedPhases`, `createdAt`, `lastReviewScore`, `lastReviewDate`, `generatePreview`, `storybookSkipped`, `visualQASkipped`, `integrationStatus`, `visualQAMode`) is tracked in `config.json` and displayed during Phase 0 re-entry as applicable.
 - Existing `DESIGN.md` is context input, not an auto-skip trigger for Phases 1–4.5; discovery gates remain required.
 - Readable third-party DESIGN.md files are `external-context` inputs, not corruption events.
 - Early DESIGN.md draft (Phase 3) bridges the extraction→source-of-truth context gap.
 - Preview file lives at `.design-farmer/design-preview.html` (not project root).
+- User-optional skipped phases do not append to `completedPhases`; they record dedicated skip state instead (`storybookSkipped`, `visualQASkipped`, `integrationStatus: "skipped"`, `visualQAMode: 'skipped'`).
 
 ## Section vs Phase Numbering
 

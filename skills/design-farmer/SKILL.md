@@ -246,7 +246,7 @@ Phase 11: Release Readiness & Handoff
 ### Cross-Phase Contracts
 
 - **DesignFarmerConfig** (from Phase 1) is passed to all subsequent phases. Persisted to `{systemPath}/.design-farmer/config.json` for context-window resilience.
-- **Pipeline state tracking**: Every phase appends its ID to `completedPhases` in config.json upon completion. `createdAt` is set once in Phase 1. Phase 8 writes `lastReviewScore` (0–10) and `lastReviewDate`. Phase 0 displays this state during re-entry.
+- **Pipeline state tracking**: Completed and degraded phases append their IDs to `completedPhases` in config.json. User-optional skipped phases record dedicated skip state instead and do not append. `createdAt` is set once in Phase 1. Phase 8 writes `lastReviewScore` (0–10) and `lastReviewDate`. Phase 0 displays this state during re-entry.
 - **Design Maturity** (from Phase 2) is written to `DesignFarmerConfig.designMaturity` and determines the implementation path in Phases 3, 3.5, 5, and 6. Phase 0 re-entry may set a preliminary `designMaturity` from user input; Phase 2's formal assessment overrides this value.
 - **Existing DESIGN.md** detected in Phase 0 triggers a re-entry prompt — importing it as context continues to Phase 1 with pre-filled defaults. Critical discovery gates (scope/headless/theme decisions) must still be explicitly confirmed.
 - **DESIGN.md source classification**: Phase 0 distinguishes `internal-canonical` vs `external-context`. Readable third-party docs are context (not corruption); only unreadable files are treated as corrupted.

@@ -25,6 +25,16 @@ pass() { PASS=$((PASS + 1)); echo "  ✓ $1"; }
 fail() { FAIL=$((FAIL + 1)); echo "  ✗ $1"; }
 warn() { WARN=$((WARN + 1)); echo "  ⚠ $1"; }
 
+last_nonempty_lines() {
+  local file="$1"
+  local count="$2"
+  awk -v count="$count" 'NF { lines[++n] = $0 } END {
+    start = n - count + 1
+    if (start < 1) start = 1
+    for (i = start; i <= n; i++) print lines[i]
+  }' "$file"
+}
+
 # ---------------------------------------------------------------------------
 # TEST 1: Cross-Reference Section Number Validation
 # Verifies that handoff messages reference section numbers that exist in target files.
@@ -178,17 +188,18 @@ echo ""
 
 # ---------------------------------------------------------------------------
 # TEST 4: Status Message Completeness
-# Every phase file must end with a **Status: DONE** (or similar) pattern.
 # ---------------------------------------------------------------------------
 echo "=== TEST 4: Status Message Completeness ==="
 
 for phase_file in "$PHASES_DIR"/phase-*.md; do
   basename_file=$(basename "$phase_file")
 
-  if grep -qE '\*\*Status: (DONE|BLOCKED|DONE_WITH_CONCERNS|NEEDS_CONTEXT)\*\*' "$phase_file"; then
+  status_tail=$(last_nonempty_lines "$phase_file" 8)
+
+  if echo "$status_tail" | grep -qE '\*\*Status: (DONE|BLOCKED|DONE_WITH_CONCERNS|NEEDS_CONTEXT)\*\*'; then
     pass "$basename_file has completion status"
   else
-    fail "$basename_file missing completion status pattern"
+    fail "$basename_file missing completion status near file end"
   fi
 done
 
@@ -249,8 +260,7 @@ while [ $i -lt ${#handoff_sources[@]} ]; do
     continue
   fi
 
-  # Check last 5 lines for the next phase reference
-  status_area=$(tail -5 "$full_path")
+  status_area=$(last_nonempty_lines "$full_path" 8)
 
   if echo "$status_area" | grep -qF "$expected"; then
     pass "$src → $expected"
@@ -565,6 +575,55 @@ if grep -q "completedPhases" "$SKILL_FILE"; then
   pass "SKILL.md: documents completedPhases contract"
 else
   fail "SKILL.md: missing completedPhases contract"
+fi
+
+if grep -q "storybookSkipped" "$SKILL_FILE" &&
+   grep -q "visualQASkipped" "$SKILL_FILE" &&
+   grep -q "integrationStatus: \"skipped\"" "$SKILL_FILE" &&
+   grep -q "visualQAMode" "$SKILL_FILE"; then
+  pass "SKILL.md: documents dedicated skip-state fields"
+else
+  fail "SKILL.md: missing one or more dedicated skip-state fields"
+fi
+
+if grep -Fq "storybookSkipped: true" "$PHASES_DIR/phase-7-storybook.md" &&
+   grep -Eq "Do NOT append.*phase-7.*completedPhases" "$PHASES_DIR/phase-7-storybook.md"; then
+  pass "Phase 7: skip path records storybookSkipped without completedPhases append"
+else
+  fail "Phase 7: skip path missing storybookSkipped or non-append contract"
+fi
+
+if grep -Fq "visualQASkipped: true" "$PHASES_DIR/phase-8.5-design-review.md" &&
+   grep -Eq "visualQAMode: ['\"]skipped['\"]" "$PHASES_DIR/phase-8.5-design-review.md" &&
+   grep -Eq "Do NOT append.*phase-8\.5.*completedPhases" "$PHASES_DIR/phase-8.5-design-review.md"; then
+  pass "Phase 8.5: skip path records visual QA skip state without completedPhases append"
+else
+  fail "Phase 8.5: skip path missing visual QA skip-state contract"
+fi
+
+if grep -q 'integrationStatus: "skipped"' "$PHASES_DIR/phase-10-integration.md" &&
+   grep -Eq "Do NOT append.*phase-10.*completedPhases" "$PHASES_DIR/phase-10-integration.md"; then
+  pass "Phase 10: skip path records integrationStatus without completedPhases append"
+else
+  fail "Phase 10: skip path missing integration skip-state contract"
+fi
+
+if grep -q "storybookSkipped" "$DOCS_DIR/PHASE-INDEX.md" &&
+   grep -q "visualQASkipped" "$DOCS_DIR/PHASE-INDEX.md" &&
+   grep -q "integrationStatus" "$DOCS_DIR/PHASE-INDEX.md" &&
+   grep -q "visualQAMode" "$DOCS_DIR/PHASE-INDEX.md"; then
+  pass "PHASE-INDEX.md: documents optional skip-state fields"
+else
+  fail "PHASE-INDEX.md: missing optional skip-state field documentation"
+fi
+
+if grep -q "storybookSkipped" "$DOCS_DIR/QUALITY-GATES.md" &&
+   grep -q "visualQASkipped" "$DOCS_DIR/QUALITY-GATES.md" &&
+   grep -q "integrationStatus" "$DOCS_DIR/QUALITY-GATES.md" &&
+   grep -q "visualQAMode" "$DOCS_DIR/QUALITY-GATES.md"; then
+  pass "QUALITY-GATES.md: documents optional skip-state fields"
+else
+  fail "QUALITY-GATES.md: missing optional skip-state field documentation"
 fi
 
 echo ""
