@@ -1,6 +1,6 @@
 ---
 name: design-farmer
-version: 0.0.5
+version: 0.0.6
 description: |
   Automated design system construction from repository analysis to production-ready implementation.
   Analyzes codebases, extracts design patterns, builds token hierarchies with OKLCH color management,
