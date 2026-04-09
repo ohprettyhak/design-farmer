@@ -56,6 +56,19 @@ curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/inst
 
 The installer detects your tools, creates skill directories, and downloads the skill bundle. Supported tools: **Claude Code**, **Codex CLI**, **Amp**, **Gemini CLI**, **OpenCode**.
 
+Selective install examples:
+
+```bash
+# Install only for Claude Code
+curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/install.sh | bash -s -- --tool claude
+
+# Install only for Codex CLI
+curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/install.sh | bash -s -- --tool codex
+
+# Preview targets without writing files
+curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/install.sh | bash -s -- --dry-run
+```
+
 For manual installation or troubleshooting, see [INSTALLATION.md](INSTALLATION.md).
 
 ## Documentation

@@ -12,7 +12,37 @@ The installer will:
 
 1. Detect supported local tools.
 2. Create each tool-specific skill directory if needed.
-3. Download `skills/design-farmer/SKILL.md` and the full phase bundle into each detected tool.
+3. Download `skills/design-farmer/SKILL.md` and the full phase bundle into selected targets.
+
+### Installer options
+
+```bash
+bash install.sh [options]
+```
+
+- `--tool <name>`: install only for a specific tool (repeatable)
+- `--all`: install for all detected tools (default behavior)
+- `--interactive`: choose targets interactively (uses `fzf --multi` when available; otherwise numeric fallback)
+- `--dry-run`: show resolved targets without writing files
+- `--list-tools`: show supported tools with detection status and exit
+
+Valid tool names: `claude`, `codex`, `amp`, `gemini`, `opencode`
+
+Examples:
+
+```bash
+# Install only for Claude Code
+curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/install.sh | bash -s -- --tool claude
+
+# Install only for Codex and Gemini
+curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/install.sh | bash -s -- --tool codex --tool gemini
+
+# Interactively pick install targets
+curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/install.sh | bash -s -- --interactive
+
+# Preview targets only
+curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/install.sh | bash -s -- --dry-run
+```
 
 Supported tools:
 
@@ -43,3 +73,4 @@ Example tool roots:
 
 - If installer output says `No supported tools detected`, install one supported tool first, then re-run.
 - If a download fails, verify network access and check `curl --version`.
+- If you run `--interactive` in a non-TTY environment (for example CI), use `--tool` instead.

@@ -56,7 +56,7 @@ installed_skill_dir_path() {
 assert_contains() {
   local file="$1"
   local expected="$2"
-  if ! grep -Fq "$expected" "$file"; then
+  if ! grep -Fq -- "$expected" "$file"; then
     echo "ERROR: Expected '$expected' in $file"
     echo "----- $file -----"
     cat "$file"
@@ -154,6 +154,173 @@ test_successful_install_for_tool() {
   assert_contains "$log_file" "https://raw.githubusercontent.com/ohprettyhak/design-farmer/${branch}/skills/design-farmer/phases/phase-0-preflight.md"
   assert_contains "$log_file" "https://raw.githubusercontent.com/ohprettyhak/design-farmer/${branch}/skills/design-farmer/phases/phase-11-readiness-handoff.md"
   assert_contains "$log_file" "https://raw.githubusercontent.com/ohprettyhak/design-farmer/${branch}/skills/design-farmer/docs/PHASE-INDEX.md"
+
+  rm -rf "$temp_dir"
+  trap - RETURN
+}
+
+test_selective_tool_install_only_writes_requested_target() {
+  local temp_dir
+  temp_dir="$(mktemp -d)"
+  trap 'rm -rf "$temp_dir"' RETURN
+
+  local fake_home="$temp_dir/home"
+  local fake_bin="$temp_dir/bin"
+  mkdir -p "$fake_home"
+  mkdir -p "$(tool_marker_path "claude" "$fake_home")"
+  mkdir -p "$(tool_marker_path "codex" "$fake_home")"
+  write_curl_stub "$fake_bin"
+
+  local output_file="$temp_dir/output.log"
+  HOME="$fake_home" PATH="$fake_bin:/usr/bin:/bin" BRANCH="smoke-test-branch" \
+    "$BASH_BIN" "$INSTALLER" --tool codex >"$output_file" 2>&1
+
+  local codex_file
+  codex_file="$(installed_skill_file_path "codex" "$fake_home")"
+  local claude_file
+  claude_file="$(installed_skill_file_path "claude" "$fake_home")"
+
+  if [[ ! -f "$codex_file" ]]; then
+    echo "ERROR: Expected codex install target was not written"
+    cat "$output_file"
+    exit 1
+  fi
+
+  if [[ -f "$claude_file" ]]; then
+    echo "ERROR: Unexpected claude install target was written"
+    cat "$output_file"
+    exit 1
+  fi
+
+  assert_contains "$output_file" "Selected targets:"
+  assert_contains "$output_file" "Codex CLI"
+
+  rm -rf "$temp_dir"
+  trap - RETURN
+}
+
+test_dry_run_does_not_write_files() {
+  local temp_dir
+  temp_dir="$(mktemp -d)"
+  trap 'rm -rf "$temp_dir"' RETURN
+
+  local fake_home="$temp_dir/home"
+  local fake_bin="$temp_dir/bin"
+  mkdir -p "$fake_home"
+  mkdir -p "$(tool_marker_path "claude" "$fake_home")"
+
+  local output_file="$temp_dir/output.log"
+  HOME="$fake_home" PATH="$fake_bin:/usr/bin:/bin" \
+    "$BASH_BIN" "$INSTALLER" --tool claude --dry-run >"$output_file" 2>&1
+
+  local claude_dir
+  claude_dir="$(installed_skill_dir_path "claude" "$fake_home")"
+  if [[ -d "$claude_dir" ]]; then
+    echo "ERROR: dry-run should not create skill directory"
+    cat "$output_file"
+    exit 1
+  fi
+
+  assert_contains "$output_file" "Dry run"
+  assert_contains "$output_file" "Done (dry run)."
+
+  rm -rf "$temp_dir"
+  trap - RETURN
+}
+
+test_dry_run_without_detected_tools_succeeds() {
+  local temp_dir
+  temp_dir="$(mktemp -d)"
+  trap 'rm -rf "$temp_dir"' RETURN
+
+  local fake_home="$temp_dir/home"
+  local fake_bin="$temp_dir/bin"
+  mkdir -p "$fake_home"
+
+  local output_file="$temp_dir/output.log"
+  HOME="$fake_home" PATH="$fake_bin:/usr/bin:/bin" \
+    "$BASH_BIN" "$INSTALLER" --dry-run >"$output_file" 2>&1
+
+  assert_contains "$output_file" "No supported tools detected. Nothing to install."
+  assert_contains "$output_file" "Done (dry run)."
+
+  rm -rf "$temp_dir"
+  trap - RETURN
+}
+
+test_list_tools_reports_status_and_exits() {
+  local temp_dir
+  temp_dir="$(mktemp -d)"
+  trap 'rm -rf "$temp_dir"' RETURN
+
+  local fake_home="$temp_dir/home"
+  mkdir -p "$fake_home"
+  mkdir -p "$(tool_marker_path "claude" "$fake_home")"
+
+  local output_file="$temp_dir/output.log"
+  HOME="$fake_home" PATH="/usr/bin:/bin" \
+    "$BASH_BIN" "$INSTALLER" --list-tools >"$output_file" 2>&1
+
+  assert_contains "$output_file" "Supported tools"
+  assert_contains "$output_file" "claude"
+  assert_contains "$output_file" "[detected]"
+  assert_contains "$output_file" "codex"
+
+  rm -rf "$temp_dir"
+  trap - RETURN
+}
+
+test_conflicting_flags_fail() {
+  local temp_dir
+  temp_dir="$(mktemp -d)"
+  trap 'rm -rf "$temp_dir"' RETURN
+
+  local fake_home="$temp_dir/home"
+  mkdir -p "$fake_home"
+  mkdir -p "$(tool_marker_path "claude" "$fake_home")"
+
+  local output_file="$temp_dir/output.log"
+  set +e
+  HOME="$fake_home" PATH="/usr/bin:/bin" \
+    "$BASH_BIN" "$INSTALLER" --all --tool claude >"$output_file" 2>&1
+  local exit_code=$?
+  set -e
+
+  if [[ $exit_code -eq 0 ]]; then
+    echo "ERROR: Installer should fail for conflicting flags"
+    cat "$output_file"
+    exit 1
+  fi
+
+  assert_contains "$output_file" "--all cannot be combined with --tool"
+
+  rm -rf "$temp_dir"
+  trap - RETURN
+}
+
+test_interactive_requires_terminal() {
+  local temp_dir
+  temp_dir="$(mktemp -d)"
+  trap 'rm -rf "$temp_dir"' RETURN
+
+  local fake_home="$temp_dir/home"
+  mkdir -p "$fake_home"
+  mkdir -p "$(tool_marker_path "claude" "$fake_home")"
+
+  local output_file="$temp_dir/output.log"
+  set +e
+  HOME="$fake_home" PATH="/usr/bin:/bin" \
+    "$BASH_BIN" "$INSTALLER" --interactive >"$output_file" 2>&1
+  local exit_code=$?
+  set -e
+
+  if [[ $exit_code -eq 0 ]]; then
+    echo "ERROR: Installer should fail for --interactive without TTY"
+    cat "$output_file"
+    exit 1
+  fi
+
+  assert_contains "$output_file" "--interactive requires an interactive terminal"
 
   rm -rf "$temp_dir"
   trap - RETURN
@@ -273,6 +440,24 @@ main() {
 
   echo "[smoke] success path for tool: $tool"
   test_successful_install_for_tool "$tool" "$smoke_branch"
+
+  echo "[smoke] selective path: --tool installs only requested target"
+  test_selective_tool_install_only_writes_requested_target
+
+  echo "[smoke] dry-run path: no files are written"
+  test_dry_run_does_not_write_files
+
+  echo "[smoke] dry-run path: no detected tools still succeeds"
+  test_dry_run_without_detected_tools_succeeds
+
+  echo "[smoke] info path: --list-tools reports statuses"
+  test_list_tools_reports_status_and_exits
+
+  echo "[smoke] parser path: conflicting flags fail"
+  test_conflicting_flags_fail
+
+  echo "[smoke] interactive path: requires terminal in CI"
+  test_interactive_requires_terminal
 
   echo "[smoke] failure path: no supported tools"
   test_no_supported_tools_fails
