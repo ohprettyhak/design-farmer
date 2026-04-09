@@ -55,12 +55,7 @@ curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/inst
 ```
 
 The installer detects your tools, creates skill directories, and downloads the skill bundle. Supported tools: **Claude Code**, **Codex CLI**, **Amp**, **Gemini CLI**, **OpenCode**.
-
-To remove the skill bundle later:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/uninstall.sh | bash
-```
+Uninstall (optional): `curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/uninstall.sh | bash` (full options in [INSTALLATION.md](INSTALLATION.md)).
 
 Selective install examples:
 

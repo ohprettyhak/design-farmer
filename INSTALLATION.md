@@ -7,12 +7,7 @@ Run the installer script:
 ```bash
 curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/install.sh | bash
 ```
-
-To remove the installed skill bundle, run the uninstaller script:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/uninstall.sh | bash
-```
+If you need to remove the bundle later, see [Uninstall options](#uninstall-options).
 
 The installer will:
 
@@ -50,7 +45,9 @@ curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/inst
 curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/install.sh | bash -s -- --dry-run
 ```
 
-### Uninstaller options
+### Uninstall options
+
+`uninstall.sh` mirrors the installer surface (`--tool`, `--all`, `--interactive`, `--dry-run`, `--list-tools`) and only removes `*/skills/design-farmer` targets.
 
 ```bash
 bash uninstall.sh [options]
