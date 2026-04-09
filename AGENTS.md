@@ -33,7 +33,7 @@
 - `.github/`: GitHub configuration.
   - `.github/workflows/skill-quality.yml`: CI pipeline (structural validation + install smoke tests).
   - `.github/pull_request_template.md`: PR template with validation evidence checklist.
-- `install.sh`: Automated installer (detects tools, downloads skill bundle atomically).
+- `install.sh`: Automated installer (detects tools, supports selective target flags, downloads skill bundle atomically).
 - `AGENTS.md`: This file — repository-wide rules.
 - `CONTRIBUTING.md`: Contributor workflow (branch naming, commit convention, PR requirements).
 - `README.md`: Project overview, installation, and documentation links.

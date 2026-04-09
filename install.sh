@@ -136,8 +136,202 @@ tool_label() {
   esac
 }
 
+is_supported_tool() {
+  local candidate="$1"
+  local tool
+  for tool in "${TOOLS[@]}"; do
+    if [ "$tool" = "$candidate" ]; then
+      return 0
+    fi
+  done
+  return 1
+}
+
+print_usage() {
+  cat <<'EOF'
+Usage: install.sh [options]
+
+Options:
+  --tool <name>     Install only for the given tool (repeatable)
+                    Valid: claude, codex, amp, gemini, opencode
+  --all             Install for all detected tools (default behavior)
+  --interactive     Select install targets interactively
+  --dry-run         Show resolved install targets without writing files
+  --list-tools      List supported tools and detected status, then exit
+  -h, --help        Show this help message
+EOF
+}
+
+list_tools() {
+  local tool
+  printf "%bSupported tools%b\n" "$BOLD" "$RESET"
+  for tool in "${TOOLS[@]}"; do
+    local marker
+    local status="not detected"
+    marker="$(tool_marker "$tool")"
+    if [ -d "$marker" ]; then
+      status="detected"
+    fi
+    printf "  - %-8s %-12s %s\n" "$tool" "[$status]" "$marker"
+  done
+}
+
+append_unique_tool() {
+  local candidate="$1"
+  local existing
+  for existing in "${SELECTED[@]}"; do
+    if [ "$existing" = "$candidate" ]; then
+      return 0
+    fi
+  done
+  SELECTED+=("$candidate")
+}
+
+select_interactively() {
+  if [ "${#DETECTED[@]}" -eq 0 ]; then
+    printf "%bError:%b --interactive requires at least one detected tool.\n" "$RED" "$RESET" >&2
+    exit 1
+  fi
+
+  if [ ! -t 1 ] || [ ! -r /dev/tty ]; then
+    printf "%bError:%b --interactive requires an interactive terminal.\n" "$RED" "$RESET" >&2
+    exit 1
+  fi
+
+  printf "%bInteractive target selection%b\n" "$BOLD" "$RESET"
+
+  if command -v fzf >/dev/null 2>&1; then
+    printf "Use Space to toggle, Enter to confirm.\n\n"
+    local chosen=()
+    local picked
+    while IFS= read -r picked; do
+      chosen+=("$picked")
+    done < <(printf "%s\n" "${DETECTED[@]}" | fzf --multi --prompt "Select install targets > " --height 40% --border --layout=reverse)
+
+    if [ "${#chosen[@]}" -eq 0 ]; then
+      printf "%bError:%b no tools selected.\n" "$RED" "$RESET" >&2
+      exit 1
+    fi
+
+    SELECTED=("${chosen[@]}")
+    return 0
+  fi
+
+  printf "fzf not found. Falling back to numeric selection.\n"
+  printf "Enter comma-separated numbers (example: 1,3).\n\n"
+
+  local i=1
+  local tool
+  for tool in "${DETECTED[@]}"; do
+    printf "  %d) %s\n" "$i" "$(tool_label "$tool")"
+    i=$((i + 1))
+  done
+
+  printf "\nSelection: "
+  local raw_input
+  IFS= read -r raw_input </dev/tty
+  if [ -z "$raw_input" ]; then
+    printf "%bError:%b no tools selected.\n" "$RED" "$RESET" >&2
+    exit 1
+  fi
+
+  local parts
+  IFS=',' read -r -a parts <<<"$raw_input"
+  local part
+  for part in "${parts[@]}"; do
+    local idx
+    idx="${part//[[:space:]]/}"
+
+    if [[ ! "$idx" =~ ^[0-9]+$ ]]; then
+      printf "%bError:%b invalid selection '%s'.\n" "$RED" "$RESET" "$part" >&2
+      exit 1
+    fi
+    if [ "$idx" -lt 1 ] || [ "$idx" -gt "${#DETECTED[@]}" ]; then
+      printf "%bError:%b selection out of range: %s.\n" "$RED" "$RESET" "$idx" >&2
+      exit 1
+    fi
+
+    append_unique_tool "${DETECTED[$((idx - 1))]}"
+  done
+
+  if [ "${#SELECTED[@]}" -eq 0 ]; then
+    printf "%bError:%b no tools selected.\n" "$RED" "$RESET" >&2
+    exit 1
+  fi
+}
+
 TOOLS=(claude codex amp gemini opencode)
 DETECTED=()
+REQUESTED_TOOLS=()
+SELECTED=()
+USE_ALL=0
+INTERACTIVE=0
+DRY_RUN=0
+LIST_ONLY=0
+
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --tool)
+      if [ "$#" -lt 2 ]; then
+        printf "%bError:%b --tool requires a value.\n" "$RED" "$RESET" >&2
+        exit 1
+      fi
+      REQUESTED_TOOLS+=("$2")
+      shift 2
+      ;;
+    --all)
+      USE_ALL=1
+      shift
+      ;;
+    --interactive)
+      INTERACTIVE=1
+      shift
+      ;;
+    --dry-run)
+      DRY_RUN=1
+      shift
+      ;;
+    --list-tools)
+      LIST_ONLY=1
+      shift
+      ;;
+    -h|--help)
+      print_usage
+      exit 0
+      ;;
+    *)
+      printf "%bError:%b unknown option: %s\n\n" "$RED" "$RESET" "$1" >&2
+      print_usage >&2
+      exit 1
+      ;;
+  esac
+done
+
+if [ "$LIST_ONLY" -eq 1 ]; then
+  for tool in "${TOOLS[@]}"; do
+    marker="$(tool_marker "$tool")"
+    if [ -d "$marker" ]; then
+      DETECTED+=("$tool")
+    fi
+  done
+  list_tools
+  exit 0
+fi
+
+if [ "$INTERACTIVE" -eq 1 ] && [ "${#REQUESTED_TOOLS[@]}" -gt 0 ]; then
+  printf "%bError:%b --interactive cannot be combined with --tool.\n" "$RED" "$RESET" >&2
+  exit 1
+fi
+
+if [ "$INTERACTIVE" -eq 1 ] && [ "$USE_ALL" -eq 1 ]; then
+  printf "%bError:%b --interactive cannot be combined with --all.\n" "$RED" "$RESET" >&2
+  exit 1
+fi
+
+if [ "$USE_ALL" -eq 1 ] && [ "${#REQUESTED_TOOLS[@]}" -gt 0 ]; then
+  printf "%bError:%b --all cannot be combined with --tool.\n" "$RED" "$RESET" >&2
+  exit 1
+fi
 
 for tool in "${TOOLS[@]}"; do
   marker="$(tool_marker "$tool")"
@@ -146,11 +340,31 @@ for tool in "${TOOLS[@]}"; do
   fi
 done
 
-require_command curl
-
 printf "%bInstalling design-farmer skill%b\n\n" "$BOLD" "$RESET"
 
-if [ "${#DETECTED[@]}" -eq 0 ]; then
+if [ "$INTERACTIVE" -eq 1 ]; then
+  select_interactively
+elif [ "${#REQUESTED_TOOLS[@]}" -gt 0 ]; then
+  for tool in "${REQUESTED_TOOLS[@]}"; do
+    if ! is_supported_tool "$tool"; then
+      printf "%bError:%b unsupported tool '%s'.\n" "$RED" "$RESET" "$tool" >&2
+      print_usage >&2
+      exit 1
+    fi
+    append_unique_tool "$tool"
+  done
+elif [ "$USE_ALL" -eq 1 ] || [ "${#REQUESTED_TOOLS[@]}" -eq 0 ]; then
+  SELECTED=("${DETECTED[@]}")
+fi
+
+if [ "$DRY_RUN" -eq 1 ] && [ "${#REQUESTED_TOOLS[@]}" -eq 0 ] && [ "$INTERACTIVE" -eq 0 ] && [ "${#SELECTED[@]}" -eq 0 ]; then
+  printf "%bDry run%b — no files will be written.\n\n" "$BOLD" "$RESET"
+  printf "No supported tools detected. Nothing to install.\n"
+  printf "%bDone (dry run).%b\n" "$GREEN" "$RESET"
+  exit 0
+fi
+
+if [ "${#SELECTED[@]}" -eq 0 ]; then
   printf "%bNo supported tools detected.%b\n" "$YELLOW" "$RESET"
   printf "Install one of these first, then run this script again:\n"
   printf "  - Claude Code:  https://claude.ai/code\n"
@@ -161,9 +375,34 @@ if [ "${#DETECTED[@]}" -eq 0 ]; then
   exit 1
 fi
 
+if [ "$DRY_RUN" -eq 0 ]; then
+  require_command curl
+fi
+
+if [ "$DRY_RUN" -eq 1 ]; then
+  printf "%bDry run%b — no files will be written.\n\n" "$BOLD" "$RESET"
+fi
+
+printf "Selected targets:\n"
+for tool in "${SELECTED[@]}"; do
+  target_dir="$(tool_skill_dir "$tool")"
+  marker="$(tool_marker "$tool")"
+  status="detected"
+  if [ ! -d "$marker" ]; then
+    status="not detected"
+  fi
+  printf "  - %s (%s) -> %s\n" "$(tool_label "$tool")" "$status" "$target_dir"
+done
+printf "\n"
+
+if [ "$DRY_RUN" -eq 1 ]; then
+  printf "%bDone (dry run).%b\n" "$GREEN" "$RESET"
+  exit 0
+fi
+
 FAILED=0
 
-for tool in "${DETECTED[@]}"; do
+for tool in "${SELECTED[@]}"; do
   target_dir="$(tool_skill_dir "$tool")"
   label="$(tool_label "$tool")"
 
