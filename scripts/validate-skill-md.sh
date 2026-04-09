@@ -323,6 +323,15 @@ if ! grep -qF "external-context" "$REENTRY_PHASE0_FILE" ||
   exit 1
 fi
 
+if ! grep -qF "Empty file guard" "$REENTRY_PHASE0_FILE" ||
+   ! grep -qF "treat it as not existing" "$REENTRY_PHASE0_FILE" ||
+   grep -qE '\*\*unreadable\*\*:.*empty file' "$REENTRY_PHASE0_FILE"; then
+  echo "ERROR: Phase 0 empty-file semantics are inconsistent"
+  echo "  File: phases/phase-0-preflight.md"
+  echo "  Contract: empty DESIGN.md is treated as absent; unreadable/corruption applies to non-empty unreadable files"
+  exit 1
+fi
+
 if ! grep -qE 'reentryMode' "$REENTRY_PHASE1_FILE" ||
    ! grep -qE 'design-context' "$REENTRY_PHASE1_FILE" ||
    ! grep -qE 'Do NOT auto-accept' "$REENTRY_PHASE1_FILE" ||

@@ -399,6 +399,14 @@ else
   fail "Re-entry path A: missing source-classification semantics for external DESIGN.md"
 fi
 
+if grep -q "Empty file guard" "$PHASES_DIR/phase-0-preflight.md" &&
+   grep -q "treat it as not existing" "$PHASES_DIR/phase-0-preflight.md" &&
+   ! grep -qE '\*\*unreadable\*\*:.*empty file' "$PHASES_DIR/phase-0-preflight.md"; then
+  pass "Re-entry path A: empty DESIGN.md is absent, not corruption"
+else
+  fail "Re-entry path A: empty-file and unreadable/corruption semantics are inconsistent"
+fi
+
 # Path A must parse Config YAML from DESIGN.md
 if grep -q "packageManager" "$PHASES_DIR/phase-0-preflight.md" &&
    grep -q "designMaturity" "$PHASES_DIR/phase-0-preflight.md"; then

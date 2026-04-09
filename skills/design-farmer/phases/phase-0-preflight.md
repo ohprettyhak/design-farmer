@@ -27,7 +27,7 @@ If a `DESIGN.md` file is found, classify its re-entry state before deciding how 
 
 - **internal-canonical**: readable Design Farmer DESIGN.md with a usable `## Config` YAML block.
 - **external-context**: readable third-party design doc (for example from awesome-design-md) that may not include all internal Config fields.
-- **unreadable**: empty file, binary/garbled content, or unrecoverable parse/encoding failure.
+- **unreadable**: binary/garbled content or unrecoverable parse/encoding failure.
 
 Contract: external-context files are valid context input and MUST NOT be labeled as corrupted. Only unreadable files use corruption language.
 
