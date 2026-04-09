@@ -371,6 +371,12 @@ echo ""
 # ---------------------------------------------------------------------------
 echo "=== TEST 9: Phase 0 — Re-Entry Paths ==="
 
+if grep -q '^If user chose \*\*B\*\*:' "$PHASES_DIR/phase-0-preflight.md"; then
+  pass "Re-entry path A: Option B delimiter exists for block boundary parsing"
+else
+  fail "Re-entry path A: missing Option B delimiter for block boundary parsing"
+fi
+
 phase0_option_a_block=$(awk '/^If user chose \*\*A\*\*:/{found=1; next} found && /^If user chose \*\*B\*\*:/{exit} found' "$PHASES_DIR/phase-0-preflight.md")
 
 if [ -z "$phase0_option_a_block" ]; then

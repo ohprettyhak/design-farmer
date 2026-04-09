@@ -288,6 +288,14 @@ fi
 echo "Validating re-entry contract semantics..."
 REENTRY_PHASE0_FILE="$SKILL_DIR/phases/phase-0-preflight.md"
 REENTRY_PHASE1_FILE="$SKILL_DIR/phases/phase-1-discovery.md"
+
+if ! grep -q '^If user chose \*\*B\*\*:' "$REENTRY_PHASE0_FILE"; then
+  echo "ERROR: Missing Option B delimiter for Phase 0 re-entry block parsing"
+  echo "  File: phases/phase-0-preflight.md"
+  echo "  Contract: Option A block boundaries must terminate at explicit Option B heading"
+  exit 1
+fi
+
 REENTRY_OPTION_A_BLOCK=$(awk '/^If user chose \*\*A\*\*:/{found=1; next} found && /^If user chose \*\*B\*\*:/{exit} found' "$REENTRY_PHASE0_FILE")
 
 if [[ -z "$REENTRY_OPTION_A_BLOCK" ]]; then
