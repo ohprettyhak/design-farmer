@@ -198,12 +198,44 @@ index_required_contracts=(
   "one-at-a-time"
   "explicit verification evidence"
   "context"
+  "storybookSkipped"
+  "visualQASkipped"
+  "integrationStatus"
+  "visualQAMode"
+  "do not append"
 )
 for contract in "${index_required_contracts[@]}"; do
   if ! echo "$INDEX_CROSS_SECTION" | grep -Fq "$contract"; then
     echo "ERROR: Cross-phase contract missing from PHASE-INDEX.md: '$contract'"
     echo "  File: docs/PHASE-INDEX.md, section: '## Cross-Phase Contracts'"
     echo "  Contract: phase index must stay aligned with SKILL.md cross-phase contracts"
+    exit 1
+  fi
+done
+
+echo "Validating QUALITY-GATES.md optional skip policy..."
+QUALITY_SECTION=$(awk '/^## 2\) Behavioral Gates/{found=1; next} found && /^## /{exit} found' "$QUALITY_GATES_FILE")
+if [[ -z "$QUALITY_SECTION" ]]; then
+  echo "ERROR: '## 2) Behavioral Gates' section in QUALITY-GATES.md is missing or empty"
+  echo "  File: docs/QUALITY-GATES.md"
+  echo "  Contract: behavioral gates must remain explicit and parseable"
+  exit 1
+fi
+
+quality_required_markers=(
+  "completed phases"
+  "user-optional skipped phases"
+  "storybookSkipped"
+  "visualQASkipped"
+  "integrationStatus"
+  "visualQAMode"
+  "must not append"
+)
+for marker in "${quality_required_markers[@]}"; do
+  if ! echo "$QUALITY_SECTION" | grep -Fq "$marker"; then
+    echo "ERROR: QUALITY-GATES.md missing optional skip policy marker: '$marker'"
+    echo "  File: docs/QUALITY-GATES.md, section: '## 2) Behavioral Gates'"
+    echo "  Contract: quality gates must document skip-state fields and non-append behavior"
     exit 1
   fi
 done
