@@ -85,7 +85,7 @@ template_fields=$(sed -n '/^```yaml/,/^```/p' "$PHASES_DIR/phase-4.5-design-sour
   | grep -oE '^[a-zA-Z]+:' | sed 's/://' | sort -u)
 
 # Extract fields mentioned in Phase 0 re-entry parsing list
-phase0_section=$(awk '/Parse it to reconstruct/,/^$/' "$PHASES_DIR/phase-0-preflight.md")
+phase0_section=$(awk '/\*\*Read the `## Config` YAML block\*\*/,/^2\. \*\*Fill gaps from preflight scan/' "$PHASES_DIR/phase-0-preflight.md")
 phase0_fields=""
 for field in $template_fields; do
   if echo "$phase0_section" | grep -qF "$field"; then
@@ -391,6 +391,14 @@ else
   fail "Re-entry path A: missing context-import continuation and decision-gate guard"
 fi
 
+if grep -q "external-context" "$PHASES_DIR/phase-0-preflight.md" &&
+   grep -q "internal-canonical" "$PHASES_DIR/phase-0-preflight.md" &&
+   grep -q "Missing or malformed Config YAML alone is NOT corruption" "$PHASES_DIR/phase-0-preflight.md"; then
+  pass "Re-entry path A: DESIGN.md source classification avoids false corruption"
+else
+  fail "Re-entry path A: missing source-classification semantics for external DESIGN.md"
+fi
+
 # Path A must parse Config YAML from DESIGN.md
 if grep -q "packageManager" "$PHASES_DIR/phase-0-preflight.md" &&
    grep -q "designMaturity" "$PHASES_DIR/phase-0-preflight.md"; then
@@ -416,7 +424,8 @@ fi
 
 if grep -qE 'reentryMode' "$PHASES_DIR/phase-1-discovery.md" &&
    grep -qE 'design-context' "$PHASES_DIR/phase-1-discovery.md" &&
-   grep -qE 'Do NOT auto-accept' "$PHASES_DIR/phase-1-discovery.md"; then
+   grep -qE 'Do NOT auto-accept' "$PHASES_DIR/phase-1-discovery.md" &&
+   grep -qE 'designDocSourceType' "$PHASES_DIR/phase-1-discovery.md"; then
   pass "Re-entry path A: Phase 1 handles reentryMode design-context"
 else
   fail "Re-entry path A: Phase 1 missing reentryMode design-context handling"

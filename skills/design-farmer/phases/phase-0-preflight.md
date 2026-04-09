@@ -23,7 +23,27 @@ grep -r "oklch\|hsl\|rgb\|#[0-9a-fA-F]\{3,8\}" --include="*.css" --include="*.sc
 find . -maxdepth 4 -name "DESIGN.md" 2>/dev/null | grep -v node_modules | head -5
 ```
 
-If a `DESIGN.md` file is found, check for existing pipeline state:
+If a `DESIGN.md` file is found, classify its re-entry state before deciding how to continue:
+
+- **internal-canonical**: readable Design Farmer DESIGN.md with a usable `## Config` YAML block.
+- **external-context**: readable third-party design doc (for example from awesome-design-md) that may not include all internal Config fields.
+- **unreadable**: empty file, binary/garbled content, or unrecoverable parse/encoding failure.
+
+Contract: external-context files are valid context input and MUST NOT be labeled as corrupted. Only unreadable files use corruption language.
+
+If state is `unreadable`, emit:
+
+```text
+Status: BLOCKED
+Reason: Existing DESIGN.md is unreadable (corrupted or invalid encoding/content).
+Recovery: Replace DESIGN.md with a readable markdown file, or remove it and restart Phase 0.
+```
+
+Then stop and wait for user direction.
+
+For `internal-canonical` and `external-context`, continue with the re-entry options below.
+
+If a `DESIGN.md` file is found and is readable, check for existing pipeline state:
 
 **Empty file guard**: If DESIGN.md exists but is empty (0 bytes), treat it as not existing.
 
@@ -61,7 +81,7 @@ Then ask via AskUserQuestion **before anything else**:
 
 If user chose **A**:
 
-1. **Read the `## Config` YAML block** from DESIGN.md (if present). If the `## Config` section is missing or malformed, fall back to preflight scan (steps 1–5) plus user prompts for bootstrap fields — do not block. Parse it to reconstruct `DesignFarmerConfig`:
+1. **Read the `## Config` YAML block** from DESIGN.md (if present). If the `## Config` section is missing or malformed, classify this file as `external-context`, then fall back to preflight scan (steps 1–5) plus user prompts for bootstrap fields — do not block. Missing or malformed Config YAML alone is NOT corruption. Parse available values to reconstruct `DesignFarmerConfig`:
    - `packageManager`, `framework`, `isMonorepo`, `systemPath`, `designSystemPackage`
    - `componentScope`, `headlessLibrary`, `themeStrategy`, `themeLibrary`, `accessibilityLevel`
    - `radiusTone`
@@ -114,7 +134,11 @@ If user chose **A**:
 
    This scan is contextual only. Do NOT treat it as a substitute for Discovery/Architecture phases.
 
-8. **Mark context-import mode** — set `reentryMode: "design-context"` in config.json to indicate DESIGN.md was imported as context and must still pass Discovery gates. Update `config.backup.json`.
+8. **Mark context-import mode** — set `reentryMode: "design-context"` in config.json to indicate DESIGN.md was imported as context and must still pass Discovery gates. Also set `designDocSourceType` to one of:
+   - `internal-canonical` (full Config YAML parsed)
+   - `external-context` (readable doc without full Config YAML)
+
+   Update `config.backup.json`.
 
 9. **Mark phase complete** — ensure `completedPhases` exists in config.json (initialize as `[]` if undefined). If `'phase-0'` is already present in the array, skip the append (idempotent). Otherwise, append `'phase-0'` to `completedPhases` in `{systemPath}/.design-farmer/config.json`. Also update `config.backup.json`.
 

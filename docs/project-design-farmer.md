@@ -89,6 +89,7 @@ skills/design-farmer/
 | Shared control size ladder (28/32/36/40) | Keeps Button/Input/Select dimensions consistent so component ergonomics and visual rhythm stay unified |
 | Phase-file decomposition (not monolithic SKILL.md) | Reduces token consumption per phase; agents load only the current phase |
 | DESIGN.md as persistent source of truth | Enables context-first re-entry (Phase 0 imports DESIGN.md context, then confirms key decisions in Discovery) and cross-session continuity |
+| DESIGN.md source classification (`internal-canonical` vs `external-context`) | Avoids false corruption reports for readable third-party docs while preserving strict handling for truly unreadable files |
 | Fix Loop Protocol (5 max attempts) | Self-healing without external plugins; escalates to BLOCKED on exhaustion |
 | Fallback/degradation registry per phase | Pipeline never silently fails; every phase has a documented fallback path |
 
@@ -179,3 +180,4 @@ Phase 0 (Preflight) ──→ detect topology, check DESIGN.md
 |------|--------|--------|
 | 2026-04-06 | Hak Lee | Initial draft |
 | 2026-04-09 | Codex | Updated re-entry contract to context-first flow and documented CI anti-drift guards |
+| 2026-04-09 | Codex | Added DESIGN.md source-classification decision to prevent false corruption handling for readable third-party docs |
