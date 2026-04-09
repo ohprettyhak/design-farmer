@@ -248,7 +248,7 @@ Phase 11: Release Readiness & Handoff
 - **DesignFarmerConfig** (from Phase 1) is passed to all subsequent phases. Persisted to `{systemPath}/.design-farmer/config.json` for context-window resilience.
 - **Pipeline state tracking**: Every phase appends its ID to `completedPhases` in config.json upon completion. `createdAt` is set once in Phase 1. Phase 8 writes `lastReviewScore` (0–10) and `lastReviewDate`. Phase 0 displays this state during re-entry.
 - **Design Maturity** (from Phase 2) is written to `DesignFarmerConfig.designMaturity` and determines the implementation path in Phases 3, 3.5, 5, and 6. Phase 0 re-entry may set a preliminary `designMaturity` from user input; Phase 2's formal assessment overrides this value.
-- **Existing DESIGN.md** detected in Phase 0 triggers a re-entry prompt — user can skip Phases 1–4 and jump directly to Phase 5.
+- **Existing DESIGN.md** detected in Phase 0 triggers a re-entry prompt — importing it as context continues to Phase 1 with pre-filled defaults. Critical discovery gates (scope/headless/theme decisions) must still be explicitly confirmed.
 - **Early DESIGN.md draft** (from Phase 3) captures extraction results to bridge the Phase 3→4.5 context gap. Phase 4.5 merges this draft into the final version.
 - **Phase 3.5 is a hard gate** before Phase 4. Preview HTML (`{systemPath}/.design-farmer/design-preview.html`) is mandatory for GREENFIELD, opt-in for EMERGING/MATURE. When skipped, the opt-in gate (3.5.0) handles text-only approval directly — the error-state Fallback Path (3.5.3) is reserved for generation failures only. The `generatePreview` field records the choice.
 - **Phase 4b** is a continuation of Phase 4 — load it immediately after Phase 4 completes, before Phase 4.5.
@@ -259,7 +259,7 @@ Phase 11: Release Readiness & Handoff
 - **User-question gating**: Discovery interview questions are one-at-a-time. Other AskUserQuestion calls require user response before proceeding.
 - **Final completion requires explicit verification evidence** from Phase 9.2 and a readiness handoff report from Phase 11.
 - **Optional phase skip policy**: Two skip mechanisms exist:
-  - **Pipeline shortcut skip** (Phase 0→5 re-entry): Uses `skippedPhases` array in config.json to record Phases 1–4.5 that were bypassed. These phases do NOT append to `completedPhases`.
+  - **Context-first re-entry** (Phase 0→1): Existing `DESIGN.md` is imported as context and does not bypass Phases 1–4.5 by default. Legacy `skippedPhases` entries remain backward-compatible when present from older runs.
   - **User-optional phase skip**: Phases 7 (Storybook), 8.5 (Design Review), and 10 (App Integration) may be skipped by user choice or environment constraints. Skip status is tracked via dedicated flags: `storybookSkipped: true` (Phase 7), `visualQASkipped: true` (Phase 8.5), `integrationStatus: "skipped"` (Phase 10). Skipped user-optional phases do NOT append to `completedPhases`. Degraded execution (e.g., manual fallback) DOES append. Phase 8.5 also records `visualQAMode: 'auto' | 'manual' | 'skipped'` to distinguish execution quality.
 
 ### Maintenance Note

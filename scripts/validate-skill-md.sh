@@ -173,6 +173,7 @@ required_cross_phase_contracts=(
   "Completion statuses are mandatory"
   "one-at-a-time"
   "explicit verification evidence"
+  "context"
 )
 for contract in "${required_cross_phase_contracts[@]}"; do
   if ! echo "$CROSS_PHASE_SECTION" | grep -Fq "$contract"; then
@@ -196,6 +197,7 @@ index_required_contracts=(
   "Completion statuses are mandatory"
   "one-at-a-time"
   "explicit verification evidence"
+  "context"
 )
 for contract in "${index_required_contracts[@]}"; do
   if ! echo "$INDEX_CROSS_SECTION" | grep -Fq "$contract"; then
@@ -280,6 +282,37 @@ fi
 echo "Validating stale references..."
 if grep -R -nE 'best-practices\.md|research/best-practices\.md' "$SKILL_DIR" >/dev/null 2>&1; then
   echo "ERROR: Stale best-practices reference found in split bundle"
+  exit 1
+fi
+
+echo "Validating stale re-entry shortcut wording..."
+if grep -nF "Phase 0 → Phase 5 shortcut" "$SKILL_DIR/phases/phase-4.5-design-source-of-truth.md" >/dev/null 2>&1; then
+  echo "ERROR: Stale re-entry wording found in phase-4.5-design-source-of-truth.md"
+  echo "  Contract: existing DESIGN.md must be treated as context import (Phase 0 -> Phase 1), not direct Phase 5 shortcut"
+  exit 1
+fi
+
+if grep -nF "Phase 0 → Phase 5 shortcut" "$SKILL_DIR/examples/DESIGN.md" >/dev/null 2>&1; then
+  echo "ERROR: Stale re-entry wording found in examples/DESIGN.md"
+  echo "  Contract: example DESIGN.md must describe context-first re-entry"
+  exit 1
+fi
+
+if grep -nF "before jumping to Phase 5" "$SKILL_DIR/phases/operational-notes.md" >/dev/null 2>&1; then
+  echo "ERROR: Stale re-entry operational note found in phases/operational-notes.md"
+  echo "  Contract: Phase 0 re-entry validates config before continuing to Phase 1"
+  exit 1
+fi
+
+if grep -nF "Phase 0 → Phase 5 shortcut" "$ROOT_DIR/docs/project-design-farmer.md" >/dev/null 2>&1; then
+  echo "ERROR: Stale re-entry wording found in docs/project-design-farmer.md"
+  echo "  Contract: repository docs must reflect context-first re-entry semantics"
+  exit 1
+fi
+
+if grep -nF "parse Config YAML ──→ Phase 5" "$ROOT_DIR/docs/project-design-farmer.md" >/dev/null 2>&1; then
+  echo "ERROR: Stale Phase 0->5 data flow found in docs/project-design-farmer.md"
+  echo "  Contract: repository docs must show Phase 0 context import continuing to Phase 1"
   exit 1
 fi
 
