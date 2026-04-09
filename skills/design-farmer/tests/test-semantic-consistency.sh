@@ -371,9 +371,15 @@ echo ""
 # ---------------------------------------------------------------------------
 echo "=== TEST 9: Phase 0 — Re-Entry Paths ==="
 
+phase0_option_a_block=$(awk '/^If user chose \*\*A\*\*:/{found=1; next} found && /^If user chose \*\*B\*\*:/{exit} found' "$PHASES_DIR/phase-0-preflight.md")
+
+if [ -z "$phase0_option_a_block" ]; then
+  fail "Re-entry path A: Option A block boundaries are not parseable"
+fi
+
 if grep -qE 'Use it as context|design reference' "$PHASES_DIR/phase-0-preflight.md" &&
-   grep -qE 'continue to Phase 1' "$PHASES_DIR/phase-0-preflight.md" &&
-   grep -qE 'Do NOT skip critical decision gates' "$PHASES_DIR/phase-0-preflight.md"; then
+   echo "$phase0_option_a_block" | grep -qE 'Continue to Phase 1' &&
+   echo "$phase0_option_a_block" | grep -qE 'Do NOT skip critical decision gates'; then
   pass "Re-entry path A: context import continues to Phase 1 with required gates"
 else
   fail "Re-entry path A: missing context-import continuation and decision-gate guard"

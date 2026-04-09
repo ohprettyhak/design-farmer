@@ -288,10 +288,18 @@ fi
 echo "Validating re-entry contract semantics..."
 REENTRY_PHASE0_FILE="$SKILL_DIR/phases/phase-0-preflight.md"
 REENTRY_PHASE1_FILE="$SKILL_DIR/phases/phase-1-discovery.md"
+REENTRY_OPTION_A_BLOCK=$(awk '/^If user chose \*\*A\*\*:/{found=1; next} found && /^If user chose \*\*B\*\*:/{exit} found' "$REENTRY_PHASE0_FILE")
+
+if [[ -z "$REENTRY_OPTION_A_BLOCK" ]]; then
+  echo "ERROR: Could not locate Option A re-entry block in Phase 0"
+  echo "  File: phases/phase-0-preflight.md"
+  echo "  Contract: Option A section boundaries must remain explicit and parseable"
+  exit 1
+fi
 
 if ! grep -qE 'Use it as context|design reference' "$REENTRY_PHASE0_FILE" ||
-   ! grep -qE 'continue to Phase 1' "$REENTRY_PHASE0_FILE" ||
-   ! grep -qE 'Do NOT skip critical decision gates' "$REENTRY_PHASE0_FILE"; then
+   ! echo "$REENTRY_OPTION_A_BLOCK" | grep -qE 'Continue to Phase 1' ||
+   ! echo "$REENTRY_OPTION_A_BLOCK" | grep -qE 'Do NOT skip critical decision gates'; then
   echo "ERROR: Phase 0 missing required context-first re-entry semantics"
   echo "  File: phases/phase-0-preflight.md"
   echo "  Contract: Option A must import context, continue to Phase 1, and preserve decision gates"
