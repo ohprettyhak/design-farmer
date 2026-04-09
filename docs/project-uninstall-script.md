@@ -23,7 +23,8 @@ Users could install the bundle in one command but had no standardized uninstall 
 - Delete only `*/skills/design-farmer` directories and preserve parent directories.
 - Add explicit safety checks for empty and unsafe paths.
 - Extend smoke tests to validate uninstall behavior and guardrails.
-- Update `README.md`, `INSTALLATION.md`, and repository policy/contracts that mention install lifecycle behavior.
+- Keep `README.md` and localized README files install-first, with uninstall shown as a single-line optional command.
+- Keep full uninstall option details in `INSTALLATION.md` and repository policy/contracts that mention install lifecycle behavior.
 
 ### Out of Scope
 
@@ -45,6 +46,9 @@ Users could install the bundle in one command but had no standardized uninstall 
   - absent targets are treated as no-op success
 - Validation contract:
   - `scripts/test-install-smoke.sh` covers install and uninstall scenarios in isolated temp HOME fixtures.
+- Documentation contract:
+  - README files expose uninstall as one-line optional guidance.
+  - `INSTALLATION.md` is the canonical uninstall option reference.
 
 ## Acceptance Criteria
 
@@ -75,3 +79,4 @@ Users could install the bundle in one command but had no standardized uninstall 
 | Date | Author | Change |
 |------|--------|--------|
 | 2026-04-09 | Codex | Initial draft |
+| 2026-04-09 | Codex | Clarified install-first README guidance and canonical uninstall detail location |

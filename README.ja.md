@@ -55,6 +55,7 @@ curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/inst
 ```
 
 インストーラが利用中のツールを検出し、スキルディレクトリの作成とバンドルのダウンロードを行います。対応ツール：**Claude Code**、**Codex CLI**、**Amp**、**Gemini CLI**、**OpenCode**。
+アンインストール（任意）：`curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/uninstall.sh | bash`（全オプションは [INSTALLATION.md](INSTALLATION.md) を参照）。
 
 手動インストールやトラブルシューティングは[INSTALLATION.md](INSTALLATION.md)を参照してください。
 
