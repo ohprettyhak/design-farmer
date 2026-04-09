@@ -205,6 +205,42 @@ test_selective_tool_install_only_writes_requested_target() {
   trap - RETURN
 }
 
+test_selective_tool_install_deduplicates_requested_targets() {
+  local temp_dir
+  temp_dir="$(mktemp -d)"
+  trap 'rm -rf "$temp_dir"' RETURN
+
+  local fake_home="$temp_dir/home"
+  local fake_bin="$temp_dir/bin"
+  mkdir -p "$fake_home"
+  mkdir -p "$(tool_marker_path "claude" "$fake_home")"
+  write_curl_stub "$fake_bin"
+
+  local output_file="$temp_dir/output.log"
+  HOME="$fake_home" PATH="$fake_bin:/usr/bin:/bin" BRANCH="smoke-test-branch" \
+    "$BASH_BIN" "$INSTALLER" --tool claude --tool claude >"$output_file" 2>&1
+
+  local claude_file
+  claude_file="$(installed_skill_file_path "claude" "$fake_home")"
+
+  if [[ ! -f "$claude_file" ]]; then
+    echo "ERROR: Expected claude install target was not written"
+    cat "$output_file"
+    exit 1
+  fi
+
+  local target_line_count
+  target_line_count="$(grep -Ec '^  - Claude Code \(' "$output_file")"
+  if [[ "$target_line_count" -ne 1 ]]; then
+    echo "ERROR: Expected Claude Code to appear exactly once in installer output"
+    cat "$output_file"
+    exit 1
+  fi
+
+  rm -rf "$temp_dir"
+  trap - RETURN
+}
+
 test_dry_run_does_not_write_files() {
   local temp_dir
   temp_dir="$(mktemp -d)"
@@ -485,6 +521,41 @@ test_uninstall_removes_only_requested_target() {
   trap - RETURN
 }
 
+test_uninstall_deduplicates_requested_targets() {
+  local temp_dir
+  temp_dir="$(mktemp -d)"
+  trap 'rm -rf "$temp_dir"' RETURN
+
+  local fake_home="$temp_dir/home"
+  mkdir -p "$fake_home"
+  mkdir -p "$(tool_marker_path "claude" "$fake_home")"
+  mkdir -p "$(installed_skill_dir_path "claude" "$fake_home")"
+  printf "installed\n" >"$(installed_skill_file_path "claude" "$fake_home")"
+
+  local output_file="$temp_dir/output.log"
+  HOME="$fake_home" PATH="/usr/bin:/bin" \
+    "$BASH_BIN" "$UNINSTALLER" --tool claude --tool claude >"$output_file" 2>&1
+
+  local claude_dir
+  claude_dir="$(installed_skill_dir_path "claude" "$fake_home")"
+  if [[ -d "$claude_dir" ]]; then
+    echo "ERROR: Expected claude uninstall target was not removed"
+    cat "$output_file"
+    exit 1
+  fi
+
+  local target_line_count
+  target_line_count="$(grep -Ec '^  - Claude Code \(' "$output_file")"
+  if [[ "$target_line_count" -ne 1 ]]; then
+    echo "ERROR: Expected Claude Code to appear exactly once in uninstaller output"
+    cat "$output_file"
+    exit 1
+  fi
+
+  rm -rf "$temp_dir"
+  trap - RETURN
+}
+
 test_uninstall_dry_run_does_not_delete_files() {
   local temp_dir
   temp_dir="$(mktemp -d)"
@@ -635,6 +706,9 @@ main() {
   echo "[smoke] selective path: --tool installs only requested target"
   test_selective_tool_install_only_writes_requested_target
 
+  echo "[smoke] selective path: duplicate --tool arguments stay deduplicated"
+  test_selective_tool_install_deduplicates_requested_targets
+
   echo "[smoke] dry-run path: no files are written"
   test_dry_run_does_not_write_files
 
@@ -661,6 +735,9 @@ main() {
 
   echo "[smoke] uninstall path: --tool removes only requested target"
   test_uninstall_removes_only_requested_target
+
+  echo "[smoke] uninstall path: duplicate --tool arguments stay deduplicated"
+  test_uninstall_deduplicates_requested_targets
 
   echo "[smoke] uninstall path: --dry-run does not delete files"
   test_uninstall_dry_run_does_not_delete_files
