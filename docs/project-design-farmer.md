@@ -154,7 +154,7 @@ Phase 0 (Preflight) ──→ detect topology, check DESIGN.md
 - [x] Radius tone preference (`radiusTone`) is captured in discovery and propagated through re-entry/config templates.
 - [x] Button/Input/Select size contracts use one shared ladder (`28/32/36/40`) in phase templates, examples, and semantic tests.
 - [x] Existing DESIGN.md re-entry is context-first (Phase 0→1), with critical discovery gates preserved (Q3/Q3-1/Q5/Q5-1).
-- [x] Structural validation blocks stale legacy wording (`Phase 0 → Phase 5 shortcut`) in template/example/operational docs.
+- [x] Structural validation blocks stale legacy direct-to-Phase-5 shortcut wording in template/example/operational docs.
 - [x] Fallback/degradation registry covers all implementation phases (14 entries).
 
 ## Dependencies

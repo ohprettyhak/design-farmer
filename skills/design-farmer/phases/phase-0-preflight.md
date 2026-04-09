@@ -61,7 +61,7 @@ Then ask via AskUserQuestion **before anything else**:
 
 If user chose **A**:
 
-1. **Read the `## Config` YAML block** from DESIGN.md (if present). If the `## Config` section is missing or malformed, fall back to preflight scan (steps 1–5) plus user prompts for critical fields — do not block. Parse it to reconstruct `DesignFarmerConfig`:
+1. **Read the `## Config` YAML block** from DESIGN.md (if present). If the `## Config` section is missing or malformed, fall back to preflight scan (steps 1–5) plus user prompts for bootstrap fields — do not block. Parse it to reconstruct `DesignFarmerConfig`:
    - `packageManager`, `framework`, `isMonorepo`, `systemPath`, `designSystemPackage`
    - `componentScope`, `headlessLibrary`, `themeStrategy`, `themeLibrary`, `accessibilityLevel`
    - `radiusTone`
@@ -78,9 +78,9 @@ If user chose **A**:
    - `systemPath`: use the directory containing DESIGN.md
    - `designSystemPackage`: read from `{systemPath}/package.json` `"name"` field (e.g., `@acme/design-system`)
 
-3. **If critical fields are still missing** (packageManager, framework, systemPath, isMonorepo, designSystemPackage, componentScope, themeStrategy), ask ONE AskUserQuestion with all missing fields at once — do not ask one-at-a-time for this recovery step.
+3. **If bootstrap fields are still missing** (packageManager, framework, systemPath, isMonorepo, designSystemPackage), ask ONE AskUserQuestion with all missing fields at once — do not ask one-at-a-time for this recovery step. If `componentScope`, `headlessLibrary`, `themeStrategy`, `themeLibrary`, `accessibilityLevel`, `targetPlatforms`, or `radiusTone` are missing, continue anyway — Phase 1 is responsible for confirming those design decisions.
 
-   **Critical field validation guard**: If the user's response still doesn't provide one or more critical fields, emit **Status: BLOCKED** with message: 'Cannot reconstruct config without required fields: {missing list}. Recovery: restart Phase 0 with complete information.'
+   **Bootstrap field validation guard**: If the user's response still doesn't provide one or more bootstrap fields, emit **Status: BLOCKED** with message: 'Cannot reconstruct config without required bootstrap fields: {missing list}. Recovery: restart Phase 0 with complete information.'
 
 4. **Derive computed identifiers** from the parsed fields:
    - `createdAt`: ISO 8601 timestamp of when this config was reconstructed (e.g., `2026-04-08T12:34:56Z`)

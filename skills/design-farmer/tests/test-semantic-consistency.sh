@@ -387,6 +387,13 @@ else
   fail "Re-entry path A: missing Config YAML field parsing"
 fi
 
+if grep -q "bootstrap fields are still missing" "$PHASES_DIR/phase-0-preflight.md" &&
+   grep -q "Phase 1 is responsible for confirming those design decisions" "$PHASES_DIR/phase-0-preflight.md"; then
+  pass "Re-entry path A: only bootstrap fields block context import"
+else
+  fail "Re-entry path A: Phase 0 still over-blocks design decisions before Phase 1"
+fi
+
 # Path B/C: continue to Phase 1 normally
 if grep -q 'chose.*B.*or.*C.*continue to Phase 1' "$PHASES_DIR/phase-0-preflight.md" ||
    grep -q 'continue to Phase 1.*Discovery Interview.*as normal' "$PHASES_DIR/phase-0-preflight.md"; then
@@ -404,7 +411,9 @@ fi
 
 if ! grep -q "Phase 0 → Phase 5 shortcut" "$PHASES_DIR/phase-4.5-design-source-of-truth.md" &&
    ! grep -q "Phase 0 → Phase 5 shortcut" "$EXAMPLES_DIR/DESIGN.md" &&
-   ! grep -q "before jumping to Phase 5" "$PHASES_DIR/operational-notes.md"; then
+   ! grep -q "before jumping to Phase 5" "$PHASES_DIR/operational-notes.md" &&
+   ! grep -q "Phase 0 → Phase 5 shortcut" "$ROOT_DIR/docs/project-design-farmer.md" &&
+   ! grep -q "parse Config YAML ──→ Phase 5" "$ROOT_DIR/docs/project-design-farmer.md"; then
   pass "Re-entry docs/templates align with context-first contract"
 else
   fail "Re-entry docs/templates contain stale Phase 0→5 shortcut wording"

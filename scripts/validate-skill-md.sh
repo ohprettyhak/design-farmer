@@ -304,4 +304,16 @@ if grep -nF "before jumping to Phase 5" "$SKILL_DIR/phases/operational-notes.md"
   exit 1
 fi
 
+if grep -nF "Phase 0 → Phase 5 shortcut" "$ROOT_DIR/docs/project-design-farmer.md" >/dev/null 2>&1; then
+  echo "ERROR: Stale re-entry wording found in docs/project-design-farmer.md"
+  echo "  Contract: repository docs must reflect context-first re-entry semantics"
+  exit 1
+fi
+
+if grep -nF "parse Config YAML ──→ Phase 5" "$ROOT_DIR/docs/project-design-farmer.md" >/dev/null 2>&1; then
+  echo "ERROR: Stale Phase 0->5 data flow found in docs/project-design-farmer.md"
+  echo "  Contract: repository docs must show Phase 0 context import continuing to Phase 1"
+  exit 1
+fi
+
 echo "All skill structure and contract checks passed."
