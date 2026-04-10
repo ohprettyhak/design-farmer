@@ -4,6 +4,8 @@
 
 Add a first-party `uninstall.sh` script that removes the `design-farmer` skill bundle from supported AI tool directories with the same target-selection ergonomics as `install.sh`, while enforcing strict path safety and no-op behavior for absent targets.
 
+This file is an internal project contract for the uninstall implementation work. End-user install and optional removal guidance belongs in root-level lifecycle docs such as `README.md` and `INSTALLATION.md`.
+
 ## Evidence
 
 - The repository already ships `install.sh` with multi-tool detection, selective target flags, and `--dry-run`, but did not provide an official uninstall workflow.
@@ -48,7 +50,7 @@ Users could install the bundle in one command but had no standardized uninstall 
   - `scripts/test-install-smoke.sh` covers install and uninstall scenarios in isolated temp HOME fixtures.
 - Documentation contract:
   - README files expose uninstall as one-line optional guidance.
-  - `INSTALLATION.md` is the canonical uninstall option reference.
+  - `INSTALLATION.md` is the canonical install lifecycle reference, including uninstall options.
 
 ## Acceptance Criteria
 
@@ -80,3 +82,4 @@ Users could install the bundle in one command but had no standardized uninstall 
 |------|--------|--------|
 | 2026-04-09 | Codex | Initial draft |
 | 2026-04-09 | Codex | Clarified install-first README guidance and canonical uninstall detail location |
+| 2026-04-10 | Codex | Reframed this file as an internal contract and aligned it with the install lifecycle documentation model |

@@ -1,6 +1,7 @@
 # project-template
 
 > Copy this file as `docs/project-<id>.md` and fill in each section before implementation begins.
+> These files are internal implementation contracts for maintainers and contributors, not end-user documentation.
 > Remove this blockquote after copying.
 
 ## Summary
