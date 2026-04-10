@@ -167,6 +167,7 @@ node -e "
   mp.plugins[0].version = pkg.version;
   mp.plugins[0].name = pkg.name;
   mp.plugins[0].description = pkg.description;
+  if (pkg.homepage) mp.plugins[0].homepage = pkg.homepage;
   fs.writeFileSync(mpPath, JSON.stringify(mp, null, 2) + '\n');
 "
 
