@@ -13,15 +13,30 @@ Marketplace installations receive automatic updates and are the recommended inst
 
 ### Migrating from the curl installer
 
-If you previously installed via `curl | bash`, your installation will continue to work. To migrate to the marketplace:
+If you previously installed via `curl | bash`, your installation will continue to work. To migrate to the marketplace without losing skill availability:
 
-1. Uninstall the curl-installed version:
+1. Install via the marketplace first (see steps above). Claude Code keeps the skill available from the marketplace cache.
+2. Verify the marketplace copy loads correctly in a new Claude Code session.
+3. Remove the curl-installed copy so only the marketplace-managed version remains:
    ```bash
-   curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/uninstall.sh | bash
+   curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/uninstall.sh | bash -s -- --tool claude
    ```
-2. Install via the marketplace (see steps above)
 
 Your existing `DESIGN.md` files and project configurations are preserved.
+
+### Migrating from the marketplace back to the curl installer
+
+If you need to switch back (for example, to manage the skill alongside other non-Claude AI tools from a single installer):
+
+1. Disable or uninstall the marketplace plugin from **Plugins → Marketplace**.
+2. Run the curl installer:
+   ```bash
+   curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/install.sh | bash -s -- --tool claude
+   ```
+
+### Avoid running both channels at once
+
+Marketplace installs live inside Claude Code's managed plugin cache, while the curl installer writes to `~/.claude/skills/design-farmer/`. When both are present, Claude Code may surface either copy depending on how it enumerates skills, and the two copies are not reconciled automatically. To keep behavior deterministic, install from exactly one channel per tool and run one of the migration flows above when switching.
 
 ## Universal installer (all tools)
 
