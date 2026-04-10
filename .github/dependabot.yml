@@ -1,0 +1,13 @@
+# Dependabot configuration — keeps CI-pinned versions moving without manual maintenance.
+# See https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+version: 2
+updates:
+  # Track GitHub Actions (actions/checkout, actions/setup-node, etc.) pinned by ref in
+  # .github/workflows/*.yml. Dependabot opens a PR when a new version is tagged upstream.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "chore"
+      include: "scope"

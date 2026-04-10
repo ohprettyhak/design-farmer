@@ -25,13 +25,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # Pin to a specific LTS minor so Node point releases cannot
+      # spontaneously break CI without a commit in this repository.
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '20.18'
 
+      # Pin the Claude Code CLI to the current minor series so an upstream
+      # release with tighter schema enforcement cannot break unrelated PRs
+      # without a commit in this repository. Dependabot (see .github/dependabot.yml)
+      # keeps the pin moving via scheduled PRs.
       - name: Install Claude Code CLI
-        run: npm install -g @anthropic-ai/claude-code
+        run: npm install -g "@anthropic-ai/claude-code@~2.1.0"
 
       - name: Validate plugin and marketplace manifests
         run: claude plugin validate .
