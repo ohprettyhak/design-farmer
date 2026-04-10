@@ -2,7 +2,7 @@
 
 ## Summary
 
-Add a second distribution channel for the Design Farmer skill — the Claude Code Marketplace — alongside the existing curl installer. Marketplace installs are the recommended path for Claude Code users because the platform handles atomic install and update, while the curl installer remains the universal path for all supported AI tools. This project covers the plugin manifests, the release automation script, and the documentation layers required to keep both channels in sync from a single `package.json` source of truth.
+Add a second distribution channel for the Design Farmer skill — the Claude Code Marketplace — alongside the existing curl installer. Marketplace installs are the recommended path for Claude Code users because the platform handles atomic install and update, while the curl installer remains the universal path for all supported AI tools. This project covers the plugin manifests, the release automation script, and the documentation layers required to keep both channels in sync from a single `package.json` source of truth, including both the Marketplace UI flow and the Marketplace CLI flow (`/plugin marketplace add` + `/plugin install`).
 
 This file is an internal project contract for the marketplace distribution work. End-user install guidance lives in `README.md`, `README.*.md`, and `INSTALLATION.md`.
 
@@ -15,7 +15,7 @@ This file is an internal project contract for the marketplace distribution work.
 
 ## Current Gap
 
-Before this project, Design Farmer could only be installed via the curl installer. Claude Code users had no discoverable, marketplace-native path, and updates required re-running the curl installer manually. Release metadata was also scattered: version and description lived in `package.json` and `SKILL.md` only, with no plugin manifests and no automation to keep them aligned.
+Before this project, Design Farmer could only be installed via the curl installer. Claude Code users had no discoverable, marketplace-native path, and updates required re-running the curl installer manually. Release metadata was also scattered: version and description lived in `package.json` and `SKILL.md` only, with no plugin manifests and no automation to keep them aligned. After the Marketplace channel shipped, the remaining documentation gap was that root docs emphasized the Marketplace UI path but did not consistently describe the equivalent CLI registration-and-install flow for users who manage plugins from Claude Code's command surface.
 
 ## Proposed Scope
 
@@ -31,13 +31,14 @@ Before this project, Design Farmer could only be installed via the curl installe
   - Restores the working tree on any pre-commit failure via an `ERR` trap.
   - Creates a single atomic release commit and annotated tag only after all sync and validation steps pass.
 - Update `README.md`, localized README variants, and `INSTALLATION.md` to lead with the marketplace path for Claude Code users, while preserving the curl installer as the universal fallback.
+- Document the Marketplace CLI flow explicitly: register the repository with `/plugin marketplace add ohprettyhak/design-farmer`, then install the plugin with `/plugin install design-farmer@design-farmer`.
 - Document the release procedure in `docs/marketplace-release-procedure.md`.
 - Update `AGENTS.md` repository structure map to list the new `.claude-plugin/` directory, `INSTALLATION.md`, and `scripts/release.sh`.
 
 ### Out of Scope
 
-- Automatic reconciliation between the marketplace cache and the curl-installed copy at runtime. Users are expected to install from exactly one channel per tool; `INSTALLATION.md` documents precedence and migration paths in both directions.
-- Schema-aware manifest merging. The release script currently overwrites known keys and strips schema-forbidden keys (`$schema`, `bugs`, top-level `version`/`description`). If the Claude Code plugin schema grows new required fields, the script will need to be updated in a follow-up.
+- Automatic reconciliation between the marketplace cache and the curl-installed copy at runtime. Users are expected to install from exactly one channel per tool; `INSTALLATION.md` documents the single-channel rule and migration paths in both directions instead of claiming a stable precedence order.
+- Expanding the release sync beyond the schema-aware manifest fields currently owned by `scripts/release-sync-manifests.mjs`. The release flow preserves unknown manifest fields and strips only schema-forbidden keys (`$schema`, `bugs`, top-level `version`/`description`); if the Claude Code plugin schema grows new required owned fields, the sync module will need to be updated in a follow-up.
 - Signed releases or checksum verification for the curl installer. `curl | bash` remains the existing universal install flow and is not changed by this project.
 - Publishing to external registries (npm, Homebrew, etc.). `package.json` keeps `"private": true`.
 
@@ -120,8 +121,8 @@ When both are present on the same machine the two copies are not reconciled auto
 - [x] `scripts/release.sh` creates exactly one release commit and one annotated tag per successful invocation, and only after all sync/validation steps pass.
 - [x] The release commit message follows the repository commit convention (`<type>: <what>`).
 - [x] `scripts/release.sh` fails loudly if `package.json` is missing the `description` field, instead of silently writing partial metadata.
-- [x] `README.md` and localized README variants present marketplace as the recommended path for Claude Code users, with the curl installer as the universal fallback.
-- [x] `INSTALLATION.md` documents the marketplace install, forward and reverse migration between channels, and install path precedence when both channels are active.
+- [x] `README.md` and localized README variants present marketplace as the recommended path for Claude Code users, with both the UI flow and the CLI registration/install flow documented, and with the curl installer as the universal fallback.
+- [x] `INSTALLATION.md` documents the marketplace install, the Marketplace CLI registration/install flow, forward and reverse migration between channels, and the single-channel guidance to follow when both channels could otherwise be active.
 - [x] `docs/marketplace-release-procedure.md` describes the release script flow accurately.
 - [x] `AGENTS.md` repository structure map references `.claude-plugin/`, `INSTALLATION.md`, `scripts/release.sh`, and `docs/marketplace-release-procedure.md`.
 
@@ -137,7 +138,8 @@ When both are present on the same machine the two copies are not reconciled auto
 | Risk | Mitigation |
 |------|------------|
 | Claude Code plugin schema gains new optional fields that the sync script silently drops on the next release. | `scripts/release-sync-manifests.mjs` is a schema-aware merge that preserves any existing manifest key the sync does not explicitly own; only the canonical fields pulled from `package.json` (name, version, description, author, license, homepage, repository) and explicitly-forbidden keys (`plugin.bugs`, `marketplace.$schema`, root-level `version`/`description`) are touched. Unit tests in `scripts/__tests__/release-sync-manifests.test.mjs` gate this behavior on every CI run, and `claude plugin validate .` runs before and after sync to catch schema breakage loudly. |
-| Duplicate installations (marketplace + curl) on the same machine. | Documented in `INSTALLATION.md` with install path precedence and safe migration procedures in both directions. Install into exactly one channel per tool. |
+| Duplicate installations (marketplace + curl) on the same machine. | Documented in `INSTALLATION.md` with the single-channel rule and safe migration procedures in both directions. Install into exactly one channel per tool. |
+| Marketplace CLI examples drift from the shipped marketplace/plugin names. | Keep the CLI examples tied to the manifest source of truth: `.claude-plugin/marketplace.json` currently uses `design-farmer` for both the marketplace name and plugin name, so user docs must update when that manifest changes. |
 | Version drift between marketplace (tag-pinned) and curl users (tracks `main`). | Release script bumps `SKILL.md`, both manifests, and `package.json` in a single atomic commit, and only creates the tag after all mutations succeed. CI and the manual `git push origin main && git push origin v<version>` step must stay adjacent. |
 | Pre-commit hook rejects the release commit, leaving modified files. | `ERR` trap runs a file-scoped `git reset -q HEAD --` + `git checkout -q HEAD --` over the four release files only, leaving untracked work and unrelated modifications intact. Script is idempotent on re-run. |
 | Inline `node -e` blocks in `release.sh` drift from the schema and become hard to maintain. | Resolved in #95 — extracted to `scripts/release-sync-manifests.mjs`, a standalone ESM module with `node --test` unit tests under `scripts/__tests__/`. `release.sh` invokes it via the CLI entry point. |

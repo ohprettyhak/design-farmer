@@ -7,8 +7,8 @@ repository. They are not the primary entrypoint for end users installing or usin
 ## Documentation Layers
 
 - **User-facing repository docs** live at the repository root:
-  - `README.md` and localized `README*.md` files for overview and quick-start guidance
-  - `INSTALLATION.md` for the install lifecycle, manual setup, troubleshooting, and optional removal
+  - `README.md` and localized `README*.md` files for overview and quick-start guidance, including the Claude Code Marketplace UI and CLI entrypoints
+  - `INSTALLATION.md` for the install lifecycle, Marketplace UI/CLI flows, manual setup, troubleshooting, and optional removal
 - **Internal project contracts** live in this directory:
   - `docs/project-*.md` for scoped implementation contracts created before work begins
   - `docs/project-template.md` for creating new contract files
