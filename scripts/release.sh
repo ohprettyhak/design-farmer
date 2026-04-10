@@ -37,6 +37,7 @@ fi
 echo "Running pre-release validation..."
 bash scripts/validate-skill-md.sh
 bash skills/design-farmer/tests/run-all.sh
+node --test scripts/__tests__/release-sync-manifests.test.mjs >/dev/null
 claude plugin validate .
 
 # Compute the next version without mutating files so we can check for
@@ -114,62 +115,10 @@ sed -i.bak "s|^version:.*|version: ${NEW_VERSION}|" "skills/design-farmer/SKILL.
 rm -f "skills/design-farmer/SKILL.md.bak"
 
 echo "Syncing plugin.json..."
-node -e "
-  const pkg = require('./package.json');
-  const fs = require('fs');
-  const pluginPath = './.claude-plugin/plugin.json';
-  const plugin = JSON.parse(fs.readFileSync(pluginPath, 'utf8'));
-  if (!pkg.description) {
-    throw new Error('package.json is missing required \"description\" field');
-  }
-  // Claude Code plugin manifest schema: author must be object, repository must be string, bugs is not supported.
-  const authorMatch = typeof pkg.author === 'string'
-    ? pkg.author.match(/^([^<(]+?)\s*(?:<([^>]+)>)?\s*(?:\(([^)]+)\))?\s*$/)
-    : null;
-  const authorObj = typeof pkg.author === 'object' && pkg.author !== null
-    ? pkg.author
-    : authorMatch
-      ? { name: authorMatch[1].trim(), ...(authorMatch[2] ? { email: authorMatch[2].trim() } : {}) }
-      : undefined;
-  const repoString = typeof pkg.repository === 'string'
-    ? pkg.repository
-    : (pkg.repository && pkg.repository.url) || undefined;
-  plugin.version = pkg.version;
-  plugin.name = pkg.name;
-  plugin.description = pkg.description;
-  if (authorObj) plugin.author = authorObj;
-  plugin.license = pkg.license;
-  plugin.homepage = pkg.homepage;
-  if (repoString) plugin.repository = repoString;
-  delete plugin.bugs;
-  fs.writeFileSync(pluginPath, JSON.stringify(plugin, null, 2) + '\n');
-"
+node scripts/release-sync-manifests.mjs plugin package.json .claude-plugin/plugin.json
 
 echo "Syncing marketplace.json..."
-node -e "
-  const pkg = require('./package.json');
-  const fs = require('fs');
-  const mpPath = './.claude-plugin/marketplace.json';
-  const mp = JSON.parse(fs.readFileSync(mpPath, 'utf8'));
-  if (!pkg.description) {
-    throw new Error('package.json is missing required \"description\" field');
-  }
-  // Marketplace schema: version/description live under 'metadata', not at root.
-  mp.metadata = mp.metadata || {};
-  mp.metadata.version = pkg.version;
-  mp.metadata.description = pkg.description;
-  delete mp.version;
-  delete mp.description;
-  delete mp['\$schema'];
-  if (!Array.isArray(mp.plugins) || mp.plugins.length === 0) {
-    throw new Error('marketplace.json must contain at least one plugin entry');
-  }
-  mp.plugins[0].version = pkg.version;
-  mp.plugins[0].name = pkg.name;
-  mp.plugins[0].description = pkg.description;
-  if (pkg.homepage) mp.plugins[0].homepage = pkg.homepage;
-  fs.writeFileSync(mpPath, JSON.stringify(mp, null, 2) + '\n');
-"
+node scripts/release-sync-manifests.mjs marketplace package.json .claude-plugin/marketplace.json
 
 echo "Re-validating manifests after metadata sync..."
 claude plugin validate .

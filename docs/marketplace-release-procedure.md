@@ -37,10 +37,11 @@
 1. Runs pre-release validation:
    - `bash scripts/validate-skill-md.sh` (structural validation)
    - `bash skills/design-farmer/tests/run-all.sh` (semantic consistency suite)
+   - `node --test scripts/__tests__/release-sync-manifests.test.mjs` (manifest sync module unit tests)
    - `claude plugin validate .` (plugin manifest validation)
 2. Bumps version in `package.json` using `npm version --no-git-tag-version` (no commit, no tag)
 3. Syncs version to `skills/design-farmer/SKILL.md` frontmatter
-4. Syncs metadata to `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json`
+4. Syncs metadata to `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json` via `scripts/release-sync-manifests.mjs` — a schema-aware merge that preserves unknown manifest fields across releases
 5. Re-runs `claude plugin validate .` after metadata sync to catch post-sync drift
 6. Creates a single atomic release commit with `package.json` and all synced files
 7. Creates a git tag (`v<version>`)
