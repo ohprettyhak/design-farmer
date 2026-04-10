@@ -690,6 +690,151 @@ test_uninstall_interactive_requires_terminal() {
   trap - RETURN
 }
 
+make_fake_marketplace_cache() {
+  local fake_home="$1"
+  # Mirror the actual Claude Code marketplace cache layout:
+  # $HOME/.claude/plugins/cache/<marketplace>/<plugin>/<version>/<plugin>
+  local cache_path="$fake_home/.claude/plugins/cache/design-farmer/design-farmer/9.9.9/design-farmer"
+  mkdir -p "$cache_path"
+  printf "fake marketplace copy\n" >"$cache_path/SKILL.md"
+}
+
+test_install_warns_on_marketplace_cache_collision_for_claude() {
+  local temp_dir
+  temp_dir="$(mktemp -d)"
+  trap 'rm -rf "$temp_dir"' RETURN
+
+  local fake_home="$temp_dir/home"
+  local fake_bin="$temp_dir/bin"
+  mkdir -p "$fake_home"
+  mkdir -p "$(tool_marker_path "claude" "$fake_home")"
+  write_curl_stub "$fake_bin"
+  make_fake_marketplace_cache "$fake_home"
+
+  local output_file="$temp_dir/output.log"
+  HOME="$fake_home" PATH="$fake_bin:/usr/bin:/bin" BRANCH="smoke-test-branch" \
+    "$BASH_BIN" "$INSTALLER" --tool claude >"$output_file" 2>&1
+
+  assert_contains "$output_file" "Claude Code marketplace install of design-farmer was detected"
+  assert_contains "$output_file" "marketplace cache :"
+  assert_contains "$output_file" "curl install path :"
+  assert_contains "$output_file" "install from"
+  assert_contains "$output_file" "Done!"
+
+  local claude_file
+  claude_file="$(installed_skill_file_path "claude" "$fake_home")"
+  if [[ ! -f "$claude_file" ]]; then
+    echo "ERROR: Install should still succeed alongside the warning"
+    cat "$output_file"
+    exit 1
+  fi
+
+  rm -rf "$temp_dir"
+  trap - RETURN
+}
+
+test_install_does_not_warn_without_marketplace_cache() {
+  local temp_dir
+  temp_dir="$(mktemp -d)"
+  trap 'rm -rf "$temp_dir"' RETURN
+
+  local fake_home="$temp_dir/home"
+  local fake_bin="$temp_dir/bin"
+  mkdir -p "$fake_home"
+  mkdir -p "$(tool_marker_path "claude" "$fake_home")"
+  write_curl_stub "$fake_bin"
+
+  local output_file="$temp_dir/output.log"
+  HOME="$fake_home" PATH="$fake_bin:/usr/bin:/bin" BRANCH="smoke-test-branch" \
+    "$BASH_BIN" "$INSTALLER" --tool claude >"$output_file" 2>&1
+
+  if grep -Fq "Claude Code marketplace install of design-farmer was detected" "$output_file"; then
+    echo "ERROR: Marketplace collision warning fired without any cache present"
+    cat "$output_file"
+    exit 1
+  fi
+
+  assert_contains "$output_file" "Done!"
+
+  rm -rf "$temp_dir"
+  trap - RETURN
+}
+
+test_install_does_not_warn_for_non_claude_target() {
+  local temp_dir
+  temp_dir="$(mktemp -d)"
+  trap 'rm -rf "$temp_dir"' RETURN
+
+  local fake_home="$temp_dir/home"
+  local fake_bin="$temp_dir/bin"
+  mkdir -p "$fake_home"
+  mkdir -p "$(tool_marker_path "codex" "$fake_home")"
+  write_curl_stub "$fake_bin"
+  # Cache is present, but claude is not a selected target — the warning
+  # should not fire because the user is only installing for codex.
+  make_fake_marketplace_cache "$fake_home"
+
+  local output_file="$temp_dir/output.log"
+  HOME="$fake_home" PATH="$fake_bin:/usr/bin:/bin" BRANCH="smoke-test-branch" \
+    "$BASH_BIN" "$INSTALLER" --tool codex >"$output_file" 2>&1
+
+  if grep -Fq "Claude Code marketplace install of design-farmer was detected" "$output_file"; then
+    echo "ERROR: Marketplace collision warning fired for non-claude target"
+    cat "$output_file"
+    exit 1
+  fi
+
+  rm -rf "$temp_dir"
+  trap - RETURN
+}
+
+test_uninstall_warns_on_marketplace_cache_collision_for_claude() {
+  local temp_dir
+  temp_dir="$(mktemp -d)"
+  trap 'rm -rf "$temp_dir"' RETURN
+
+  local fake_home="$temp_dir/home"
+  local fake_bin="$temp_dir/bin"
+  mkdir -p "$fake_home"
+  mkdir -p "$(tool_marker_path "claude" "$fake_home")"
+  write_curl_stub "$fake_bin"
+
+  # Install the curl copy first, then seed the marketplace cache so the
+  # uninstaller sees the collision when it runs.
+  local install_output="$temp_dir/install.log"
+  HOME="$fake_home" PATH="$fake_bin:/usr/bin:/bin" BRANCH="smoke-test-branch" \
+    "$BASH_BIN" "$INSTALLER" --tool claude >"$install_output" 2>&1
+
+  make_fake_marketplace_cache "$fake_home"
+
+  local uninstall_output="$temp_dir/uninstall.log"
+  HOME="$fake_home" PATH="/usr/bin:/bin" \
+    "$BASH_BIN" "$UNINSTALLER" --tool claude >"$uninstall_output" 2>&1
+
+  assert_contains "$uninstall_output" "Claude Code marketplace install of design-farmer was detected"
+  assert_contains "$uninstall_output" "removes ONLY the curl-installed copy"
+  assert_contains "$uninstall_output" "Done!"
+
+  local claude_dir
+  claude_dir="$(installed_skill_dir_path "claude" "$fake_home")"
+  if [[ -d "$claude_dir" ]]; then
+    echo "ERROR: Curl install should be removed by uninstall even with warning"
+    cat "$uninstall_output"
+    exit 1
+  fi
+
+  local cache_dir
+  cache_dir="$fake_home/.claude/plugins/cache/design-farmer/design-farmer/9.9.9/design-farmer"
+  if [[ ! -d "$cache_dir" ]]; then
+    echo "ERROR: Uninstaller must not touch the marketplace cache"
+    cat "$uninstall_output"
+    exit 1
+  fi
+
+  rm -rf "$temp_dir"
+  trap - RETURN
+}
+
 main() {
   local tool="${1:-}"
   if [[ -z "$tool" ]]; then
@@ -753,6 +898,18 @@ main() {
 
   echo "[smoke] uninstall interactive path: requires terminal in CI"
   test_uninstall_interactive_requires_terminal
+
+  echo "[smoke] install path: warns on marketplace cache collision for claude"
+  test_install_warns_on_marketplace_cache_collision_for_claude
+
+  echo "[smoke] install path: silent when no marketplace cache is present"
+  test_install_does_not_warn_without_marketplace_cache
+
+  echo "[smoke] install path: silent when marketplace cache exists but claude is not targeted"
+  test_install_does_not_warn_for_non_claude_target
+
+  echo "[smoke] uninstall path: warns on marketplace cache collision for claude"
+  test_uninstall_warns_on_marketplace_cache_collision_for_claude
 
   echo "All install/uninstall smoke tests passed for tool=$tool"
 }

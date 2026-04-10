@@ -54,6 +54,48 @@ require_command() {
   fi
 }
 
+# Claude Code stores marketplace-installed plugins under
+# $HOME/.claude/plugins/cache/<marketplace>/<plugin>/<version>/<plugin>.
+# For this repository both the marketplace and plugin name are 'design-farmer',
+# so the presence of the top-level cache directory is a reliable signal that
+# the plugin is already installed via the Claude Code Marketplace.
+marketplace_cache_dir() {
+  printf "%s/.claude/plugins/cache/%s/%s\n" "$HOME" "$SKILL_NAME" "$SKILL_NAME"
+}
+
+detect_marketplace_cache() {
+  local cache_dir
+  cache_dir="$(marketplace_cache_dir)"
+  if [ -d "$cache_dir" ]; then
+    return 0
+  fi
+  return 1
+}
+
+claude_is_selected() {
+  local tool
+  for tool in ${SELECTED[@]+"${SELECTED[@]}"}; do
+    if [ "$tool" = "claude" ]; then
+      return 0
+    fi
+  done
+  return 1
+}
+
+warn_marketplace_cache_collision_install() {
+  local cache_dir
+  cache_dir="$(marketplace_cache_dir)"
+  local curl_dir
+  curl_dir="$(tool_skill_dir claude)"
+  printf "%bWarning:%b a Claude Code marketplace install of %s was detected.\n" "$YELLOW" "$RESET" "$SKILL_NAME"
+  printf "  marketplace cache : %s\n" "$cache_dir"
+  printf "  curl install path : %s\n" "$curl_dir"
+  printf "  Both copies can stay enabled simultaneously and Claude Code does not\n"
+  printf "  reconcile them automatically. To avoid duplicate skills, install from\n"
+  printf "  exactly one channel per tool. See INSTALLATION.md -> 'Avoid running\n"
+  printf "  both channels at once' for safe migration flows.\n\n"
+}
+
 install_bundle_atomic() {
   local target_dir="$1"
   shift
@@ -394,6 +436,10 @@ for tool in "${SELECTED[@]}"; do
   printf "  - %s (%s) -> %s\n" "$(tool_label "$tool")" "$status" "$target_dir"
 done
 printf "\n"
+
+if claude_is_selected && detect_marketplace_cache; then
+  warn_marketplace_cache_collision_install
+fi
 
 if [ "$DRY_RUN" -eq 1 ]; then
   printf "%bDone (dry run).%b\n" "$GREEN" "$RESET"

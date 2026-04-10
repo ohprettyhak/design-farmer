@@ -38,6 +38,8 @@ If you need to switch back (for example, to manage the skill alongside other non
 
 Marketplace installs live inside Claude Code's managed plugin cache, while the curl installer writes to `~/.claude/skills/design-farmer/`. When both are present, Claude Code may surface either copy depending on how it enumerates skills, and the two copies are not reconciled automatically. To keep behavior deterministic, install from exactly one channel per tool and run one of the migration flows above when switching.
 
+Both `install.sh` and `uninstall.sh` detect the marketplace cache at `~/.claude/plugins/cache/design-farmer/design-farmer` when the `claude` target is active, and print an advisory warning that lists both paths. The warning is non-fatal — the script still proceeds so existing automation is not broken — but it is your cue to pick one channel and run the matching migration flow.
+
 ## Universal installer (all tools)
 
 Run the installer script:

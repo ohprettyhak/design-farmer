@@ -171,6 +171,49 @@ select_interactively() {
   fi
 }
 
+# Claude Code stores marketplace-installed plugins under
+# $HOME/.claude/plugins/cache/<marketplace>/<plugin>/<version>/<plugin>.
+# For this repository both the marketplace and plugin name are 'design-farmer',
+# so the presence of the top-level cache directory is a reliable signal that
+# the plugin is also installed via the Claude Code Marketplace — which this
+# uninstaller intentionally does not touch.
+marketplace_cache_dir() {
+  printf "%s/.claude/plugins/cache/%s/%s\n" "$HOME" "$SKILL_NAME" "$SKILL_NAME"
+}
+
+detect_marketplace_cache() {
+  local cache_dir
+  cache_dir="$(marketplace_cache_dir)"
+  if [ -d "$cache_dir" ]; then
+    return 0
+  fi
+  return 1
+}
+
+claude_is_selected() {
+  local tool
+  for tool in ${SELECTED[@]+"${SELECTED[@]}"}; do
+    if [ "$tool" = "claude" ]; then
+      return 0
+    fi
+  done
+  return 1
+}
+
+warn_marketplace_cache_collision_uninstall() {
+  local cache_dir
+  cache_dir="$(marketplace_cache_dir)"
+  local curl_dir
+  curl_dir="$(tool_skill_dir claude)"
+  printf "%bWarning:%b a Claude Code marketplace install of %s was detected.\n" "$YELLOW" "$RESET" "$SKILL_NAME"
+  printf "  marketplace cache : %s\n" "$cache_dir"
+  printf "  curl install path : %s\n" "$curl_dir"
+  printf "  This uninstaller removes ONLY the curl-installed copy. The marketplace\n"
+  printf "  copy is managed by Claude Code and will remain active. Use Claude Code's\n"
+  printf "  Plugins -> Marketplace UI to remove it. See INSTALLATION.md ->\n"
+  printf "  'Avoid running both channels at once' for the full migration flow.\n\n"
+}
+
 safe_remove_target() {
   local target_dir="$1"
 
@@ -325,6 +368,10 @@ for tool in "${SELECTED[@]}"; do
   printf "  - %s (%s, %s) -> %s\n" "$(tool_label "$tool")" "$detected_status" "$install_status" "$target_dir"
 done
 printf "\n"
+
+if claude_is_selected && detect_marketplace_cache; then
+  warn_marketplace_cache_collision_uninstall
+fi
 
 if [ "$DRY_RUN" -eq 1 ]; then
   printf "%bDone (dry run).%b\n" "$GREEN" "$RESET"
