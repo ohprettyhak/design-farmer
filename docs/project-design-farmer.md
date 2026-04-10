@@ -27,7 +27,9 @@ Before this project, agents had no repeatable workflow for:
 - Phase instruction files under `phases/`.
 - Companion documentation (`PHASE-INDEX.md`, `QUALITY-GATES.md`, `MAINTENANCE.md`, `EXAMPLES-GALLERY.md`).
 - Greenfield reference example (`examples/DESIGN.md` — Nova UI).
-- Automated installer (`install.sh`) with atomic bundle deployment.
+- Automated installer (`install.sh`) with atomic bundle deployment and selective target options (`--tool`, `--interactive`, `--dry-run`).
+- Automated uninstaller (`uninstall.sh`) with selective target options (`--tool`, `--interactive`, `--dry-run`) and safe path-guarded removal.
+- README and localized README variants aligned to an install-first flow, with uninstall guidance limited to a single-line pointer to `uninstall.sh` and `INSTALLATION.md` for full options.
 - Structural validation script (`scripts/validate-skill-md.sh`).
 - Semantic consistency test suite (`tests/test-semantic-consistency.sh`).
 - CI pipeline (GitHub Actions: structural validation + install smoke tests).
@@ -88,16 +90,25 @@ skills/design-farmer/
 | User-selected radius tone (`radiusTone`) | Captures corner-style intent early and keeps generated radius defaults aligned with product direction |
 | Shared control size ladder (28/32/36/40) | Keeps Button/Input/Select dimensions consistent so component ergonomics and visual rhythm stay unified |
 | Phase-file decomposition (not monolithic SKILL.md) | Reduces token consumption per phase; agents load only the current phase |
-| DESIGN.md as persistent source of truth | Enables re-entry (Phase 0 → Phase 5 shortcut) and cross-session design continuity |
+| DESIGN.md as persistent source of truth | Enables context-first re-entry (Phase 0 imports DESIGN.md context, then confirms key decisions in Discovery) and cross-session continuity |
+| DESIGN.md source classification (`internal-canonical` vs `external-context`) | Avoids false corruption reports for readable third-party docs while preserving strict handling for truly unreadable files |
+| Audience-based documentation layers | Keeps user lifecycle guidance in root docs, implementation contracts in `docs/`, and skill-maintainer references in `skills/design-farmer/docs/` so workflow docs stay easier to navigate |
 | Fix Loop Protocol (5 max attempts) | Self-healing without external plugins; escalates to BLOCKED on exhaustion |
 | Fallback/degradation registry per phase | Pipeline never silently fails; every phase has a documented fallback path |
+
+### Documentation Layers
+
+- Root docs (`README.md`, localized `README*.md`, `INSTALLATION.md`, `CONTRIBUTING.md`, `AGENTS.md`) are the canonical user, contributor, and repository-operation guides.
+- `docs/project-*.md` files are internal implementation contracts and change records for repository work.
+- `skills/design-farmer/docs/` contains maintainer references for the skill bundle and phase system.
+- Install/uninstall lifecycle guidance stays install-first in root docs, with `INSTALLATION.md` as the canonical detail reference and uninstall treated as optional cleanup.
 
 ### Data Flow
 
 ```
 Phase 0 (Preflight) ──→ detect topology, check DESIGN.md
     │
-    ├─ DESIGN.md found (path A) ──→ parse Config YAML ──→ Phase 5 (skip 1-4)
+    ├─ DESIGN.md found (path A) ──→ parse Config YAML + import context ──→ Phase 1 (pre-filled discovery)
     │
     └─ No DESIGN.md ──→ Phase 1 (Discovery Interview)
                              │
@@ -149,11 +160,16 @@ Phase 0 (Preflight) ──→ detect topology, check DESIGN.md
 - [x] Semantic consistency tests (72 checks) pass with zero failures.
 - [x] Exhaustive simulation (169 checks, 1152 paths) passes with zero failures.
 - [x] Installer deploys bundle atomically across 5 AI tools.
+- [x] Installer supports selective target installation (`--tool`, `--interactive`) and preview mode (`--dry-run`).
+- [x] Uninstaller safely removes only `*/skills/design-farmer` targets across 5 AI tools.
+- [x] Uninstaller supports selective target removal (`--tool`, `--interactive`) and preview mode (`--dry-run`).
+- [x] README + localized README files keep install as the primary path and present uninstall as a single-line optional action.
 - [x] CI pipeline runs on every PR and push to `main`.
 - [x] DESIGN.md Config fields survive Phase 4.5 → Phase 0 round-trip (14 fields).
 - [x] Radius tone preference (`radiusTone`) is captured in discovery and propagated through re-entry/config templates.
 - [x] Button/Input/Select size contracts use one shared ladder (`28/32/36/40`) in phase templates, examples, and semantic tests.
-- [x] All conditional skip/jump paths (6 paths) are valid and tested.
+- [x] Existing DESIGN.md re-entry is context-first (Phase 0→1), with critical discovery gates preserved (Q3/Q3-1/Q5/Q5-1).
+- [x] Structural validation blocks stale legacy direct-to-Phase-5 shortcut wording in template/example/operational docs.
 - [x] Fallback/degradation registry covers all implementation phases (14 entries).
 
 ## Dependencies
@@ -171,9 +187,3 @@ Phase 0 (Preflight) ──→ detect topology, check DESIGN.md
 | Agent runtime differences across tools | Fallback/degradation registry ensures graceful handling; `Agent(prompt="...")` compatibility note |
 | OKLCH browser support gaps | Baseline 2023 (96%+ global); P3 gamut enhancement behind `@media (color-gamut: p3)` |
 | APCA not yet W3C standard | Dual-check: APCA + WCAG 2.x 4.5:1 for legal compliance |
-
-## Revision History
-
-| Date | Author | Change |
-|------|--------|--------|
-| 2026-04-06 | Hak Lee | Initial draft |

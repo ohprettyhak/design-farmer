@@ -55,12 +55,31 @@ curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/inst
 ```
 
 The installer detects your tools, creates skill directories, and downloads the skill bundle. Supported tools: **Claude Code**, **Codex CLI**, **Amp**, **Gemini CLI**, **OpenCode**.
+Canonical lifecycle guide: [INSTALLATION.md](INSTALLATION.md) covers install options, manual setup, troubleshooting, and optional removal.
+Uninstall (optional): `curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/uninstall.sh | bash`.
 
-For manual installation or troubleshooting, see [INSTALLATION.md](INSTALLATION.md).
+Selective install examples:
+
+```bash
+# Install only for Claude Code
+curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/install.sh | bash -s -- --tool claude
+
+# Install only for Codex CLI
+curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/install.sh | bash -s -- --tool codex
+
+# Preview targets without writing files
+curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/install.sh | bash -s -- --dry-run
+```
+For manual installation, troubleshooting, or optional removal details, see [INSTALLATION.md](INSTALLATION.md).
 
 ## Documentation
 
+- [Installation guide](INSTALLATION.md) — canonical install lifecycle reference, including manual setup, troubleshooting, and optional removal.
 - [Canonical skill spec](skills/design-farmer/SKILL.md) — runtime instruction file.
+
+For maintainers and contributors:
+
+- [Internal project contracts](docs/README.md) — repository implementation contracts and planning records.
 - [Phase index](skills/design-farmer/docs/PHASE-INDEX.md) — compact execution map for maintainers.
 - [Quality gates](skills/design-farmer/docs/QUALITY-GATES.md) — verification and release-readiness criteria.
 - [Maintenance guide](skills/design-farmer/docs/MAINTENANCE.md) — anti-drift and update workflow.

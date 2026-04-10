@@ -5,6 +5,10 @@
 Keep the Design Farmer bundle (`SKILL.md`, `phases/*.md`, `docs/*.md`, installer, and
 validator) authoritative while reducing drift, ambiguity, and regressions.
 
+This directory is for skill maintainers. User-facing installation and repository workflow docs
+live at the repository root, while `docs/project-*.md` files store internal implementation
+contracts for repository changes.
+
 ## File Structure
 
 ```
@@ -58,6 +62,7 @@ skills/design-farmer/
 
 - Completion statuses and fallback/degradation rules (in `SKILL.md` router)
 - Discovery interview control flow (in `phases/phase-1-discovery.md`)
+- Phase 0 DESIGN.md re-entry semantics (context import vs. phase bypass) and downstream Discovery confirmation gates
 - Phase numbering and ordering (in `SKILL.md` phase index)
 - Phase 3.5 / 4.5 / 11 parity with current lifecycle (preview, DESIGN.md, readiness handoff)
 - Risk score thresholds (in `phases/phase-8-review.md` and `phases/phase-8.5-design-review.md`)

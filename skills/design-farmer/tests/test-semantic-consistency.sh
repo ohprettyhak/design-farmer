@@ -25,6 +25,16 @@ pass() { PASS=$((PASS + 1)); echo "  ✓ $1"; }
 fail() { FAIL=$((FAIL + 1)); echo "  ✗ $1"; }
 warn() { WARN=$((WARN + 1)); echo "  ⚠ $1"; }
 
+last_nonempty_lines() {
+  local file="$1"
+  local count="$2"
+  awk -v count="$count" 'NF { lines[++n] = $0 } END {
+    start = n - count + 1
+    if (start < 1) start = 1
+    for (i = start; i <= n; i++) print lines[i]
+  }' "$file"
+}
+
 # ---------------------------------------------------------------------------
 # TEST 1: Cross-Reference Section Number Validation
 # Verifies that handoff messages reference section numbers that exist in target files.
@@ -85,7 +95,7 @@ template_fields=$(sed -n '/^```yaml/,/^```/p' "$PHASES_DIR/phase-4.5-design-sour
   | grep -oE '^[a-zA-Z]+:' | sed 's/://' | sort -u)
 
 # Extract fields mentioned in Phase 0 re-entry parsing list
-phase0_section=$(awk '/Parse it to reconstruct/,/^$/' "$PHASES_DIR/phase-0-preflight.md")
+phase0_section=$(awk '/\*\*Read the `## Config` YAML block\*\*/,/^2\. \*\*Fill gaps from preflight scan/' "$PHASES_DIR/phase-0-preflight.md")
 phase0_fields=""
 for field in $template_fields; do
   if echo "$phase0_section" | grep -qF "$field"; then
@@ -178,17 +188,18 @@ echo ""
 
 # ---------------------------------------------------------------------------
 # TEST 4: Status Message Completeness
-# Every phase file must end with a **Status: DONE** (or similar) pattern.
 # ---------------------------------------------------------------------------
 echo "=== TEST 4: Status Message Completeness ==="
 
 for phase_file in "$PHASES_DIR"/phase-*.md; do
   basename_file=$(basename "$phase_file")
 
-  if grep -qE '\*\*Status: (DONE|BLOCKED|DONE_WITH_CONCERNS|NEEDS_CONTEXT)\*\*' "$phase_file"; then
+  status_tail=$(last_nonempty_lines "$phase_file" 8)
+
+  if echo "$status_tail" | grep -qE '\*\*Status: (DONE|BLOCKED|DONE_WITH_CONCERNS|NEEDS_CONTEXT)\*\*'; then
     pass "$basename_file has completion status"
   else
-    fail "$basename_file missing completion status pattern"
+    fail "$basename_file missing completion status near file end"
   fi
 done
 
@@ -249,8 +260,7 @@ while [ $i -lt ${#handoff_sources[@]} ]; do
     continue
   fi
 
-  # Check last 5 lines for the next phase reference
-  status_area=$(tail -5 "$full_path")
+  status_area=$(last_nonempty_lines "$full_path" 8)
 
   if echo "$status_area" | grep -qF "$expected"; then
     pass "$src → $expected"
@@ -371,12 +381,40 @@ echo ""
 # ---------------------------------------------------------------------------
 echo "=== TEST 9: Phase 0 — Re-Entry Paths ==="
 
-# Path A: Use DESIGN.md as-is → skip to Phase 5
-if grep -q "Jump directly to Phase 5" "$PHASES_DIR/phase-0-preflight.md" &&
-   grep -q "Do not run Phases 1–4" "$PHASES_DIR/phase-0-preflight.md"; then
-  pass "Re-entry path A: skip to Phase 5 with Phase 1-4 bypass"
+if grep -q '^If user chose \*\*B\*\*:' "$PHASES_DIR/phase-0-preflight.md"; then
+  pass "Re-entry path A: Option B delimiter exists for block boundary parsing"
 else
-  fail "Re-entry path A: missing skip-to-Phase-5 or Phase-1-4 bypass"
+  fail "Re-entry path A: missing Option B delimiter for block boundary parsing"
+fi
+
+phase0_option_a_block=$(awk '/^If user chose \*\*A\*\*:/{found=1; next} found && /^If user chose \*\*B\*\*:/{exit} found' "$PHASES_DIR/phase-0-preflight.md")
+
+if [ -z "$phase0_option_a_block" ]; then
+  fail "Re-entry path A: Option A block boundaries are not parseable"
+fi
+
+if grep -qE 'Use it as context|design reference' "$PHASES_DIR/phase-0-preflight.md" &&
+   echo "$phase0_option_a_block" | grep -qE 'Continue to Phase 1' &&
+   echo "$phase0_option_a_block" | grep -qE 'Do NOT skip critical decision gates'; then
+  pass "Re-entry path A: context import continues to Phase 1 with required gates"
+else
+  fail "Re-entry path A: missing context-import continuation and decision-gate guard"
+fi
+
+if grep -q "external-context" "$PHASES_DIR/phase-0-preflight.md" &&
+   grep -q "internal-canonical" "$PHASES_DIR/phase-0-preflight.md" &&
+   grep -q "Missing or malformed Config YAML alone is NOT corruption" "$PHASES_DIR/phase-0-preflight.md"; then
+  pass "Re-entry path A: DESIGN.md source classification avoids false corruption"
+else
+  fail "Re-entry path A: missing source-classification semantics for external DESIGN.md"
+fi
+
+if grep -q "Empty file guard" "$PHASES_DIR/phase-0-preflight.md" &&
+   grep -q "treat it as not existing" "$PHASES_DIR/phase-0-preflight.md" &&
+   ! grep -qE '\*\*unreadable\*\*:.*empty file' "$PHASES_DIR/phase-0-preflight.md"; then
+  pass "Re-entry path A: empty DESIGN.md is absent, not corruption"
+else
+  fail "Re-entry path A: empty-file and unreadable/corruption semantics are inconsistent"
 fi
 
 # Path A must parse Config YAML from DESIGN.md
@@ -387,12 +425,38 @@ else
   fail "Re-entry path A: missing Config YAML field parsing"
 fi
 
+if grep -q "bootstrap fields are still missing" "$PHASES_DIR/phase-0-preflight.md" &&
+   grep -q "Phase 1 is responsible for confirming those design decisions" "$PHASES_DIR/phase-0-preflight.md"; then
+  pass "Re-entry path A: only bootstrap fields block context import"
+else
+  fail "Re-entry path A: Phase 0 still over-blocks design decisions before Phase 1"
+fi
+
 # Path B/C: continue to Phase 1 normally
 if grep -q 'chose.*B.*or.*C.*continue to Phase 1' "$PHASES_DIR/phase-0-preflight.md" ||
    grep -q 'continue to Phase 1.*Discovery Interview.*as normal' "$PHASES_DIR/phase-0-preflight.md"; then
   pass "Re-entry path B/C: continues to Phase 1 normally"
 else
   fail "Re-entry path B/C: missing continuation to Phase 1"
+fi
+
+if grep -qE 'reentryMode' "$PHASES_DIR/phase-1-discovery.md" &&
+   grep -qE 'design-context' "$PHASES_DIR/phase-1-discovery.md" &&
+   grep -qE 'Do NOT auto-accept' "$PHASES_DIR/phase-1-discovery.md" &&
+   grep -qE 'designDocSourceType' "$PHASES_DIR/phase-1-discovery.md"; then
+  pass "Re-entry path A: Phase 1 handles reentryMode design-context"
+else
+  fail "Re-entry path A: Phase 1 missing reentryMode design-context handling"
+fi
+
+if ! grep -qE 'Phase 0[[:space:]]*→[[:space:]]*Phase 5[[:space:]]*shortcut' "$PHASES_DIR/phase-4.5-design-source-of-truth.md" &&
+   ! grep -qE 'Phase 0[[:space:]]*→[[:space:]]*Phase 5[[:space:]]*shortcut' "$EXAMPLES_DIR/DESIGN.md" &&
+   ! grep -qE 'before jumping to Phase[[:space:]]*5' "$PHASES_DIR/operational-notes.md" &&
+   ! grep -qE 'Phase 0[[:space:]]*→[[:space:]]*Phase 5[[:space:]]*shortcut' "$ROOT_DIR/docs/project-design-farmer.md" &&
+   ! grep -qE 'parse Config YAML[[:space:]]+.*Phase[[:space:]]*5' "$ROOT_DIR/docs/project-design-farmer.md"; then
+  pass "Re-entry docs/templates align with context-first contract"
+else
+  fail "Re-entry docs/templates contain stale Phase 0→5 shortcut wording"
 fi
 
 echo ""
@@ -511,6 +575,55 @@ if grep -q "completedPhases" "$SKILL_FILE"; then
   pass "SKILL.md: documents completedPhases contract"
 else
   fail "SKILL.md: missing completedPhases contract"
+fi
+
+if grep -q "storybookSkipped" "$SKILL_FILE" &&
+   grep -q "visualQASkipped" "$SKILL_FILE" &&
+   grep -q "integrationStatus: \"skipped\"" "$SKILL_FILE" &&
+   grep -q "visualQAMode" "$SKILL_FILE"; then
+  pass "SKILL.md: documents dedicated skip-state fields"
+else
+  fail "SKILL.md: missing one or more dedicated skip-state fields"
+fi
+
+if grep -Fq "storybookSkipped: true" "$PHASES_DIR/phase-7-storybook.md" &&
+   grep -Eq "Do NOT append.*phase-7.*completedPhases" "$PHASES_DIR/phase-7-storybook.md"; then
+  pass "Phase 7: skip path records storybookSkipped without completedPhases append"
+else
+  fail "Phase 7: skip path missing storybookSkipped or non-append contract"
+fi
+
+if grep -Fq "visualQASkipped: true" "$PHASES_DIR/phase-8.5-design-review.md" &&
+   grep -Eq "visualQAMode: ['\"]skipped['\"]" "$PHASES_DIR/phase-8.5-design-review.md" &&
+   grep -Eq "Do NOT append.*phase-8\.5.*completedPhases" "$PHASES_DIR/phase-8.5-design-review.md"; then
+  pass "Phase 8.5: skip path records visual QA skip state without completedPhases append"
+else
+  fail "Phase 8.5: skip path missing visual QA skip-state contract"
+fi
+
+if grep -q 'integrationStatus: "skipped"' "$PHASES_DIR/phase-10-integration.md" &&
+   grep -Eq "Do NOT append.*phase-10.*completedPhases" "$PHASES_DIR/phase-10-integration.md"; then
+  pass "Phase 10: skip path records integrationStatus without completedPhases append"
+else
+  fail "Phase 10: skip path missing integration skip-state contract"
+fi
+
+if grep -q "storybookSkipped" "$DOCS_DIR/PHASE-INDEX.md" &&
+   grep -q "visualQASkipped" "$DOCS_DIR/PHASE-INDEX.md" &&
+   grep -q "integrationStatus" "$DOCS_DIR/PHASE-INDEX.md" &&
+   grep -q "visualQAMode" "$DOCS_DIR/PHASE-INDEX.md"; then
+  pass "PHASE-INDEX.md: documents optional skip-state fields"
+else
+  fail "PHASE-INDEX.md: missing optional skip-state field documentation"
+fi
+
+if grep -q "storybookSkipped" "$DOCS_DIR/QUALITY-GATES.md" &&
+   grep -q "visualQASkipped" "$DOCS_DIR/QUALITY-GATES.md" &&
+   grep -q "integrationStatus" "$DOCS_DIR/QUALITY-GATES.md" &&
+   grep -q "visualQAMode" "$DOCS_DIR/QUALITY-GATES.md"; then
+  pass "QUALITY-GATES.md: documents optional skip-state fields"
+else
+  fail "QUALITY-GATES.md: missing optional skip-state field documentation"
 fi
 
 echo ""

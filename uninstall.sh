@@ -1,37 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-REPO="ohprettyhak/design-farmer"
-BRANCH="${BRANCH:-main}"
-RAW_BASE="https://raw.githubusercontent.com/${REPO}/${BRANCH}"
 SKILL_NAME="design-farmer"
-SKILL_ROOT="skills/design-farmer"
-BUNDLE_FILES=(
-  "$SKILL_ROOT/SKILL.md"
-  "$SKILL_ROOT/bin/version-check"
-  "$SKILL_ROOT/docs/PHASE-INDEX.md"
-  "$SKILL_ROOT/docs/QUALITY-GATES.md"
-  "$SKILL_ROOT/docs/MAINTENANCE.md"
-  "$SKILL_ROOT/docs/EXAMPLES-GALLERY.md"
-  "$SKILL_ROOT/phases/operational-notes.md"
-  "$SKILL_ROOT/phases/phase-0-preflight.md"
-  "$SKILL_ROOT/phases/phase-1-discovery.md"
-  "$SKILL_ROOT/phases/phase-2-repo-analysis.md"
-  "$SKILL_ROOT/phases/phase-3-pattern-extraction.md"
-  "$SKILL_ROOT/phases/phase-3.5-visual-preview.md"
-  "$SKILL_ROOT/phases/phase-4-architecture.md"
-  "$SKILL_ROOT/phases/phase-4b-theming.md"
-  "$SKILL_ROOT/phases/phase-4.5-design-source-of-truth.md"
-  "$SKILL_ROOT/phases/phase-5-tokens.md"
-  "$SKILL_ROOT/phases/phase-6-components.md"
-  "$SKILL_ROOT/phases/phase-7-storybook.md"
-  "$SKILL_ROOT/phases/phase-8-review.md"
-  "$SKILL_ROOT/phases/phase-8.5-design-review.md"
-  "$SKILL_ROOT/phases/phase-9-documentation.md"
-  "$SKILL_ROOT/phases/phase-10-integration.md"
-  "$SKILL_ROOT/phases/phase-11-readiness-handoff.md"
-  "$SKILL_ROOT/examples/DESIGN.md"
-)
 
 if [ -t 1 ]; then
   BOLD='\033[1m'
@@ -46,65 +16,6 @@ else
   YELLOW=''
   RESET=''
 fi
-
-require_command() {
-  if ! command -v "$1" >/dev/null 2>&1; then
-    printf "%bError:%b required command not found: %s\n" "$RED" "$RESET" "$1" >&2
-    exit 1
-  fi
-}
-
-install_bundle_atomic() {
-  local target_dir="$1"
-  shift
-
-  local target_parent
-  target_parent="$(dirname "$target_dir")"
-  mkdir -p "$target_parent"
-
-  local staging_dir
-  staging_dir="$(mktemp -d "${target_parent}/.design-farmer-staging.XXXXXX")"
-  local backup_dir=""
-
-  for relative_path in "$@"; do
-    local staged_path
-    staged_path="${staging_dir}/${relative_path#${SKILL_ROOT}/}"
-    mkdir -p "$(dirname "$staged_path")"
-
-    if ! curl -fsSL "${RAW_BASE}/${relative_path}" -o "$staged_path" 2>/dev/null; then
-      rm -rf "$staging_dir"
-      return 1
-    fi
-  done
-
-  if [ -d "$staging_dir/bin" ]; then
-    find "$staging_dir/bin" -type f -exec chmod +x {} +
-  fi
-
-  if [ -d "$target_dir" ]; then
-    backup_dir="$(mktemp -d "${target_parent}/.design-farmer-backup.XXXXXX")"
-    rmdir "$backup_dir"
-    if ! mv "$target_dir" "$backup_dir"; then
-      rm -rf "$staging_dir"
-      return 1
-    fi
-  fi
-
-  if mv "$staging_dir" "$target_dir"; then
-    if [ -n "$backup_dir" ] && [ -d "$backup_dir" ]; then
-      rm -rf "$backup_dir"
-    fi
-    return 0
-  fi
-
-  rm -rf "$staging_dir"
-  if [ -n "$backup_dir" ] && [ -d "$backup_dir" ]; then
-    if ! mv "$backup_dir" "$target_dir"; then
-      printf "%bError:%b rollback failed for %s; manual restore required.\n" "$RED" "$RESET" "$target_dir" >&2
-    fi
-  fi
-  return 1
-}
 
 tool_marker() {
   case "$1" in
@@ -149,14 +60,14 @@ is_supported_tool() {
 
 print_usage() {
   cat <<'EOF'
-Usage: install.sh [options]
+Usage: uninstall.sh [options]
 
 Options:
-  --tool <name>     Install only for the given tool (repeatable)
+  --tool <name>     Uninstall only for the given tool (repeatable)
                     Valid: claude, codex, amp, gemini, opencode
-  --all             Install for all detected tools (default behavior)
-  --interactive     Select install targets interactively
-  --dry-run         Show resolved install targets without writing files
+  --all             Uninstall for all detected tools (default behavior)
+  --interactive     Select uninstall targets interactively
+  --dry-run         Show resolved uninstall targets without deleting files
   --list-tools      List supported tools and detected status, then exit
   -h, --help        Show this help message
 EOF
@@ -206,7 +117,7 @@ select_interactively() {
     local picked
     while IFS= read -r picked; do
       chosen+=("$picked")
-    done < <(printf "%s\n" "${DETECTED[@]}" | fzf --multi --prompt "Select install targets > " --height 40% --border --layout=reverse)
+    done < <(printf "%s\n" "${DETECTED[@]}" | fzf --multi --prompt "Select uninstall targets > " --height 40% --border --layout=reverse)
 
     if [ "${#chosen[@]}" -eq 0 ]; then
       printf "%bError:%b no tools selected.\n" "$RED" "$RESET" >&2
@@ -258,6 +169,30 @@ select_interactively() {
     printf "%bError:%b no tools selected.\n" "$RED" "$RESET" >&2
     exit 1
   fi
+}
+
+safe_remove_target() {
+  local target_dir="$1"
+
+  if [ -z "$target_dir" ]; then
+    printf "%bError:%b refusing empty target path.\n" "$RED" "$RESET" >&2
+    return 1
+  fi
+
+  case "$target_dir" in
+    */skills/design-farmer) ;;
+    *)
+      printf "%bError:%b refusing unsafe path: %s\n" "$RED" "$RESET" "$target_dir" >&2
+      return 1
+      ;;
+  esac
+
+  if [ ! -e "$target_dir" ]; then
+    return 0
+  fi
+
+  rm -rf "$target_dir"
+  return 0
 }
 
 TOOLS=(claude codex amp gemini opencode)
@@ -340,7 +275,7 @@ for tool in "${TOOLS[@]}"; do
   fi
 done
 
-printf "%bInstalling design-farmer skill%b\n\n" "$BOLD" "$RESET"
+printf "%bUninstalling design-farmer skill%b\n\n" "$BOLD" "$RESET"
 
 if [ "$INTERACTIVE" -eq 1 ]; then
   select_interactively
@@ -358,40 +293,36 @@ elif [ "$USE_ALL" -eq 1 ] || [ "${#REQUESTED_TOOLS[@]}" -eq 0 ]; then
 fi
 
 if [ "$DRY_RUN" -eq 1 ] && [ "${#REQUESTED_TOOLS[@]}" -eq 0 ] && [ "$INTERACTIVE" -eq 0 ] && [ "${#SELECTED[@]}" -eq 0 ]; then
-  printf "%bDry run%b — no files will be written.\n\n" "$BOLD" "$RESET"
-  printf "No supported tools detected. Nothing to install.\n"
+  printf "%bDry run%b — no files will be deleted.\n\n" "$BOLD" "$RESET"
+  printf "No supported tools detected. Nothing to uninstall.\n"
   printf "%bDone (dry run).%b\n" "$GREEN" "$RESET"
   exit 0
 fi
 
 if [ "${#SELECTED[@]}" -eq 0 ]; then
-  printf "%bNo supported tools detected.%b\n" "$YELLOW" "$RESET"
-  printf "Install one of these first, then run this script again:\n"
-  printf "  - Claude Code:  https://claude.ai/code\n"
-  printf "  - Codex CLI:    https://github.com/openai/codex\n"
-  printf "  - Amp:          https://ampcode.com\n"
-  printf "  - Gemini CLI:   https://github.com/google-gemini/gemini-cli\n"
-  printf "  - OpenCode:     https://opencode.ai\n"
-  exit 1
-fi
-
-if [ "$DRY_RUN" -eq 0 ]; then
-  require_command curl
+  printf "%bNo supported tools detected. Nothing to uninstall.%b\n" "$YELLOW" "$RESET"
+  exit 0
 fi
 
 if [ "$DRY_RUN" -eq 1 ]; then
-  printf "%bDry run%b — no files will be written.\n\n" "$BOLD" "$RESET"
+  printf "%bDry run%b — no files will be deleted.\n\n" "$BOLD" "$RESET"
 fi
 
 printf "Selected targets:\n"
 for tool in "${SELECTED[@]}"; do
   target_dir="$(tool_skill_dir "$tool")"
   marker="$(tool_marker "$tool")"
-  status="detected"
+  detected_status="detected"
+  install_status="installed"
+
   if [ ! -d "$marker" ]; then
-    status="not detected"
+    detected_status="not detected"
   fi
-  printf "  - %s (%s) -> %s\n" "$(tool_label "$tool")" "$status" "$target_dir"
+  if [ ! -d "$target_dir" ]; then
+    install_status="absent"
+  fi
+
+  printf "  - %s (%s, %s) -> %s\n" "$(tool_label "$tool")" "$detected_status" "$install_status" "$target_dir"
 done
 printf "\n"
 
@@ -406,23 +337,23 @@ for tool in "${SELECTED[@]}"; do
   target_dir="$(tool_skill_dir "$tool")"
   label="$(tool_label "$tool")"
 
-  if install_bundle_atomic "$target_dir" "${BUNDLE_FILES[@]}"; then
-    printf "  %b✓%b %s\n" "$GREEN" "$RESET" "$label"
+  if [ -d "$target_dir" ]; then
+    if safe_remove_target "$target_dir"; then
+      printf "  %b✓%b %s\n" "$GREEN" "$RESET" "$label"
+    else
+      printf "  %b✗%b %s (uninstall failed)\n" "$RED" "$RESET" "$label"
+      FAILED=1
+    fi
   else
-    printf "  %b✗%b %s (bundle install failed; rollback attempted)\n" "$RED" "$RESET" "$label"
-    FAILED=1
+    printf "  %b-%b %s (already absent)\n" "$YELLOW" "$RESET" "$label"
   fi
 done
 
 printf "\n"
-printf "  %bInstalled%b */skills/%s/\n" "$GREEN" "$RESET" "$SKILL_NAME"
-printf "  %bUsage%b: invoke your assistant with the %s skill context\n\n" "$GREEN" "$RESET" "$SKILL_NAME"
 
 if [ "$FAILED" -ne 0 ]; then
-  printf "%b  Completed with errors.%b\n" "$YELLOW" "$RESET"
+  printf "%bCompleted with errors.%b\n" "$YELLOW" "$RESET"
   exit 1
 fi
 
-printf "  %bDone!%b\n\n" "$GREEN" "$RESET"
-printf "  If you find Design Farmer useful, please consider starring the repository:\n"
-printf "  %bhttps://github.com/ohprettyhak/design-farmer%b\n" "$BOLD" "$RESET"
+printf "%bDone!%b\n" "$GREEN" "$RESET"

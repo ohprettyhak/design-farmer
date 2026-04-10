@@ -55,6 +55,7 @@ curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/inst
 ```
 
 安裝腳本會自動偵測已安裝的工具，建立技能目錄並下載技能包。支援的工具：**Claude Code**、**Codex CLI**、**Amp**、**Gemini CLI**、**OpenCode**。
+解除安裝（可選）：`curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/uninstall.sh | bash`（完整選項見 [INSTALLATION.md](INSTALLATION.md)）。
 
 手動安裝及問題排查請參閱 [INSTALLATION.md](INSTALLATION.md)。
 

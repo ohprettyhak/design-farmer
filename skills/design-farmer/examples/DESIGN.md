@@ -8,7 +8,7 @@
 > All color values use OKLCH. All sizes are in pixels unless noted.
 
 ## Config
-<!-- Required for Design Farmer re-entry (Phase 0 → Phase 5 shortcut). Update before use. -->
+<!-- Required for Design Farmer re-entry context import (Phase 0 → Phase 1 with discovery confirmation gates). Update before use. -->
 ```yaml
 packageManager: pnpm
 framework: next-app-router
@@ -339,7 +339,17 @@ pixel grid across all viewports.
 
 ---
 
-## 9. Agent Prompt Guide
+## 9. Decisions Log
+
+- `2026-04-06` — Initial greenfield DESIGN.md example created for Nova UI
+- `2026-04-06` — Established rounded radius tone and the shared 28/32/36/40 control size ladder
+- `2026-04-06` — Chose OKLCH indigo as the primary brand direction for the reference system
+
+Use this section for meaningful design-direction changes when the document evolves. Do not turn it into an edit-by-edit changelog.
+
+---
+
+## 10. Agent Prompt Guide
 
 ### Quick Token Reference
 - Primary action background: `var(--interactive-primary)` → `oklch(0.55 0.22 264)`
@@ -362,13 +372,6 @@ pixel grid across all viewports.
 3. Match border approach: box-shadow for interactive outlines, CSS border for structural dividers
 4. Test hover/focus/active/disabled states in both light and dark themes
 5. Verify APCA Lc ≥ 60 for any new text/background pair
-
----
-
-## Revision History
-| Date | Action | Sections Changed |
-|------|--------|-----------------|
-| 2026-04-06 | Example file created | All |
 
 ---
 

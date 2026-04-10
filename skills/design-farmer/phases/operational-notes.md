@@ -210,7 +210,7 @@ This prevents silent failures from corrupted, incomplete, or stale config files.
 
 ### When to Validate
 
-- **Phase 0 re-entry**: after reconstructing config from DESIGN.md (before jumping to Phase 5)
+- **Phase 0 re-entry**: after reconstructing config from DESIGN.md context import (before continuing to Phase 1)
 - **Phase 3.5 re-entry**: after loading config for preview regeneration
 - **Every phase start**: before reading any config values — if config.json is missing or unparseable, treat as BLOCKED
 

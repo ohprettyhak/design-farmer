@@ -173,6 +173,7 @@ required_cross_phase_contracts=(
   "Completion statuses are mandatory"
   "one-at-a-time"
   "explicit verification evidence"
+  "context"
 )
 for contract in "${required_cross_phase_contracts[@]}"; do
   if ! echo "$CROSS_PHASE_SECTION" | grep -Fq "$contract"; then
@@ -196,12 +197,45 @@ index_required_contracts=(
   "Completion statuses are mandatory"
   "one-at-a-time"
   "explicit verification evidence"
+  "context"
+  "storybookSkipped"
+  "visualQASkipped"
+  "integrationStatus"
+  "visualQAMode"
+  "do not append"
 )
 for contract in "${index_required_contracts[@]}"; do
   if ! echo "$INDEX_CROSS_SECTION" | grep -Fq "$contract"; then
     echo "ERROR: Cross-phase contract missing from PHASE-INDEX.md: '$contract'"
     echo "  File: docs/PHASE-INDEX.md, section: '## Cross-Phase Contracts'"
     echo "  Contract: phase index must stay aligned with SKILL.md cross-phase contracts"
+    exit 1
+  fi
+done
+
+echo "Validating QUALITY-GATES.md optional skip policy..."
+QUALITY_SECTION=$(awk '/^## 2\) Behavioral Gates/{found=1; next} found && /^## /{exit} found' "$QUALITY_GATES_FILE")
+if [[ -z "$QUALITY_SECTION" ]]; then
+  echo "ERROR: '## 2) Behavioral Gates' section in QUALITY-GATES.md is missing or empty"
+  echo "  File: docs/QUALITY-GATES.md"
+  echo "  Contract: behavioral gates must remain explicit and parseable"
+  exit 1
+fi
+
+quality_required_markers=(
+  "completed phases"
+  "user-optional skipped phases"
+  "storybookSkipped"
+  "visualQASkipped"
+  "integrationStatus"
+  "visualQAMode"
+  "must not append"
+)
+for marker in "${quality_required_markers[@]}"; do
+  if ! echo "$QUALITY_SECTION" | grep -Fq "$marker"; then
+    echo "ERROR: QUALITY-GATES.md missing optional skip policy marker: '$marker'"
+    echo "  File: docs/QUALITY-GATES.md, section: '## 2) Behavioral Gates'"
+    echo "  Contract: quality gates must document skip-state fields and non-append behavior"
     exit 1
   fi
 done
@@ -282,5 +316,87 @@ if grep -R -nE 'best-practices\.md|research/best-practices\.md' "$SKILL_DIR" >/d
   echo "ERROR: Stale best-practices reference found in split bundle"
   exit 1
 fi
+
+echo "Validating re-entry contract semantics..."
+REENTRY_PHASE0_FILE="$SKILL_DIR/phases/phase-0-preflight.md"
+REENTRY_PHASE1_FILE="$SKILL_DIR/phases/phase-1-discovery.md"
+
+if ! grep -q '^If user chose \*\*B\*\*:' "$REENTRY_PHASE0_FILE"; then
+  echo "ERROR: Missing Option B delimiter for Phase 0 re-entry block parsing"
+  echo "  File: phases/phase-0-preflight.md"
+  echo "  Contract: Option A block boundaries must terminate at explicit Option B heading"
+  exit 1
+fi
+
+REENTRY_OPTION_A_BLOCK=$(awk '/^If user chose \*\*A\*\*:/{found=1; next} found && /^If user chose \*\*B\*\*:/{exit} found' "$REENTRY_PHASE0_FILE")
+
+if [[ -z "$REENTRY_OPTION_A_BLOCK" ]]; then
+  echo "ERROR: Could not locate Option A re-entry block in Phase 0"
+  echo "  File: phases/phase-0-preflight.md"
+  echo "  Contract: Option A section boundaries must remain explicit and parseable"
+  exit 1
+fi
+
+if ! grep -qE 'Use it as context|design reference' "$REENTRY_PHASE0_FILE" ||
+   ! echo "$REENTRY_OPTION_A_BLOCK" | grep -qE 'Continue to Phase 1' ||
+   ! echo "$REENTRY_OPTION_A_BLOCK" | grep -qE 'Do NOT skip critical decision gates'; then
+  echo "ERROR: Phase 0 missing required context-first re-entry semantics"
+  echo "  File: phases/phase-0-preflight.md"
+  echo "  Contract: Option A must import context, continue to Phase 1, and preserve decision gates"
+  exit 1
+fi
+
+if ! grep -qF "external-context" "$REENTRY_PHASE0_FILE" ||
+   ! grep -qF "internal-canonical" "$REENTRY_PHASE0_FILE" ||
+   ! grep -qF "Missing or malformed Config YAML alone is NOT corruption" "$REENTRY_PHASE0_FILE"; then
+  echo "ERROR: Phase 0 missing DESIGN.md source-classification semantics"
+  echo "  File: phases/phase-0-preflight.md"
+  echo "  Contract: readable third-party DESIGN.md must be treated as external-context, not corruption"
+  exit 1
+fi
+
+if ! grep -qF "Empty file guard" "$REENTRY_PHASE0_FILE" ||
+   ! grep -qF "treat it as not existing" "$REENTRY_PHASE0_FILE" ||
+   grep -qE '\*\*unreadable\*\*:.*empty file' "$REENTRY_PHASE0_FILE"; then
+  echo "ERROR: Phase 0 empty-file semantics are inconsistent"
+  echo "  File: phases/phase-0-preflight.md"
+  echo "  Contract: empty DESIGN.md is treated as absent; unreadable/corruption applies to non-empty unreadable files"
+  exit 1
+fi
+
+if ! grep -qE 'reentryMode' "$REENTRY_PHASE1_FILE" ||
+   ! grep -qE 'design-context' "$REENTRY_PHASE1_FILE" ||
+   ! grep -qE 'Do NOT auto-accept' "$REENTRY_PHASE1_FILE" ||
+   ! grep -qE 'designDocSourceType' "$REENTRY_PHASE1_FILE"; then
+  echo "ERROR: Phase 1 missing design-context confirmation semantics"
+  echo "  File: phases/phase-1-discovery.md"
+  echo "  Contract: reentryMode design-context must force explicit confirmation and preserve source classification"
+  exit 1
+fi
+
+forbidden_reentry_patterns=(
+  'Phase 0[[:space:]]*→[[:space:]]*Phase 5[[:space:]]*shortcut'
+  'before jumping to Phase[[:space:]]*5'
+  'parse Config YAML[[:space:]]+.*Phase[[:space:]]*5'
+)
+
+reentry_contract_files=(
+  "$SKILL_DIR/phases/phase-4.5-design-source-of-truth.md"
+  "$SKILL_DIR/examples/DESIGN.md"
+  "$SKILL_DIR/phases/operational-notes.md"
+  "$ROOT_DIR/docs/project-design-farmer.md"
+)
+
+for file in "${reentry_contract_files[@]}"; do
+  for pattern in "${forbidden_reentry_patterns[@]}"; do
+    if grep -nE "$pattern" "$file" >/dev/null 2>&1; then
+      echo "ERROR: Stale re-entry shortcut semantics found"
+      echo "  File: ${file#$ROOT_DIR/}"
+      echo "  Pattern: $pattern"
+      echo "  Contract: re-entry must be context-first (Phase 0 -> Phase 1), not direct-to-Phase-5"
+      exit 1
+    fi
+  done
+done
 
 echo "All skill structure and contract checks passed."

@@ -24,7 +24,11 @@ This document defines release-quality checks for maintainers updating the Design
 - Phase transitions must keep explicit “STOP / proceed” control points where required.
 - Final verification commands (in `phases/phase-9-documentation.md` and `phases/phase-11-readiness-handoff.md`) remain explicit and testable.
 - Phase 3.5 preview approval (maturity-conditional opt-in), Phase 4.5 DESIGN.md generation, and Phase 11 readiness handoff remain aligned with the current lifecycle.
-- Every phase must append its ID to `completedPhases` in config.json upon completion.
+- Phase 0 re-entry with existing DESIGN.md must preserve context import semantics: pre-fill defaults, but still run critical Discovery decision gates.
+- Phase 0 re-entry must classify DESIGN.md source (`internal-canonical` vs `external-context`) and must not label readable third-party DESIGN.md as corrupted.
+- Pipeline state guidance must distinguish completed phases from user-optional skipped phases.
+- User-optional skips must record dedicated state fields in config.json: `storybookSkipped`, `visualQASkipped`, `integrationStatus`, and `visualQAMode` where applicable.
+- User-optional skipped phases must not append their phase IDs to `completedPhases`; only completed or degraded executions append.
 - Phase 3 must generate an early DESIGN.md draft without overwriting existing files.
 - Phase 3.5 preview file must be generated inside `.design-farmer/`, not the project root.
 

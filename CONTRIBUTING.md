@@ -77,4 +77,10 @@ Your PR should include:
 
 ## 7) Documentation Discipline
 
-When behavior or contributor workflow changes, update the matching docs in the same PR (README, templates, policies, or process docs).
+When behavior or contributor workflow changes, update the matching docs in the same PR (README, installation guide, templates, policies, or process docs).
+
+Documentation layers in this repository:
+
+- Root docs (`README*.md`, `INSTALLATION.md`, `CONTRIBUTING.md`, `AGENTS.md`) are the canonical user, contributor, and repository-operation guides.
+- `docs/project-*.md` files are internal implementation contracts and change records.
+- `skills/design-farmer/docs/` contains maintainer references for the skill bundle itself.

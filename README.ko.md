@@ -55,6 +55,7 @@ curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/inst
 ```
 
 설치 스크립트가 사용 중인 도구를 감지하고, 스킬 디렉토리를 만들고, 번들을 내려받습니다. 지원 도구: **Claude Code**, **Codex CLI**, **Amp**, **Gemini CLI**, **OpenCode**.
+삭제(선택): `curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/uninstall.sh | bash` (옵션 전체는 [INSTALLATION.md](INSTALLATION.md) 참고).
 
 수동 설치 및 문제 해결은 [INSTALLATION.md](INSTALLATION.md)를 참고하세요.
 
