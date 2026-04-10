@@ -34,12 +34,16 @@
 
 ## What the Release Script Does
 
-1. Runs pre-release validation (`validate-skill-md.sh` + `claude plugin validate .`)
+1. Runs pre-release validation:
+   - `bash scripts/validate-skill-md.sh` (structural validation)
+   - `bash skills/design-farmer/tests/run-all.sh` (semantic consistency suite)
+   - `claude plugin validate .` (plugin manifest validation)
 2. Bumps version in `package.json` using `npm version`
 3. Syncs version to `skills/design-farmer/SKILL.md` frontmatter
-4. Syncs metadata to `.claude-plugin/plugin.json`
-5. Amends the `npm version` commit to include all synced files
-6. Creates a git tag (`v<version>`)
+4. Syncs metadata to `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json`
+5. Re-runs `claude plugin validate .` after metadata sync to catch post-sync drift
+6. Amends the `npm version` commit to include all synced files
+7. Creates a git tag (`v<version>`)
 
 ## Version Source of Truth
 
