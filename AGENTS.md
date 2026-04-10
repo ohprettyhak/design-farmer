@@ -33,8 +33,9 @@
   - `scripts/release.sh`: Atomic release automation (version bump, file sync, tag creation).
   - `scripts/test-install-smoke.sh`: Install/uninstall smoke tests across tools and shells.
 - `.github/`: GitHub configuration.
-  - `.github/workflows/skill-quality.yml`: CI pipeline (structural validation, install/uninstall smoke tests).
+  - `.github/workflows/skill-quality.yml`: CI pipeline (structural validation, plugin manifest validation, install/uninstall smoke tests).
   - `.github/pull_request_template.md`: PR template with validation evidence checklist.
+  - `.github/dependabot.yml`: Dependabot configuration that tracks GitHub Actions pins on a weekly schedule.
 - `.claude-plugin/`: Claude Code Marketplace plugin metadata.
   - `.claude-plugin/plugin.json`: Marketplace plugin manifest (name, version, skills path).
   - `.claude-plugin/marketplace.json`: Marketplace listing metadata (owner, plugins array, tags, category).
@@ -140,7 +141,7 @@ Repository-wide quality CI runs on every pull request and push to `main`.
 
 Jobs:
 - `validate-skill`: runs `bash scripts/validate-skill-md.sh` and `bash skills/design-farmer/tests/run-all.sh` — fails if any structural or semantic consistency check fails.
-- `validate-plugin`: installs the Claude Code CLI and runs `claude plugin validate .` — fails if `.claude-plugin/plugin.json` or `.claude-plugin/marketplace.json` drifts from the Claude Code plugin/marketplace schema.
+- `validate-plugin`: pins `actions/setup-node@v4` to Node `20.18` and installs `@anthropic-ai/claude-code@~2.1.0`, then runs `claude plugin validate .` — fails if `.claude-plugin/plugin.json` or `.claude-plugin/marketplace.json` drifts from the Claude Code plugin/marketplace schema. Both versions are pinned so upstream releases cannot break unrelated PRs without a commit in this repository; Dependabot (`.github/dependabot.yml`) bumps the GitHub Actions pins on a weekly schedule.
 - `install-smoke`: runs `bash scripts/test-install-smoke.sh` across 5 tools x 2 shells (bash, zsh) — fails if any install/uninstall smoke test fails.
 
 All CI jobs must pass before a PR is merged.
