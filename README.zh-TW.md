@@ -50,14 +50,22 @@ Design Farmer 根據專案狀態分階段工作：
 
 ## 安裝
 
+### Claude Code — 市集（推薦）
+
+透過 Claude Code 市集直接安裝，可獲得自動更新：
+
+1. 開啟 Claude Code 設定，進入 **Plugins → Marketplace**。
+2. 搜尋 **design-farmer** 並點擊 **Install**。
+
+### 所有工具 — curl 安裝腳本
+
 ```bash
 curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/install.sh | bash
 ```
 
-安裝腳本會自動偵測已安裝的工具，建立技能目錄並下載技能包。支援的工具：**Claude Code**、**Codex CLI**、**Amp**、**Gemini CLI**、**OpenCode**。
-解除安裝（可選）：`curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/uninstall.sh | bash`（完整選項見 [INSTALLATION.md](INSTALLATION.md)）。
+自動偵測並安裝到 **Claude Code**、**Codex CLI**、**Amp**、**Gemini CLI** 和 **OpenCode**。
 
-手動安裝及問題排查請參閱 [INSTALLATION.md](INSTALLATION.md)。
+選擇性安裝旗標（`--tool`、`--interactive`、`--dry-run`）、手動安裝、問題排查及解除安裝方法詳見 [INSTALLATION.md](INSTALLATION.md)。
 
 ## 文件
 

@@ -50,14 +50,22 @@ Design Farmer는 프로젝트 상태에 맞춰 단계별로 작동합니다:
 
 ## 설치
 
+### Claude Code — 마켓플레이스 (권장)
+
+Claude Code 마켓플레이스에서 바로 설치하면 자동 업데이트까지 지원됩니다:
+
+1. Claude Code 설정을 열고 **Plugins → Marketplace**로 이동합니다.
+2. **design-farmer**를 검색한 뒤 **Install**을 클릭합니다.
+
+### 모든 도구 — curl 설치 스크립트
+
 ```bash
 curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/install.sh | bash
 ```
 
-설치 스크립트가 사용 중인 도구를 감지하고, 스킬 디렉토리를 만들고, 번들을 내려받습니다. 지원 도구: **Claude Code**, **Codex CLI**, **Amp**, **Gemini CLI**, **OpenCode**.
-삭제(선택): `curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/uninstall.sh | bash` (옵션 전체는 [INSTALLATION.md](INSTALLATION.md) 참고).
+**Claude Code**, **Codex CLI**, **Amp**, **Gemini CLI**, **OpenCode**를 자동 감지해 설치합니다.
 
-수동 설치 및 문제 해결은 [INSTALLATION.md](INSTALLATION.md)를 참고하세요.
+선택적 설치 플래그(`--tool`, `--interactive`, `--dry-run`), 수동 설치, 문제 해결, 제거 방법은 [INSTALLATION.md](INSTALLATION.md)를 참고하세요.
 
 ## 문서
 
