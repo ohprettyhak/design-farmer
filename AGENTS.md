@@ -30,11 +30,10 @@
   - `skills/design-farmer/tests/`: Test suites (`run-all.sh`, `test-semantic-consistency.sh`).
 - `scripts/`: Repository-level validation and CI scripts.
   - `scripts/validate-skill-md.sh`: Structural validation (phase files, router references, contracts).
-  - `scripts/validate-marketplace-plugin.sh`: Marketplace plugin.json schema and field validation.
   - `scripts/release.sh`: Atomic release automation (version bump, file sync, tag creation).
   - `scripts/test-install-smoke.sh`: Install/uninstall smoke tests across tools and shells.
 - `.github/`: GitHub configuration.
-  - `.github/workflows/skill-quality.yml`: CI pipeline (structural validation, marketplace validation, version sync check, install/uninstall smoke tests).
+  - `.github/workflows/skill-quality.yml`: CI pipeline (structural validation, install/uninstall smoke tests).
   - `.github/pull_request_template.md`: PR template with validation evidence checklist.
 - `.claude-plugin/`: Claude Code Marketplace plugin metadata.
   - `.claude-plugin/plugin.json`: Marketplace plugin manifest (name, version, skills path).

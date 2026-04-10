@@ -27,7 +27,7 @@ fi
 
 echo "Running pre-release validation..."
 bash scripts/validate-skill-md.sh
-bash scripts/validate-marketplace-plugin.sh
+claude plugin validate .
 
 echo "Bumping version (${RELEASE_TYPE})..."
 npm version "$RELEASE_TYPE"

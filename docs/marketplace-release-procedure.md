@@ -34,7 +34,7 @@
 
 ## What the Release Script Does
 
-1. Runs pre-release validation (`validate-skill-md.sh` + `validate-marketplace-plugin.sh`)
+1. Runs pre-release validation (`validate-skill-md.sh` + `claude plugin validate .`)
 2. Bumps version in `package.json` using `npm version`
 3. Syncs version to `skills/design-farmer/SKILL.md` frontmatter
 4. Syncs metadata to `.claude-plugin/plugin.json`

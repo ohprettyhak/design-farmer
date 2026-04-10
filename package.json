@@ -15,7 +15,6 @@
   },
   "scripts": {
     "release": "bash scripts/release.sh",
-    "validate:marketplace": "bash scripts/validate-marketplace-plugin.sh",
     "validate:skill": "bash scripts/validate-skill-md.sh"
   }
 }
