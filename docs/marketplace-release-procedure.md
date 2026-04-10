@@ -46,16 +46,23 @@
 7. Creates a git tag (`v<version>`)
 
 The bump, sync, and validation steps all run before any commit or tag is
-created, so a failure at any stage leaves the working tree untouched and the
-git history clean — nothing to roll back.
+created. A failure at any stage is caught by the release script's `ERR`
+trap, which restores the four managed release files to their pre-release
+state via a file-scoped `git reset` + `git checkout`, leaving the git
+history clean and the rest of the working tree untouched. After the
+release commit succeeds, a second trap guards tag creation and rolls
+the commit back with `git reset --soft HEAD~1` if tagging fails.
+`docs/project-marketplace-distribution.md` has the full failure-mode
+matrix.
 
 ## Version Source of Truth
 
 `package.json` at the repository root is the single source of truth for version.
-All other files (`SKILL.md`, `plugin.json`) derive from it during the release process.
+All other files (`skills/design-farmer/SKILL.md`, `.claude-plugin/plugin.json`,
+`.claude-plugin/marketplace.json`) derive from it during the release process.
 
-Do NOT manually edit version fields in `SKILL.md` or `plugin.json` — they are
-overwritten by the release script.
+Do NOT manually edit version or metadata fields in `SKILL.md`, `plugin.json`,
+or `marketplace.json` — they are overwritten by the release script.
 
 ## Rollback Procedure
 
