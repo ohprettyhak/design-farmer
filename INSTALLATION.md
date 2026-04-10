@@ -11,11 +11,27 @@ Install directly from the Claude Code Marketplace and let Claude Code manage the
 
 Marketplace installations are managed by Claude Code's plugin system — new versions are surfaced through the built-in plugin refresh flow, so there is no need to re-run the installer by hand. This is the recommended installation method for Claude Code users.
 
+### Marketplace CLI flow
+
+If you already know the plugin you want, you can do the same install through Claude Code's command interface:
+
+```bash
+/plugin marketplace add ohprettyhak/design-farmer
+/plugin install design-farmer@design-farmer
+```
+
+- `/plugin marketplace add ohprettyhak/design-farmer` registers this repository's marketplace catalog with Claude Code.
+- `/plugin install design-farmer@design-farmer` installs the `design-farmer` plugin from that registered marketplace.
+
+After the marketplace is registered once, future installs only need the `install` command unless you remove the marketplace registration from Claude Code.
+
+To verify the marketplace registration, run `/plugin marketplace list`. To verify the plugin install, open `/plugin` and confirm `design-farmer` appears in the installed plugins view.
+
 ### Migrating from the curl installer
 
 If you previously installed via `curl | bash`, your installation will continue to work. To migrate to the marketplace without losing skill availability:
 
-1. Install via the marketplace first (see steps above). Claude Code keeps the skill available from the marketplace cache.
+1. Install via the marketplace first (either the UI flow above or the CLI flow above). Claude Code keeps the skill available from the marketplace cache.
 2. Verify the marketplace copy loads correctly in a new Claude Code session.
 3. Remove the curl-installed copy so only the marketplace-managed version remains:
    ```bash
@@ -58,7 +74,7 @@ The installer will:
 
 | Method | Tools | Use when |
 |--------|-------|----------|
-| **Marketplace** | Claude Code only | You use Claude Code and want the plugin lifecycle managed for you |
+| **Marketplace** | Claude Code only | You use Claude Code and want the plugin lifecycle managed for you through the UI or `/plugin` CLI |
 | **Installer script** | Claude Code, Codex, Amp, Gemini, OpenCode | You use multiple AI tools or prefer shell-based install |
 
 Both methods install the same skill bundle.
