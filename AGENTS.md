@@ -27,7 +27,7 @@
   - `skills/design-farmer/docs/`: Companion docs (`PHASE-INDEX.md`, `QUALITY-GATES.md`, `MAINTENANCE.md`, `EXAMPLES-GALLERY.md`).
   - `skills/design-farmer/examples/`: Reference examples (`DESIGN.md` — Nova UI greenfield reference).
   - `skills/design-farmer/bin/`: Executable utilities (`version-check`).
-  - `skills/design-farmer/tests/`: Test suites (`run-all.sh`, `test-semantic-consistency.sh`).
+  - `skills/design-farmer/tests/`: Test suites (`run-all.sh`, `test-semantic-consistency.sh`, `test-version-check.sh`).
 - `scripts/`: Repository-level validation and CI scripts.
   - `scripts/validate-skill-md.sh`: Structural validation (phase files, router references, contracts).
   - `scripts/release.sh`: Atomic release automation (version bump, file sync, tag creation).
@@ -104,9 +104,11 @@ When asked to review comments on a GitHub PR:
 ### Testing Rules
 
 - All test suites MUST pass before a PR is merged.
-- Two test suites exist:
+- Three test suites exist:
   1. **Structural validation** (`scripts/validate-skill-md.sh`): phase file existence, router references, orphan detection, completion status protocol, cross-phase contracts, discovery interview gating, tool-contract keywords.
   2. **Semantic consistency** (`skills/design-farmer/tests/test-semantic-consistency.sh`): cross-reference section numbers, config field coverage, phase flow sequence, status message completeness, handoff chain, docs alignment, Fix Loop Protocol coverage, Phase 0 re-entry paths, conditional question gates, Phase 4b light-only guard, Phase 6 non-React guardrail, cross-phase data dependencies, pipeline state tracking.
+  3. **version-check behavior** (`skills/design-farmer/tests/test-version-check.sh`): Releases API primary path, SKILL.md-on-main fallback path, and silent exit when both upstream sources are unreachable — uses `file://` URL overrides so the suite runs offline.
+- All three suites are run together by `skills/design-farmer/tests/run-all.sh`.
 - When adding a new phase, branching condition, or config field, add corresponding test coverage in the appropriate suite.
 
 ### Commit Convention

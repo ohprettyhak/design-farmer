@@ -18,6 +18,11 @@
 #      - Cross-phase data dependencies, pipeline state tracking
 #      - Fix Loop Protocol coverage
 #
+#   3. version-check behavior (tests/test-version-check.sh)
+#      - Releases API primary path (UPGRADE_AVAILABLE / OK)
+#      - Fallback to SKILL.md on main when Releases API is unreachable
+#      - Silent exit when both upstream sources fail
+#
 # Usage: bash skills/design-farmer/tests/run-all.sh
 
 set -eo pipefail
@@ -52,6 +57,18 @@ if bash "$TESTS_DIR/test-semantic-consistency.sh"; then
 else
   echo ""
   echo "Suite 2: FAILED"
+  SUITE_FAIL=1
+fi
+
+echo ""
+echo "── Suite 3: version-check Behavior ──"
+echo ""
+if bash "$TESTS_DIR/test-version-check.sh"; then
+  echo ""
+  echo "Suite 3: PASSED"
+else
+  echo ""
+  echo "Suite 3: FAILED"
   SUITE_FAIL=1
 fi
 
