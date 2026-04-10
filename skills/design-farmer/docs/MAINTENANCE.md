@@ -5,6 +5,10 @@
 Keep the Design Farmer bundle (`SKILL.md`, `phases/*.md`, `docs/*.md`, installer, and
 validator) authoritative while reducing drift, ambiguity, and regressions.
 
+This directory is for skill maintainers. User-facing installation and repository workflow docs
+live at the repository root, while `docs/project-*.md` files store internal implementation
+contracts for repository changes.
+
 ## File Structure
 
 ```

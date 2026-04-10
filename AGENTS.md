@@ -1,6 +1,6 @@
 ### Instructions
 
-- Use the `docs/` directory as the source of truth for project contracts and implementation documents.
+- Use the `docs/` directory as the source of truth for internal project contracts and implementation-planning documents.
 - All repository-wide rules must be defined in this `AGENTS.md`.
 - List files in `docs/` before starting each task, and keep `docs/` up-to-date.
 - After completing each task, update the relevant `AGENTS.md` and `docs/` files in the same change when policies, structure, or contracts changed.
@@ -17,9 +17,10 @@
 
 ### Repository Structure Map
 
-- `docs/`: Source of truth for project contracts and repository documentation.
+- `docs/`: Source of truth for internal project contracts and implementation-planning documents.
   - `docs/project-template.md`: Required structure for every new project document.
   - `docs/project-<id>.md`: Per-project contract document (created before implementation begins).
+  - `docs/README.md`: Explains the role of internal project-contract docs and how they differ from user-facing docs.
 - `skills/`: Skill bundles distributed to end-user AI tools.
   - `skills/design-farmer/SKILL.md`: Router — frontmatter, voice, phase index, cross-phase contracts.
   - `skills/design-farmer/phases/`: Phase instruction files (`phase-*.md`, `operational-notes.md`).
@@ -33,11 +34,13 @@
 - `.github/`: GitHub configuration.
   - `.github/workflows/skill-quality.yml`: CI pipeline (structural validation + install/uninstall smoke tests).
   - `.github/pull_request_template.md`: PR template with validation evidence checklist.
+- `INSTALLATION.md`: Canonical install lifecycle guide, including manual setup, troubleshooting, and optional removal.
 - `install.sh`: Automated installer (detects tools, supports selective target flags, downloads skill bundle atomically).
 - `uninstall.sh`: Automated uninstaller (detects/selects tools and removes only `skills/design-farmer` targets safely).
 - `AGENTS.md`: This file — repository-wide rules.
 - `CONTRIBUTING.md`: Contributor workflow (branch naming, commit convention, PR requirements).
 - `README.md`: Project overview, installation, and documentation links.
+- `README.*.md`: Localized overview and installation entrypoint documents.
 
 ### Documentation Policy
 
