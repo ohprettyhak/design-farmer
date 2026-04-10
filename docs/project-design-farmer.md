@@ -31,7 +31,7 @@ Before this project, agents had no repeatable workflow for:
 - Automated uninstaller (`uninstall.sh`) with selective target options (`--tool`, `--interactive`, `--dry-run`) and safe path-guarded removal.
 - README and localized README variants aligned to an install-first flow, with uninstall guidance limited to a single-line pointer to `uninstall.sh` and `INSTALLATION.md` for full options.
 - Structural validation script (`scripts/validate-skill-md.sh`).
-- Semantic consistency test suite (`tests/test-semantic-consistency.sh`).
+- Semantic consistency test suite (`skills/design-farmer/tests/test-semantic-consistency.sh`).
 - CI pipeline (GitHub Actions: structural validation + install smoke tests).
 - Version check utility (`bin/version-check`).
 

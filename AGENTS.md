@@ -106,7 +106,7 @@ When asked to review comments on a GitHub PR:
 - All test suites MUST pass before a PR is merged.
 - Two test suites exist:
   1. **Structural validation** (`scripts/validate-skill-md.sh`): phase file existence, router references, orphan detection, completion status protocol, cross-phase contracts, discovery interview gating, tool-contract keywords.
-  2. **Semantic consistency** (`tests/test-semantic-consistency.sh`): cross-reference section numbers, config field coverage, phase flow sequence, status message completeness, handoff chain, docs alignment, Fix Loop Protocol coverage, Phase 0 re-entry paths, conditional question gates, Phase 4b light-only guard, Phase 6 non-React guardrail, cross-phase data dependencies, pipeline state tracking.
+  2. **Semantic consistency** (`skills/design-farmer/tests/test-semantic-consistency.sh`): cross-reference section numbers, config field coverage, phase flow sequence, status message completeness, handoff chain, docs alignment, Fix Loop Protocol coverage, Phase 0 re-entry paths, conditional question gates, Phase 4b light-only guard, Phase 6 non-React guardrail, cross-phase data dependencies, pipeline state tracking.
 - When adding a new phase, branching condition, or config field, add corresponding test coverage in the appropriate suite.
 
 ### Commit Convention
