@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Run skill structure validation
         run: bash scripts/validate-skill-md.sh
@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       # Pin to a specific LTS minor so Node point releases cannot
       # spontaneously break CI without a commit in this repository.
@@ -54,7 +54,7 @@ jobs:
         tool: [claude, codex, amp, gemini, opencode]
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Ensure zsh is available
         run: |
