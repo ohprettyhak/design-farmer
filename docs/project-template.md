@@ -46,9 +46,3 @@
 ## Risks
 
 <!-- Known risks, unknowns, and mitigation strategies. -->
-
-## Revision History
-
-| Date | Author | Change |
-|------|--------|--------|
-| YYYY-MM-DD | — | Initial draft |

@@ -187,15 +187,3 @@ Phase 0 (Preflight) ──→ detect topology, check DESIGN.md
 | Agent runtime differences across tools | Fallback/degradation registry ensures graceful handling; `Agent(prompt="...")` compatibility note |
 | OKLCH browser support gaps | Baseline 2023 (96%+ global); P3 gamut enhancement behind `@media (color-gamut: p3)` |
 | APCA not yet W3C standard | Dual-check: APCA + WCAG 2.x 4.5:1 for legal compliance |
-
-## Revision History
-
-| Date | Author | Change |
-|------|--------|--------|
-| 2026-04-06 | Hak Lee | Initial draft |
-| 2026-04-09 | Codex | Updated re-entry contract to context-first flow and documented CI anti-drift guards |
-| 2026-04-09 | Codex | Added DESIGN.md source-classification decision to prevent false corruption handling for readable third-party docs |
-| 2026-04-09 | Codex | Added installer selective-target contract (`--tool`, `--interactive`, `--dry-run`) and acceptance criteria |
-| 2026-04-09 | Codex | Added uninstall script contract, safety scope, and install/uninstall smoke test expectations |
-| 2026-04-09 | Codex | Aligned README and localized README install-first messaging with one-line uninstall guidance |
-| 2026-04-10 | Codex | Clarified documentation-layer ownership and kept install lifecycle guidance rooted in `INSTALLATION.md` |

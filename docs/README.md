@@ -1,6 +1,6 @@
 # Internal Project Contracts
 
-This directory stores internal implementation contracts and project history for repository work.
+This directory stores internal implementation contracts and planning records for repository work.
 These files are written for maintainers and contributors planning or tracking changes inside this
 repository. They are not the primary entrypoint for end users installing or using Design Farmer.
 

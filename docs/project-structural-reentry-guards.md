@@ -55,10 +55,3 @@ Introduce semantic markers and structural checks for re-entry flow and legacy sh
 
 - Over-generalized patterns may allow subtle regressions if too loose.
 - Over-constrained patterns may keep false positives if too strict.
-
-## Revision History
-
-| Date | Author | Change |
-|------|--------|--------|
-| 2026-04-09 | Codex | Initial draft |
-| 2026-04-09 | Codex | Completed structural re-entry guard refactor and verified validation/smoke suites |
