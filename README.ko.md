@@ -57,6 +57,15 @@ Claude Code 마켓플레이스에서 바로 설치하면 플러그인 수명 주
 1. Claude Code 설정을 열고 **Plugins → Marketplace**로 이동합니다.
 2. **design-farmer**를 검색한 뒤 **Install**을 클릭합니다.
 
+Claude Code 명령 인터페이스를 선호한다면, 이 저장소를 마켓플레이스로 등록한 뒤 플러그인을 바로 설치할 수도 있습니다:
+
+```bash
+/plugin marketplace add ohprettyhak/design-farmer
+/plugin install design-farmer@design-farmer
+```
+
+`marketplace add`는 마켓플레이스 카탈로그를 등록하는 단계입니다. 그다음 `install`이 등록된 마켓플레이스에서 `design-farmer` 플러그인을 설치하며, 이후 업데이트는 Claude Code의 기본 플러그인 갱신 흐름을 따릅니다.
+
 ### 모든 도구 — curl 설치 스크립트
 
 ```bash
@@ -65,7 +74,7 @@ curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/inst
 
 **Claude Code**, **Codex CLI**, **Amp**, **Gemini CLI**, **OpenCode**를 자동 감지해 설치합니다.
 
-선택적 설치 플래그(`--tool`, `--interactive`, `--dry-run`), 수동 설치, 문제 해결, 제거 방법은 [INSTALLATION.md](INSTALLATION.md)를 참고하세요.
+마켓플레이스 UI/CLI 설치 흐름, 마켓플레이스와 curl 설치 간 마이그레이션, 선택적 설치 플래그(`--tool`, `--interactive`, `--dry-run`), 수동 설치, 문제 해결, 제거 방법은 [INSTALLATION.md](INSTALLATION.md)를 참고하세요.
 
 ## 문서
 

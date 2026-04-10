@@ -42,7 +42,7 @@
   - `.claude-plugin/plugin.json`: Marketplace plugin manifest (name, version, skills path).
   - `.claude-plugin/marketplace.json`: Marketplace listing metadata (owner, plugins array, tags, category).
 - `package.json`: Single source of truth for version and release metadata (`private: true`, no npm publish).
-- `INSTALLATION.md`: Canonical install lifecycle guide, including marketplace, curl installer, manual setup, troubleshooting, and optional removal.
+- `INSTALLATION.md`: Canonical install lifecycle guide, including Marketplace UI and CLI flows, curl installer, manual setup, troubleshooting, and optional removal.
 - `install.sh`: Automated installer (detects tools, supports selective target flags, downloads skill bundle atomically).
 - `uninstall.sh`: Automated uninstaller (detects/selects tools and removes only `skills/design-farmer` targets safely).
 - `docs/marketplace-release-procedure.md`: Step-by-step marketplace release workflow.

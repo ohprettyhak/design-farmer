@@ -31,6 +31,11 @@
 5. **Verify marketplace update:**
    - Check that marketplace picks up the new version
    - Test marketplace install in a clean environment
+   - Verify both Marketplace entrypoints still work for Claude Code users:
+     ```bash
+     /plugin marketplace add ohprettyhak/design-farmer
+     /plugin install design-farmer@design-farmer
+     ```
 
 ## What the Release Script Does
 
@@ -45,6 +50,8 @@
 5. Re-runs `claude plugin validate .` after metadata sync to catch post-sync drift
 6. Creates a single atomic release commit with `package.json` and all synced files
 7. Creates a git tag (`v<version>`)
+
+The post-release verification should confirm that the CLI install example in `README.md`, localized `README.*.md` files, and `INSTALLATION.md` still matches the manifest identifiers shipped in `.claude-plugin/marketplace.json`.
 
 The bump, sync, and validation steps all run before any commit or tag is
 created. A failure at any stage is caught by the release script's `ERR`

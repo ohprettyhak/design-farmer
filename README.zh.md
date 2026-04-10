@@ -57,6 +57,15 @@ Design Farmer 根据项目状态分阶段工作：
 1. 打开 Claude Code 设置，进入 **Plugins → Marketplace**。
 2. 搜索 **design-farmer** 并点击 **Install**。
 
+如果你更喜欢使用 Claude Code 的命令界面，也可以先把这个仓库注册为市场，再直接安装插件：
+
+```bash
+/plugin marketplace add ohprettyhak/design-farmer
+/plugin install design-farmer@design-farmer
+```
+
+`marketplace add` 用于注册市场目录。完成后，`install` 会从已注册的市场安装 `design-farmer` 插件，后续更新仍由 Claude Code 的常规插件刷新流程管理。
+
 ### 所有工具 — curl 安装脚本
 
 ```bash
@@ -65,7 +74,7 @@ curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/inst
 
 自动检测并安装到 **Claude Code**、**Codex CLI**、**Amp**、**Gemini CLI** 和 **OpenCode**。
 
-选择性安装标志（`--tool`、`--interactive`、`--dry-run`）、手动安装、问题排查及卸载方法详见 [INSTALLATION.md](INSTALLATION.md)。
+市场 UI/CLI 安装流程、市场与 curl 安装之间的迁移、选择性安装标志（`--tool`、`--interactive`、`--dry-run`）、手动安装、问题排查及卸载方法详见 [INSTALLATION.md](INSTALLATION.md)。
 
 ## 文档
 
