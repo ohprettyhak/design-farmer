@@ -92,8 +92,16 @@ skills/design-farmer/
 | Phase-file decomposition (not monolithic SKILL.md) | Reduces token consumption per phase; agents load only the current phase |
 | DESIGN.md as persistent source of truth | Enables context-first re-entry (Phase 0 imports DESIGN.md context, then confirms key decisions in Discovery) and cross-session continuity |
 | DESIGN.md source classification (`internal-canonical` vs `external-context`) | Avoids false corruption reports for readable third-party docs while preserving strict handling for truly unreadable files |
+| Audience-based documentation layers | Keeps user lifecycle guidance in root docs, implementation contracts in `docs/`, and skill-maintainer references in `skills/design-farmer/docs/` so workflow docs stay easier to navigate |
 | Fix Loop Protocol (5 max attempts) | Self-healing without external plugins; escalates to BLOCKED on exhaustion |
 | Fallback/degradation registry per phase | Pipeline never silently fails; every phase has a documented fallback path |
+
+### Documentation Layers
+
+- Root docs (`README.md`, localized `README*.md`, `INSTALLATION.md`, `CONTRIBUTING.md`, `AGENTS.md`) are the canonical user, contributor, and repository-operation guides.
+- `docs/project-*.md` files are internal implementation contracts and change records for repository work.
+- `skills/design-farmer/docs/` contains maintainer references for the skill bundle and phase system.
+- Install/uninstall lifecycle guidance stays install-first in root docs, with `INSTALLATION.md` as the canonical detail reference and uninstall treated as optional cleanup.
 
 ### Data Flow
 
@@ -179,14 +187,3 @@ Phase 0 (Preflight) ──→ detect topology, check DESIGN.md
 | Agent runtime differences across tools | Fallback/degradation registry ensures graceful handling; `Agent(prompt="...")` compatibility note |
 | OKLCH browser support gaps | Baseline 2023 (96%+ global); P3 gamut enhancement behind `@media (color-gamut: p3)` |
 | APCA not yet W3C standard | Dual-check: APCA + WCAG 2.x 4.5:1 for legal compliance |
-
-## Revision History
-
-| Date | Author | Change |
-|------|--------|--------|
-| 2026-04-06 | Hak Lee | Initial draft |
-| 2026-04-09 | Codex | Updated re-entry contract to context-first flow and documented CI anti-drift guards |
-| 2026-04-09 | Codex | Added DESIGN.md source-classification decision to prevent false corruption handling for readable third-party docs |
-| 2026-04-09 | Codex | Added installer selective-target contract (`--tool`, `--interactive`, `--dry-run`) and acceptance criteria |
-| 2026-04-09 | Codex | Added uninstall script contract, safety scope, and install/uninstall smoke test expectations |
-| 2026-04-09 | Codex | Aligned README and localized README install-first messaging with one-line uninstall guidance |

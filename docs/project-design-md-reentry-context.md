@@ -59,11 +59,3 @@ Revise re-entry semantics so existing `DESIGN.md` pre-fills defaults and informs
 
 - Slightly slower re-entry flow due to discovery confirmation gates.
 - Potential contract drift if router/docs/tests are not updated together.
-
-## Revision History
-
-| Date | Author | Change |
-|------|--------|--------|
-| 2026-04-09 | Codex | Initial draft |
-| 2026-04-09 | Codex | Marked acceptance criteria complete and added anti-drift completion evidence |
-| 2026-04-09 | Codex | Added source-classification contract and narrowed corruption semantics to unreadable files |
