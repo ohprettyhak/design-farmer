@@ -1,19 +1,65 @@
 # Installation
 
-## Recommended (automatic)
+## Marketplace (Claude Code — recommended)
+
+Install directly from the Claude Code Marketplace and let Claude Code manage the plugin lifecycle:
+
+1. Open Claude Code settings
+2. Navigate to Plugins > Marketplace
+3. Search for **design-farmer**
+4. Click **Install**
+
+Marketplace installations are managed by Claude Code's plugin system — new versions are surfaced through the built-in plugin refresh flow, so there is no need to re-run the installer by hand. This is the recommended installation method for Claude Code users.
+
+### Migrating from the curl installer
+
+If you previously installed via `curl | bash`, your installation will continue to work. To migrate to the marketplace without losing skill availability:
+
+1. Install via the marketplace first (see steps above). Claude Code keeps the skill available from the marketplace cache.
+2. Verify the marketplace copy loads correctly in a new Claude Code session.
+3. Remove the curl-installed copy so only the marketplace-managed version remains:
+   ```bash
+   curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/uninstall.sh | bash -s -- --tool claude
+   ```
+
+Your existing `DESIGN.md` files and project configurations are preserved.
+
+### Migrating from the marketplace back to the curl installer
+
+If you need to switch back (for example, to manage the skill alongside other non-Claude AI tools from a single installer):
+
+1. Disable or uninstall the marketplace plugin from **Plugins → Marketplace**.
+2. Run the curl installer:
+   ```bash
+   curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/install.sh | bash -s -- --tool claude
+   ```
+
+### Avoid running both channels at once
+
+Marketplace installs live inside Claude Code's managed plugin cache, while the curl installer writes to `~/.claude/skills/design-farmer/`. When both are present, Claude Code may surface either copy depending on how it enumerates skills, and the two copies are not reconciled automatically. To keep behavior deterministic, install from exactly one channel per tool and run one of the migration flows above when switching.
+
+## Universal installer (all tools)
 
 Run the installer script:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/install.sh | bash
 ```
-This is the canonical lifecycle guide for installing Design Farmer, handling manual setup, troubleshooting, and optionally removing the bundle later.
 
 The installer will:
 
 1. Detect supported local tools.
 2. Create each tool-specific skill directory if needed.
 3. Download `skills/design-farmer/SKILL.md` and the full phase bundle into selected targets.
+
+### Marketplace vs. installer
+
+| Method | Tools | Use when |
+|--------|-------|----------|
+| **Marketplace** | Claude Code only | You use Claude Code and want the plugin lifecycle managed for you |
+| **Installer script** | Claude Code, Codex, Amp, Gemini, OpenCode | You use multiple AI tools or prefer shell-based install |
+
+Both methods install the same skill bundle.
 
 ### Installer options
 

@@ -50,18 +50,31 @@ Design Farmer 根據專案狀態分階段工作：
 
 ## 安裝
 
+### Claude Code — 市集（推薦）
+
+透過 Claude Code 市集直接安裝，外掛生命週期由 Claude Code 統一管理：
+
+1. 開啟 Claude Code 設定，進入 **Plugins → Marketplace**。
+2. 搜尋 **design-farmer** 並點擊 **Install**。
+
+### 所有工具 — curl 安裝腳本
+
 ```bash
 curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/install.sh | bash
 ```
 
-安裝腳本會自動偵測已安裝的工具，建立技能目錄並下載技能包。支援的工具：**Claude Code**、**Codex CLI**、**Amp**、**Gemini CLI**、**OpenCode**。
-解除安裝（可選）：`curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/uninstall.sh | bash`（完整選項見 [INSTALLATION.md](INSTALLATION.md)）。
+自動偵測並安裝到 **Claude Code**、**Codex CLI**、**Amp**、**Gemini CLI** 和 **OpenCode**。
 
-手動安裝及問題排查請參閱 [INSTALLATION.md](INSTALLATION.md)。
+選擇性安裝旗標（`--tool`、`--interactive`、`--dry-run`）、手動安裝、問題排查及解除安裝方法詳見 [INSTALLATION.md](INSTALLATION.md)。
 
 ## 文件
 
+- [安裝指南](INSTALLATION.md)：涵蓋市集／curl 安裝、手動安裝、問題排查與解除安裝的官方參考
 - [技能規範](skills/design-farmer/SKILL.md)：執行時參考的指令檔
+
+維護者與貢獻者參考：
+
+- [內部專案契約](docs/README.md)：repo 實作契約與規劃紀錄
 - [階段索引](skills/design-farmer/docs/PHASE-INDEX.md)：維護者參考的執行流程
 - [品質關卡](skills/design-farmer/docs/QUALITY-GATES.md)：驗證標準與發布檢查清單
 - [維護指南](skills/design-farmer/docs/MAINTENANCE.md)：樣式一致性維護與更新流程

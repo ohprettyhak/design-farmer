@@ -50,27 +50,22 @@ The screenshot above was built from a **greenfield project** — no existing tok
 
 ## Installation
 
+### Claude Code — Marketplace (recommended)
+
+Install directly from the Claude Code Marketplace and let Claude Code manage the plugin lifecycle:
+
+1. Open Claude Code settings and go to **Plugins → Marketplace**.
+2. Search for **design-farmer** and click **Install**.
+
+### All tools — curl installer
+
 ```bash
 curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/install.sh | bash
 ```
 
-The installer detects your tools, creates skill directories, and downloads the skill bundle. Supported tools: **Claude Code**, **Codex CLI**, **Amp**, **Gemini CLI**, **OpenCode**.
-Canonical lifecycle guide: [INSTALLATION.md](INSTALLATION.md) covers install options, manual setup, troubleshooting, and optional removal.
-Uninstall (optional): `curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/uninstall.sh | bash`.
+Detects and installs into **Claude Code**, **Codex CLI**, **Amp**, **Gemini CLI**, and **OpenCode**.
 
-Selective install examples:
-
-```bash
-# Install only for Claude Code
-curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/install.sh | bash -s -- --tool claude
-
-# Install only for Codex CLI
-curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/install.sh | bash -s -- --tool codex
-
-# Preview targets without writing files
-curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/install.sh | bash -s -- --dry-run
-```
-For manual installation, troubleshooting, or optional removal details, see [INSTALLATION.md](INSTALLATION.md).
+See [INSTALLATION.md](INSTALLATION.md) for selective install flags (`--tool`, `--interactive`, `--dry-run`), manual setup, troubleshooting, and optional removal.
 
 ## Documentation
 

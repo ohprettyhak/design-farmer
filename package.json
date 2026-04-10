@@ -1,0 +1,20 @@
+{
+  "name": "design-farmer",
+  "version": "0.0.6",
+  "private": true,
+  "description": "Automated design system construction from repository analysis to production-ready implementation.",
+  "author": "Hak Lee <hi@haklee.me>",
+  "license": "MIT",
+  "homepage": "https://github.com/ohprettyhak/design-farmer#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ohprettyhak/design-farmer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ohprettyhak/design-farmer/issues"
+  },
+  "scripts": {
+    "release": "bash scripts/release.sh",
+    "validate:skill": "bash scripts/validate-skill-md.sh"
+  }
+}

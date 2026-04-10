@@ -39,7 +39,7 @@ Revise re-entry semantics so existing `DESIGN.md` pre-fills defaults and informs
 - `phase-0-preflight.md`: change Option A semantics to context import + Phase 1 continuation; set `reentryMode: "design-context"`.
 - `phase-1-discovery.md`: consume `reentryMode` and enforce explicit confirmation of critical gates.
 - `SKILL.md`, `docs/PHASE-INDEX.md`: update cross-phase contracts.
-- `scripts/validate-skill-md.sh` and `tests/test-semantic-consistency.sh`: enforce new contract.
+- `scripts/validate-skill-md.sh` and `skills/design-farmer/tests/test-semantic-consistency.sh`: enforce new contract.
 
 ## Acceptance Criteria
 

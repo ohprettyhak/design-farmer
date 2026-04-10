@@ -16,6 +16,26 @@ jobs:
       - name: Run skill structure validation
         run: bash scripts/validate-skill-md.sh
 
+      - name: Run semantic consistency suite
+        run: bash skills/design-farmer/tests/run-all.sh
+
+  validate-plugin:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Claude Code CLI
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Validate plugin and marketplace manifests
+        run: claude plugin validate .
+
   install-smoke:
     runs-on: ubuntu-latest
     strategy:
