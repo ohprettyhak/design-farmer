@@ -38,12 +38,16 @@
    - `bash scripts/validate-skill-md.sh` (structural validation)
    - `bash skills/design-farmer/tests/run-all.sh` (semantic consistency suite)
    - `claude plugin validate .` (plugin manifest validation)
-2. Bumps version in `package.json` using `npm version`
+2. Bumps version in `package.json` using `npm version --no-git-tag-version` (no commit, no tag)
 3. Syncs version to `skills/design-farmer/SKILL.md` frontmatter
 4. Syncs metadata to `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json`
 5. Re-runs `claude plugin validate .` after metadata sync to catch post-sync drift
-6. Amends the `npm version` commit to include all synced files
+6. Creates a single atomic release commit with `package.json` and all synced files
 7. Creates a git tag (`v<version>`)
+
+The bump, sync, and validation steps all run before any commit or tag is
+created, so a failure at any stage leaves the working tree untouched and the
+git history clean — nothing to roll back.
 
 ## Version Source of Truth
 

@@ -31,7 +31,7 @@ bash skills/design-farmer/tests/run-all.sh
 claude plugin validate .
 
 echo "Bumping version (${RELEASE_TYPE})..."
-npm version "$RELEASE_TYPE"
+npm version --no-git-tag-version "$RELEASE_TYPE" >/dev/null
 
 NEW_VERSION=$(node -p "require('./package.json').version")
 
@@ -90,12 +90,11 @@ node -e "
 echo "Re-validating manifests after metadata sync..."
 claude plugin validate .
 
-echo "Amending release commit..."
-git add skills/design-farmer/SKILL.md .claude-plugin/plugin.json .claude-plugin/marketplace.json
-git commit --amend --no-edit
+echo "Creating release commit..."
+git add package.json skills/design-farmer/SKILL.md .claude-plugin/plugin.json .claude-plugin/marketplace.json
+git commit -m "${NEW_VERSION}"
 
 NEW_TAG="v${NEW_VERSION}"
-git tag -d "$NEW_TAG" 2>/dev/null || true
 git tag -a "$NEW_TAG" -m "Release ${NEW_TAG}"
 
 echo ""
