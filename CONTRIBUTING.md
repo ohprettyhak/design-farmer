@@ -75,6 +75,16 @@ Your PR should include:
 - Keep PR scope aligned to the linked issue acceptance criteria.
 - Merge once checks pass and reviewer approval is complete.
 
+### Major GitHub Action Version Bumps
+
+When a PR upgrades a GitHub Action across a major version (for example `actions/checkout@v4` -> `@v6`), review it as a compatibility change rather than a routine dependency bump.
+
+1. Read the upstream release notes for every intermediate major version.
+2. Classify each documented breaking change as applicable or not applicable to this repository's current workflow usage.
+3. Confirm the workflow inputs used here still match upstream expectations.
+4. Capture GitHub Actions evidence from the PR branch before merge.
+5. Record the decision in the PR description or thread: merge, defer with a reason, or add a narrow `.github/dependabot.yml` ignore rule.
+
 ## 7) Documentation Discipline
 
 When behavior or contributor workflow changes, update the matching docs in the same PR (README, installation guide, templates, policies, or process docs).
