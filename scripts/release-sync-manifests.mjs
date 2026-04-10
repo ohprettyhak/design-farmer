@@ -76,9 +76,29 @@ function assertPkgDescription(pkg) {
 }
 
 /**
+ * Assign a canonical field from `pkg` onto `next`: when the value is
+ * present, write it; when the value is missing, delete the field from
+ * `next` so removing it from `package.json` clears the stale manifest
+ * value on the next release. Unknown (non-canonical) keys are left
+ * untouched by the caller because this helper only acts on the fields
+ * the sync explicitly owns.
+ */
+function assignOrClear(next, key, value) {
+  if (value === undefined || value === null || value === '') {
+    delete next[key];
+  } else {
+    next[key] = value;
+  }
+}
+
+/**
  * Produce a new plugin.json object by merging canonical fields from `pkg`
  * into `current`, stripping schema-forbidden keys, and preserving every
- * other key verbatim.
+ * non-canonical key verbatim. Canonical optional fields (author, license,
+ * homepage, repository) are cleared from the manifest when absent in
+ * `pkg` so `package.json` remains the single source of truth for them —
+ * the previous inline sync relied on `JSON.stringify` dropping `undefined`
+ * values to get the same effect, which is easy to miss on refactor.
  */
 export function syncPluginManifest(pkg, current) {
   assertPkgDescription(pkg);
@@ -88,22 +108,10 @@ export function syncPluginManifest(pkg, current) {
   next.version = pkg.version;
   next.description = pkg.description;
 
-  const author = normalizeAuthor(pkg.author);
-  if (author) {
-    next.author = author;
-  }
-
-  if (pkg.license) {
-    next.license = pkg.license;
-  }
-  if (pkg.homepage) {
-    next.homepage = pkg.homepage;
-  }
-
-  const repository = normalizeRepository(pkg.repository);
-  if (repository) {
-    next.repository = repository;
-  }
+  assignOrClear(next, 'author', normalizeAuthor(pkg.author));
+  assignOrClear(next, 'license', pkg.license);
+  assignOrClear(next, 'homepage', pkg.homepage);
+  assignOrClear(next, 'repository', normalizeRepository(pkg.repository));
 
   // Claude Code plugin manifest schema forbids `bugs` at the top level.
   delete next.bugs;
@@ -136,15 +144,17 @@ export function syncMarketplaceManifest(pkg, current) {
   delete next['$schema'];
 
   // Update the first plugin entry (the one this repository owns) while
-  // preserving any fields the sync does not manage.
+  // preserving any fields the sync does not manage. Canonical optional
+  // fields are cleared when absent in package.json for the same reason
+  // as the plugin.json sync above: keep package.json as the single
+  // source of truth instead of letting stale values persist across
+  // releases.
   const [firstPlugin, ...restPlugins] = current.plugins;
   const nextFirstPlugin = { ...firstPlugin };
   nextFirstPlugin.name = pkg.name;
   nextFirstPlugin.version = pkg.version;
   nextFirstPlugin.description = pkg.description;
-  if (pkg.homepage) {
-    nextFirstPlugin.homepage = pkg.homepage;
-  }
+  assignOrClear(nextFirstPlugin, 'homepage', pkg.homepage);
   next.plugins = [nextFirstPlugin, ...restPlugins];
 
   return next;

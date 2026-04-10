@@ -171,6 +171,39 @@ test('syncPluginManifest: normalizes repository object to URL string', () => {
   assert.equal(next.repository, 'https://github.com/a/b.git');
 });
 
+test('syncPluginManifest: clears canonical optional fields removed from package.json', () => {
+  // package.json is the single source of truth for license, homepage,
+  // author, and repository. Dropping any of them from package.json must
+  // clear the stale value from plugin.json on the next release so the
+  // manifest never disagrees with the source of truth.
+  const pkg = { ...basePkg };
+  delete pkg.author;
+  delete pkg.license;
+  delete pkg.homepage;
+  delete pkg.repository;
+  const next = syncPluginManifest(pkg, basePluginManifest);
+  assert.ok(!('author' in next), 'author must be cleared when absent from pkg');
+  assert.ok(!('license' in next), 'license must be cleared when absent from pkg');
+  assert.ok(!('homepage' in next), 'homepage must be cleared when absent from pkg');
+  assert.ok(!('repository' in next), 'repository must be cleared when absent from pkg');
+});
+
+test('syncPluginManifest: clearing canonical fields does not touch unknown fields', () => {
+  const pkg = { ...basePkg };
+  delete pkg.license;
+  delete pkg.homepage;
+  const current = {
+    ...basePluginManifest,
+    skills: './skills/',
+    futureKey: 'still here',
+  };
+  const next = syncPluginManifest(pkg, current);
+  assert.ok(!('license' in next));
+  assert.ok(!('homepage' in next));
+  assert.equal(next.skills, './skills/');
+  assert.equal(next.futureKey, 'still here');
+});
+
 // --- syncMarketplaceManifest -------------------------------------------
 
 test('syncMarketplaceManifest: baseline — current repository manifest shape round-trips', () => {
@@ -261,4 +294,15 @@ test('syncMarketplaceManifest: throws when plugins array is missing or empty', (
   const without = { ...baseMarketplaceManifest };
   delete without.plugins;
   assert.throws(() => syncMarketplaceManifest(basePkg, without), /at least one plugin/);
+});
+
+test('syncMarketplaceManifest: clears plugins[0].homepage when pkg.homepage is removed', () => {
+  const pkg = { ...basePkg };
+  delete pkg.homepage;
+  const next = syncMarketplaceManifest(pkg, baseMarketplaceManifest);
+  assert.ok(!('homepage' in next.plugins[0]), 'plugins[0].homepage must be cleared when absent from pkg');
+  // Non-canonical fields like source/category/tags must survive.
+  assert.equal(next.plugins[0].source, './');
+  assert.equal(next.plugins[0].category, 'productivity');
+  assert.deepEqual(next.plugins[0].tags, ['design-system', 'oklch', 'components']);
 });
