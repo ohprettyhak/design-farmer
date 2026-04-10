@@ -137,7 +137,8 @@ Recommended format:
 Repository-wide quality CI runs on every pull request and push to `main`.
 
 Jobs:
-- `validate-skill`: runs `bash scripts/validate-skill-md.sh` — fails if any structural check fails.
+- `validate-skill`: runs `bash scripts/validate-skill-md.sh` and `bash skills/design-farmer/tests/run-all.sh` — fails if any structural or semantic consistency check fails.
+- `validate-plugin`: installs the Claude Code CLI and runs `claude plugin validate .` — fails if `.claude-plugin/plugin.json` or `.claude-plugin/marketplace.json` drifts from the Claude Code plugin/marketplace schema.
 - `install-smoke`: runs `bash scripts/test-install-smoke.sh` across 5 tools x 2 shells (bash, zsh) — fails if any install/uninstall smoke test fails.
 
 All CI jobs must pass before a PR is merged.
