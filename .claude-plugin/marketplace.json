@@ -2,7 +2,7 @@
   "name": "design-farmer",
   "owner": {
     "name": "Hak Lee",
-    "email": "ohprettyhak@gmail.com"
+    "email": "hi@haklee.me"
   },
   "metadata": {
     "description": "Automated design system construction from repository analysis to production-ready implementation.",
@@ -15,7 +15,7 @@
       "version": "0.0.6",
       "author": {
         "name": "Hak Lee",
-        "email": "ohprettyhak@gmail.com"
+        "email": "hi@haklee.me"
       },
       "source": "./",
       "category": "productivity",

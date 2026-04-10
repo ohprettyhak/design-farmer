@@ -3,7 +3,7 @@
   "version": "0.0.6",
   "private": true,
   "description": "Automated design system construction from repository analysis to production-ready implementation.",
-  "author": "Hak Lee <ohprettyhak@gmail.com>",
+  "author": "Hak Lee <hi@haklee.me>",
   "license": "MIT",
   "homepage": "https://github.com/ohprettyhak/design-farmer#readme",
   "repository": {
