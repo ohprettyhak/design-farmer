@@ -32,6 +32,9 @@ jobs:
         with:
           node-version: '20.18'
 
+      - name: Run manifest sync unit tests
+        run: node --test scripts/__tests__/release-sync-manifests.test.mjs
+
       # Pin the Claude Code CLI to the current minor series so an upstream
       # release with tighter schema enforcement cannot break unrelated PRs
       # without a commit in this repository. Dependabot (see .github/dependabot.yml)
