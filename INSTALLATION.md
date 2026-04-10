@@ -7,7 +7,7 @@ Run the installer script:
 ```bash
 curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/install.sh | bash
 ```
-If you need to remove the bundle later, see [Uninstall options](#uninstall-options).
+This is the canonical lifecycle guide for installing Design Farmer, handling manual setup, troubleshooting, and optionally removing the bundle later.
 
 The installer will:
 
@@ -45,9 +45,40 @@ curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/inst
 curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/install.sh | bash -s -- --dry-run
 ```
 
-### Uninstall options
+## Manual (fallback)
 
-`uninstall.sh` mirrors the installer surface (`--tool`, `--all`, `--interactive`, `--dry-run`, `--list-tools`) and only removes `*/skills/design-farmer` targets.
+Because Design Farmer ships as a multi-file bundle, manual setup must copy the entire
+`skills/design-farmer/` directory rather than only `SKILL.md`.
+
+From a local checkout of this repository:
+
+```bash
+mkdir -p "<tool-skill-root>"
+cp -R "skills/design-farmer" "<tool-skill-root>/design-farmer"
+```
+
+If you are not working from a local checkout, prefer the installer script instead of trying to
+download individual bundle files manually.
+
+Example tool roots:
+
+- `~/.claude/skills`
+- `~/.agents/skills`
+- `~/.config/agents/skills`
+- `~/.gemini/skills`
+- `~/.config/opencode/skills`
+
+## Troubleshooting
+
+- If installer output says `No supported tools detected`, install one supported tool first, then re-run.
+- If a download fails, verify network access and check `curl --version`.
+- If you run `--interactive` in a non-TTY environment (for example CI), use `--tool` instead.
+
+## Optional removal
+
+If you no longer need the bundle, use `uninstall.sh` for optional cleanup. It mirrors the installer surface and only removes `*/skills/design-farmer` targets.
+
+### Uninstall options
 
 ```bash
 bash uninstall.sh [options]
@@ -82,26 +113,6 @@ Supported tools:
 - Gemini CLI
 - OpenCode
 
-## Manual (fallback)
+Additional optional-removal troubleshooting:
 
-```bash
-mkdir -p "<tool-skill-root>/design-farmer"
-curl -fsSL \
-  https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/skills/design-farmer/SKILL.md \
-  -o "<tool-skill-root>/design-farmer/SKILL.md"
-```
-
-Example tool roots:
-
-- `~/.claude/skills`
-- `~/.agents/skills`
-- `~/.config/agents/skills`
-- `~/.gemini/skills`
-- `~/.config/opencode/skills`
-
-## Troubleshooting
-
-- If installer output says `No supported tools detected`, install one supported tool first, then re-run.
 - If uninstaller output says `No supported tools detected. Nothing to uninstall.`, no supported local tool markers were found.
-- If a download fails, verify network access and check `curl --version`.
-- If you run `--interactive` in a non-TTY environment (for example CI), use `--tool` instead.
