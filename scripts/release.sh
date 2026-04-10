@@ -27,6 +27,7 @@ fi
 
 echo "Running pre-release validation..."
 bash scripts/validate-skill-md.sh
+bash skills/design-farmer/tests/run-all.sh
 claude plugin validate .
 
 echo "Bumping version (${RELEASE_TYPE})..."
@@ -85,6 +86,9 @@ node -e "
   mp.plugins[0].description = pkg.description;
   fs.writeFileSync(mpPath, JSON.stringify(mp, null, 2) + '\n');
 "
+
+echo "Re-validating manifests after metadata sync..."
+claude plugin validate .
 
 echo "Amending release commit..."
 git add skills/design-farmer/SKILL.md .claude-plugin/plugin.json .claude-plugin/marketplace.json
