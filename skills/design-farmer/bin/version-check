@@ -5,7 +5,16 @@ set -euo pipefail
 SKILL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CACHE_DIR="${HOME}/.config/design-farmer"
 CACHE_FILE="${CACHE_DIR}/version-check.cache"
-REMOTE_URL="https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/skills/design-farmer/SKILL.md"
+
+# Primary upstream source: the GitHub Releases API returns the latest tagged
+# release, so users are only ever prompted to upgrade to a version that is
+# actually published. Overridable via environment variable for tests.
+: "${DF_RELEASES_API_URL:=https://api.github.com/repos/ohprettyhak/design-farmer/releases/latest}"
+
+# Fallback source: SKILL.md on main. Used only when the Releases API is
+# unreachable or rate-limited so offline users retain best-effort checks,
+# at the cost of occasionally prompting for a main-ahead-of-tag version.
+: "${DF_FALLBACK_RAW_URL:=https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/skills/design-farmer/SKILL.md}"
 
 TTL_OK=3600
 TTL_UPGRADE=43200
@@ -46,10 +55,36 @@ if [[ -f "$CACHE_FILE" ]]; then
   fi
 fi
 
-REMOTE_RAW=$(curl -fsSL --max-time 5 "$REMOTE_URL" 2>/dev/null || echo "")
-REMOTE_VERSION=$(echo "$REMOTE_RAW" | sed -n 's/^version:[[:space:]]*//p' | head -1 | tr -d '[:space:]')
+REMOTE_VERSION=""
 
-if [[ -z "$REMOTE_VERSION" ]] || [[ ! "$REMOTE_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+# Primary path: query the Releases API, extract tag_name without jq so the
+# bundle runs in plain shell environments, strip the leading 'v', and accept
+# only strict semver.
+#
+# The `|| true` suffix on the pipeline keeps a no-match grep from tripping
+# `set -o pipefail` and aborting the whole script before the fallback can run.
+RELEASES_RAW=$(curl -fsSL --max-time 5 -H "Accept: application/vnd.github+json" "$DF_RELEASES_API_URL" 2>/dev/null || echo "")
+if [[ -n "$RELEASES_RAW" ]]; then
+  RELEASE_TAG=$(echo "$RELEASES_RAW" | grep -o '"tag_name"[[:space:]]*:[[:space:]]*"[^"]*"' 2>/dev/null | head -1 | sed -E 's/.*"([^"]*)"$/\1/' || true)
+  CANDIDATE=${RELEASE_TAG#v}
+  if [[ -n "$CANDIDATE" ]] && [[ "$CANDIDATE" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    REMOTE_VERSION="$CANDIDATE"
+  fi
+fi
+
+# Fallback path: if the Releases API was unreachable, rate-limited, or
+# returned a tag that did not parse as strict semver, fall back to the
+# SKILL.md frontmatter on main so offline users still get a best-effort
+# check. This retains the pre-#94 behavior under degraded conditions.
+if [[ -z "$REMOTE_VERSION" ]]; then
+  FALLBACK_RAW=$(curl -fsSL --max-time 5 "$DF_FALLBACK_RAW_URL" 2>/dev/null || echo "")
+  CANDIDATE=$(echo "$FALLBACK_RAW" | sed -n 's/^version:[[:space:]]*//p' | head -1 | tr -d '[:space:]' || true)
+  if [[ -n "$CANDIDATE" ]] && [[ "$CANDIDATE" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    REMOTE_VERSION="$CANDIDATE"
+  fi
+fi
+
+if [[ -z "$REMOTE_VERSION" ]]; then
   exit 0
 fi
 
