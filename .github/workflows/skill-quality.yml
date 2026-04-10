@@ -31,6 +31,8 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: '20.18'
+          # Keep CI behavior explicit even if package.json metadata changes later.
+          package-manager-cache: false
 
       - name: Run manifest sync unit tests
         run: node --test scripts/__tests__/release-sync-manifests.test.mjs

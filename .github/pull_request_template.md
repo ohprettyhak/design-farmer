@@ -16,6 +16,15 @@
 - [ ] Ran tests relevant to changed code/docs
 - [ ] Confirmed no unexpected file changes
 
+### Major Action Upgrade Evidence
+
+<!-- Complete this section when the PR changes a GitHub Action major version. -->
+
+- Intermediate major release notes reviewed:
+- Breaking changes classified as applicable / not applicable:
+- PR check evidence for the bumped branch:
+- Final decision / rollback note:
+
 ## Impact Notes
 
 <!-- Explain user-visible impact and any migration/release notes. -->
