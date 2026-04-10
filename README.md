@@ -57,6 +57,15 @@ Install directly from the Claude Code Marketplace and let Claude Code manage the
 1. Open Claude Code settings and go to **Plugins → Marketplace**.
 2. Search for **design-farmer** and click **Install**.
 
+If you prefer Claude Code's command interface, register this repository as a marketplace and install the plugin directly:
+
+```bash
+/plugin marketplace add ohprettyhak/design-farmer
+/plugin install design-farmer@design-farmer
+```
+
+The `marketplace add` step registers the marketplace catalog. After that, `install` pulls the `design-farmer` plugin from the registered marketplace, and Claude Code keeps future updates in its normal plugin refresh flow.
+
 ### All tools — curl installer
 
 ```bash
@@ -65,7 +74,7 @@ curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/inst
 
 Detects and installs into **Claude Code**, **Codex CLI**, **Amp**, **Gemini CLI**, and **OpenCode**.
 
-See [INSTALLATION.md](INSTALLATION.md) for selective install flags (`--tool`, `--interactive`, `--dry-run`), manual setup, troubleshooting, and optional removal.
+See [INSTALLATION.md](INSTALLATION.md) for the full Marketplace UI and CLI flows, migration guidance between Marketplace and curl installs, selective install flags (`--tool`, `--interactive`, `--dry-run`), manual setup, troubleshooting, and optional removal.
 
 ## Documentation
 
