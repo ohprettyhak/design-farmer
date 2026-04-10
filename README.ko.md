@@ -52,7 +52,7 @@ Design Farmer는 프로젝트 상태에 맞춰 단계별로 작동합니다:
 
 ### Claude Code — 마켓플레이스 (권장)
 
-Claude Code 마켓플레이스에서 바로 설치하면 자동 업데이트까지 지원됩니다:
+Claude Code 마켓플레이스에서 바로 설치하면 플러그인 수명 주기를 Claude Code가 관리합니다:
 
 1. Claude Code 설정을 열고 **Plugins → Marketplace**로 이동합니다.
 2. **design-farmer**를 검색한 뒤 **Install**을 클릭합니다.
@@ -69,8 +69,13 @@ curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/inst
 
 ## 문서
 
+- [설치 가이드](INSTALLATION.md): 마켓플레이스/curl 설치, 수동 설치, 문제 해결, 제거까지 포함한 공식 설치 레퍼런스
 - [스킬 명세](skills/design-farmer/SKILL.md): 실행 시 참조되는 명세 파일
-- [단계 인덱스](skills/design-farmer/docs/PHASE-INDEX.md): 관리자를 위한 실행 흐름 요약
+
+관리자·기여자용 문서:
+
+- [내부 프로젝트 계약](docs/README.md): 리포지토리 구현 계약 및 기획 기록
+- [단계 인덱스](skills/design-farmer/docs/PHASE-INDEX.md): 관리자용 실행 흐름 요약
 - [품질 게이트](skills/design-farmer/docs/QUALITY-GATES.md): 검증 기준과 릴리스 체크리스트
 - [유지보수 가이드](skills/design-farmer/docs/MAINTENANCE.md): 스타일 일관성 유지 및 업데이트 절차
 - [예시 갤러리](skills/design-farmer/docs/EXAMPLES-GALLERY.md): 시나리오별 전후 비교와 단계 매핑

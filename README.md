@@ -52,7 +52,7 @@ The screenshot above was built from a **greenfield project** — no existing tok
 
 ### Claude Code — Marketplace (recommended)
 
-Install directly from the Claude Code Marketplace for automatic updates:
+Install directly from the Claude Code Marketplace and let Claude Code manage the plugin lifecycle:
 
 1. Open Claude Code settings and go to **Plugins → Marketplace**.
 2. Search for **design-farmer** and click **Install**.

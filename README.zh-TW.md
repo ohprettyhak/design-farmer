@@ -52,7 +52,7 @@ Design Farmer 根據專案狀態分階段工作：
 
 ### Claude Code — 市集（推薦）
 
-透過 Claude Code 市集直接安裝，可獲得自動更新：
+透過 Claude Code 市集直接安裝，外掛生命週期由 Claude Code 統一管理：
 
 1. 開啟 Claude Code 設定，進入 **Plugins → Marketplace**。
 2. 搜尋 **design-farmer** 並點擊 **Install**。
@@ -69,7 +69,12 @@ curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/inst
 
 ## 文件
 
+- [安裝指南](INSTALLATION.md)：涵蓋市集／curl 安裝、手動安裝、問題排查與解除安裝的官方參考
 - [技能規範](skills/design-farmer/SKILL.md)：執行時參考的指令檔
+
+維護者與貢獻者參考：
+
+- [內部專案契約](docs/README.md)：repo 實作契約與規劃紀錄
 - [階段索引](skills/design-farmer/docs/PHASE-INDEX.md)：維護者參考的執行流程
 - [品質關卡](skills/design-farmer/docs/QUALITY-GATES.md)：驗證標準與發布檢查清單
 - [維護指南](skills/design-farmer/docs/MAINTENANCE.md)：樣式一致性維護與更新流程

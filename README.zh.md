@@ -52,7 +52,7 @@ Design Farmer 根据项目状态分阶段工作：
 
 ### Claude Code — 市场（推荐）
 
-通过 Claude Code 市场直接安装，可获得自动更新：
+通过 Claude Code 市场直接安装，插件生命周期由 Claude Code 统一管理：
 
 1. 打开 Claude Code 设置，进入 **Plugins → Marketplace**。
 2. 搜索 **design-farmer** 并点击 **Install**。
@@ -69,7 +69,12 @@ curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/inst
 
 ## 文档
 
+- [安装指南](INSTALLATION.md)：涵盖市场／curl 安装、手动安装、问题排查与卸载的官方参考
 - [技能规范](skills/design-farmer/SKILL.md)：运行时参考的指令文件
+
+维护者与贡献者参考：
+
+- [内部项目契约](docs/README.md)：仓库实现契约与计划记录
 - [阶段索引](skills/design-farmer/docs/PHASE-INDEX.md)：维护者参考的执行流程
 - [质量关卡](skills/design-farmer/docs/QUALITY-GATES.md)：验证标准与发布检查清单
 - [维护指南](skills/design-farmer/docs/MAINTENANCE.md)：样式一致性维护与更新流程

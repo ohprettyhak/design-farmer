@@ -2,14 +2,14 @@
 
 ## Marketplace (Claude Code — recommended)
 
-Install directly from the Claude Code Marketplace for automatic installation and updates:
+Install directly from the Claude Code Marketplace and let Claude Code manage the plugin lifecycle:
 
 1. Open Claude Code settings
 2. Navigate to Plugins > Marketplace
 3. Search for **design-farmer**
 4. Click **Install**
 
-Marketplace installations receive automatic updates and are the recommended installation method for Claude Code users.
+Marketplace installations are managed by Claude Code's plugin system — new versions are surfaced through the built-in plugin refresh flow, so there is no need to re-run the installer by hand. This is the recommended installation method for Claude Code users.
 
 ### Migrating from the curl installer
 
@@ -45,7 +45,6 @@ Run the installer script:
 ```bash
 curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/install.sh | bash
 ```
-This is the canonical lifecycle guide for installing Design Farmer, handling manual setup, troubleshooting, and optionally removing the bundle later.
 
 The installer will:
 
@@ -57,7 +56,7 @@ The installer will:
 
 | Method | Tools | Use when |
 |--------|-------|----------|
-| **Marketplace** | Claude Code only | You use Claude Code and want automatic updates |
+| **Marketplace** | Claude Code only | You use Claude Code and want the plugin lifecycle managed for you |
 | **Installer script** | Claude Code, Codex, Amp, Gemini, OpenCode | You use multiple AI tools or prefer shell-based install |
 
 Both methods install the same skill bundle.
