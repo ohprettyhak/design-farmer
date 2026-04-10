@@ -45,6 +45,8 @@ yarn-error.log*
 # Test
 coverage/
 
-# Lock (uncomment if needed)
-# bun.lockb
-# pnpm-lock.yaml
+# Lock
+package-lock.json
+
+# Temp (schema cache, staging)
+.tmp/

@@ -1,0 +1,36 @@
+{
+  "name": "design-farmer",
+  "owner": {
+    "name": "Hak Lee",
+    "email": "ohprettyhak@gmail.com"
+  },
+  "metadata": {
+    "description": "Automated design system construction from repository analysis to production-ready implementation.",
+    "version": "0.0.6"
+  },
+  "plugins": [
+    {
+      "name": "design-farmer",
+      "description": "Automated design system construction from repository analysis to production-ready implementation.",
+      "version": "0.0.6",
+      "author": {
+        "name": "Hak Lee",
+        "email": "ohprettyhak@gmail.com"
+      },
+      "source": "./",
+      "category": "productivity",
+      "homepage": "https://github.com/ohprettyhak/design-farmer",
+      "tags": [
+        "design-system",
+        "design-tokens",
+        "oklch",
+        "components",
+        "accessibility",
+        "a11y",
+        "ui",
+        "testing",
+        "documentation"
+      ]
+    }
+  ]
+}

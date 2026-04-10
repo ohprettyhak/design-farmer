@@ -1,6 +1,29 @@
 # Installation
 
-## Recommended (automatic)
+## Marketplace (Claude Code — recommended)
+
+Install directly from the Claude Code Marketplace for automatic installation and updates:
+
+1. Open Claude Code settings
+2. Navigate to Plugins > Marketplace
+3. Search for **design-farmer**
+4. Click **Install**
+
+Marketplace installations receive automatic updates and are the recommended installation method for Claude Code users.
+
+### Migrating from the curl installer
+
+If you previously installed via `curl | bash`, your installation will continue to work. To migrate to the marketplace:
+
+1. Uninstall the curl-installed version:
+   ```bash
+   curl -fsSL https://raw.githubusercontent.com/ohprettyhak/design-farmer/main/uninstall.sh | bash
+   ```
+2. Install via the marketplace (see steps above)
+
+Your existing `DESIGN.md` files and project configurations are preserved.
+
+## Universal installer (all tools)
 
 Run the installer script:
 
@@ -14,6 +37,15 @@ The installer will:
 1. Detect supported local tools.
 2. Create each tool-specific skill directory if needed.
 3. Download `skills/design-farmer/SKILL.md` and the full phase bundle into selected targets.
+
+### Marketplace vs. installer
+
+| Method | Tools | Use when |
+|--------|-------|----------|
+| **Marketplace** | Claude Code only | You use Claude Code and want automatic updates |
+| **Installer script** | Claude Code, Codex, Amp, Gemini, OpenCode | You use multiple AI tools or prefer shell-based install |
+
+Both methods install the same skill bundle.
 
 ### Installer options
 

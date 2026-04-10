@@ -30,13 +30,20 @@
   - `skills/design-farmer/tests/`: Test suites (`run-all.sh`, `test-semantic-consistency.sh`).
 - `scripts/`: Repository-level validation and CI scripts.
   - `scripts/validate-skill-md.sh`: Structural validation (phase files, router references, contracts).
+  - `scripts/validate-marketplace-plugin.sh`: Marketplace plugin.json schema and field validation.
+  - `scripts/release.sh`: Atomic release automation (version bump, file sync, tag creation).
   - `scripts/test-install-smoke.sh`: Install/uninstall smoke tests across tools and shells.
 - `.github/`: GitHub configuration.
-  - `.github/workflows/skill-quality.yml`: CI pipeline (structural validation + install/uninstall smoke tests).
+  - `.github/workflows/skill-quality.yml`: CI pipeline (structural validation, marketplace validation, version sync check, install/uninstall smoke tests).
   - `.github/pull_request_template.md`: PR template with validation evidence checklist.
-- `INSTALLATION.md`: Canonical install lifecycle guide, including manual setup, troubleshooting, and optional removal.
+- `.claude-plugin/`: Claude Code Marketplace plugin metadata.
+  - `.claude-plugin/plugin.json`: Marketplace plugin manifest (name, version, skills path).
+  - `.claude-plugin/marketplace.json`: Marketplace listing metadata (owner, plugins array, tags, category).
+- `package.json`: Single source of truth for version and release metadata (`private: true`, no npm publish).
+- `INSTALLATION.md`: Canonical install lifecycle guide, including marketplace, curl installer, manual setup, troubleshooting, and optional removal.
 - `install.sh`: Automated installer (detects tools, supports selective target flags, downloads skill bundle atomically).
 - `uninstall.sh`: Automated uninstaller (detects/selects tools and removes only `skills/design-farmer` targets safely).
+- `docs/marketplace-release-procedure.md`: Step-by-step marketplace release workflow.
 - `AGENTS.md`: This file — repository-wide rules.
 - `CONTRIBUTING.md`: Contributor workflow (branch naming, commit convention, PR requirements).
 - `README.md`: Project overview, installation, and documentation links.
